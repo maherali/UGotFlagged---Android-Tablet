@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, UGotFlaggedActivity!</string>
     <string name="app_name">UGotFlagged</string>
+    <string name="login_email">Email:</string>
+    <string name="login_password">Password:</string>
+    <string name="login_submit">Login</string>
 </resources>

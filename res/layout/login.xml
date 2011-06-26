@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<TextView android:text="Login" android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+	<RelativeLayout android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<EditText android:id="@+id/login_email" android:inputType="textEmailAddress"
+			android:hint="Email" android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
+		<EditText android:id="@+id/login_password"
+			android:layout_below="@id/login_email" android:password="true"
+			android:hint="Password" android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
+		<CheckBox android:text="Remember me" android:id="@+id/rememberme"
+			android:layout_below="@id/login_password" android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+		</CheckBox>
+		<Button android:layout_width="wrap_content"  
+		android:layout_below="@id/rememberme" android:id="@+id/login_submit" android:layout_height="wrap_content" android:text="@string/login_submit"></Button>
+
+	</RelativeLayout>
+
+</LinearLayout>
