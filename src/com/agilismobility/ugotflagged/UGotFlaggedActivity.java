@@ -20,7 +20,7 @@ public class UGotFlaggedActivity extends Activity {
 			Intent intent = new Intent();
 			intent.setClass(getApplication(), LoginActivity.class);
 			startActivity(intent);
-		}
+		} 
 		finish();
 	}
 	
