@@ -1,5 +1,10 @@
 package com.agilismobility.ugotflagged.services;
 
+import com.agilismobility.ugotflagged.proxy.ServerProxy;
+import com.agilismobility.ugotflagged.proxy.ServerProxy.IServerResponder;
+import com.agilismobility.ugotflagged.proxy.ServerResponse;
+import com.agilismobility.ugotflagged.utils.Utils;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,63 +25,36 @@ public class LoginService extends Service {
 	public int onStartCommand(Intent intent, int flags, final int startId) {
 		String email = intent.getStringExtra("email");
 		String password = intent.getStringExtra("password");
-		new LoginTask().execute(email, password, new Integer(startId).toString());
+		login(email, password, startId);
 		return START_REDELIVER_INTENT;
 	}
 
-	private class LoginTask extends AsyncTask<String, Integer, Boolean> {
-		private String email;
-		private String password;
-		private int startId;
+	private void login(String email, String password, final int startId) {
+		Log.d(TAG, "log in using " + email + " and password " + password);
+		ServerProxy.get("/sessions?", Utils.toUrlParams("user_name", email, "password", password), new IServerResponder() {
+			@Override
+			public void success(ServerResponse response) {
+				announceLoginSuccess(startId);
+			}
 
-		protected Boolean doInBackground(String... params) {
-			this.email = params[0];
-			this.password = params[1];
-			this.startId = new Integer(params[2]);
-			login();
-			return true;
-		}
+			@Override
+			public void failure(ServerResponse response) {
+				announceLoginFailure(startId);
+			}
 
-		protected void onProgressUpdate(Integer... progress) {
-
-		}
-
-		protected void onPostExecute(Boolean result) {
-			announceLoginSuccess(startId);
-		}
-
-		private void login() {
-			Log.d(TAG, "log in using " + this.email + " and password " + this.password);
-			// URL imgURL = null;
-			// try {
-			// imgURL = new URL(theUrl);
-			// } catch (MalformedURLException e) {
-			// e.printStackTrace();
-			// }
-			// HttpURLConnection conn = null;
-			// try {
-			// conn = (HttpURLConnection) imgURL.openConnection();
-			// conn.setDoInput(true);
-			// conn.connect();
-			// InputStream is = conn.getInputStream();
-			// BitmapFactory.Options o = new BitmapFactory.Options();
-			// o.inSampleSize = 2; // 1/2 the size
-			// Bitmap bit = BitmapFactory.decodeStream(is, null, o);
-			// bmImg = Bitmap.createScaledBitmap(bit, this.desirdWidth,
-			// this.desiredHeight, true);
-			// bit.recycle();
-			// } catch (Exception e) {
-			// e.printStackTrace();
-			// } finally {
-			// if (conn != null) {
-			// conn.disconnect();
-			// }
-			// }
-		}
+		});
 	}
 
-	public void announceLoginSuccess(int startID) {
+	private void announceLoginSuccess(int startID) {
 		Intent newIntent = new Intent(LOGIN_SUCCESS_NOTIF);
+		newIntent.putExtra("success", true);
+		sendBroadcast(newIntent);
+		stopSelf(startID);
+	}
+
+	private void announceLoginFailure(int startID) {
+		Intent newIntent = new Intent(LOGIN_SUCCESS_NOTIF);
+		newIntent.putExtra("success", false);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}

@@ -47,6 +47,7 @@ public class LoginActivity extends Activity {
 				intent.putExtra("email", email.getText().toString());
 				intent.putExtra("password", password.getText().toString());
 				startService(intent);
+				((Button) findViewById(R.id.login_submit)).setEnabled(false);
 			}
 		});
 		registerReceiver();
@@ -61,10 +62,14 @@ public class LoginActivity extends Activity {
 	public class MyReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Intent newIntent = new Intent();
-			newIntent.setClass(getApplication(), FlagsActivity.class);
-			startActivity(newIntent);
-			finish();
+			((Button) findViewById(R.id.login_submit)).setEnabled(true);
+			boolean success = intent.getBooleanExtra("success", true);
+			if (success) {
+				Intent newIntent = new Intent();
+				newIntent.setClass(getApplication(), FlagsActivity.class);
+				startActivity(newIntent);
+				finish();
+			}
 		}
 	}
 
