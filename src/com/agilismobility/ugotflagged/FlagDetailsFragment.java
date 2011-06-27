@@ -16,8 +16,7 @@ public class FlagDetailsFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mContentView = new TextView(getActivity());
 		return mContentView;
 	}

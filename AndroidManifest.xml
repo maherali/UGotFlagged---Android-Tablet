@@ -27,5 +27,7 @@
 		<activity android:name=".LoginActivity">
 		</activity>
 
+		<service android:enabled="true" android:name=".services.LoginService"></service>
+
 	</application>
 </manifest>

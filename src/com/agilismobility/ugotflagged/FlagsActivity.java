@@ -6,7 +6,11 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 public class FlagsActivity extends Activity implements TabListener {
 
@@ -21,8 +25,7 @@ public class FlagsActivity extends Activity implements TabListener {
 		for (int i = 0; i < ACTIONS.length; i++) {
 			bar.addTab(bar.newTab().setText(ACTIONS[i]).setTabListener(this));
 		}
-		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
-				| ActionBar.DISPLAY_USE_LOGO);
+		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_USE_LOGO);
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		bar.setDisplayShowHomeEnabled(true);
 	}
@@ -44,5 +47,25 @@ public class FlagsActivity extends Activity implements TabListener {
 		// TODO Auto-generated method stub
 
 	}
-}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.logout:
+			finish();
+			Intent intent = new Intent();
+			intent.setClass(getApplication(), LoginActivity.class);
+			startActivity(intent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

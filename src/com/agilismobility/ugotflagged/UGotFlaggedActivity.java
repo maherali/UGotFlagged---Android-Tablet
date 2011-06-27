@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 public class UGotFlaggedActivity extends Activity {
-  
 
 	private boolean remembeMe = false;
 
@@ -20,8 +19,8 @@ public class UGotFlaggedActivity extends Activity {
 			Intent intent = new Intent();
 			intent.setClass(getApplication(), LoginActivity.class);
 			startActivity(intent);
-		} 
+		}
 		finish();
 	}
-	
+
 }
