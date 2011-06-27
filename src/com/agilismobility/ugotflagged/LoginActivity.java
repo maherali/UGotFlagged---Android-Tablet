@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class LoginActivity extends Activity {
@@ -23,17 +24,23 @@ public class LoginActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
+		final TextView email = (TextView) findViewById(R.id.login_email);
+		final TextView password = (TextView) findViewById(R.id.login_password);
+		final CheckBox rememberMe = (CheckBox) findViewById(R.id.rememberme);
+
+		SharedPreferences settings = getSharedPreferences(LOGIN_PREF, 0);
+		email.setText(settings.getString("login_email", ""));
+		password.setText(settings.getString("login_password", ""));
+		rememberMe.setChecked(settings.getBoolean("login_remember_me", false));
+
 		((Button) findViewById(R.id.login_submit)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				TextView email = (TextView) findViewById(R.id.login_email);
-				TextView password = (TextView) findViewById(R.id.login_password);
-
 				SharedPreferences settings = getSharedPreferences(LOGIN_PREF, 0);
 				SharedPreferences.Editor editor = settings.edit();
 
 				editor.putString("login_email", email.getText().toString());
 				editor.putString("login_password", password.getText().toString());
-				;
+				editor.putBoolean("login_remember_me", rememberMe.isChecked());
 				editor.commit();
 
 				Intent intent = new Intent(LoginActivity.this, LoginService.class);
