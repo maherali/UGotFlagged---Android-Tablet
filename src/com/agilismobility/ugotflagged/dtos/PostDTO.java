@@ -56,10 +56,10 @@ public class PostDTO {
 		this.author = xml.textValueForNode(post, "author");
 		this.adminAuthor = xml.boolValueForNode(post, "admin_author");
 		this.timeAgo = xml.textValueForNode(post, "timeago");
-		this.photoID = xml.intValueForNode(post, "photo/identifier");
-		this.photoMainURL = xml.textValueForNode(post, "photo/main_url");
-		this.photoiPhoneURL = xml.textValueForNode(post, "photo/iphone_url");
-		this.photoFeedURL = xml.textValueForNode(post, "photo/feed_url");
+		this.photoID = xml.intValueForNode(post, "photos/photo/identifier");
+		this.photoMainURL = xml.textValueForNode(post, "photos/photo/main_url");
+		this.photoiPhoneURL = xml.textValueForNode(post, "photos/photo/iphone_url");
+		this.photoFeedURL = xml.textValueForNode(post, "photos/photo/feed_url");
 		replies = new ArrayList<ReplyDTO>();
 		NodeList theReplies = xml.nodesForXPath(post, "replies/reply");
 		for (int i = 0; i < theReplies.getLength(); i++) {

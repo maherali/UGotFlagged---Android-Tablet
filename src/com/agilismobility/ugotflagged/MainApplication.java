@@ -5,13 +5,16 @@ import java.util.HashMap;
 
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
+import com.agilismobility.ugotflagged.services.ImageResources;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 public class MainApplication extends Application {
 
 	private static Context mInstance;
+	private final String TAG = "MainApplication";
 
 	@Override
 	public void onCreate() {
@@ -21,8 +24,13 @@ public class MainApplication extends Application {
 
 	@Override
 	public void onLowMemory() {
-		// TODO Auto-generated method stub
+		Log.d(TAG, "***********************onLowMemory***********************");
+		getImageCache().clear();
 		super.onLowMemory();
+	}
+
+	public ImageResources getImageCache() {
+		return ImageResources.getInstance();
 	}
 
 	@Override
@@ -48,7 +56,7 @@ public class MainApplication extends Application {
 		public static ArrayList<PostDTO> getStream() {
 			return users.get(currUserID).posts;
 		}
-		
+
 	}
 
 }
