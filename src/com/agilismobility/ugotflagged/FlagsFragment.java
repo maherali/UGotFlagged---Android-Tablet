@@ -1,6 +1,7 @@
 package com.agilismobility.ugotflagged;
 
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.dtos.PostDTO;
 
 import android.app.ListFragment;
 import android.graphics.Color;
@@ -26,10 +27,7 @@ public class FlagsFragment extends ListFragment {
 	}
 
 	public void populateStream() {
-		setListAdapter(new ArrayAdapter<String>(getActivity(),
-				R.layout.stream_item, new String[] { "A", "B", "C", "D", "E",
-						"F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-						"Q", "R" }));
+		setListAdapter(new ArrayAdapter<PostDTO>(getActivity(), R.layout.stream_item, MainApplication.GlobalState.getStream()));
 	}
 
 	@Override
@@ -38,8 +36,7 @@ public class FlagsFragment extends ListFragment {
 	}
 
 	private void showAt(int position) {
-		FlagDetailsFragment frag = (FlagDetailsFragment) getFragmentManager()
-				.findFragmentById(R.id.frag_details);
+		FlagDetailsFragment frag = (FlagDetailsFragment) getFragmentManager().findFragmentById(R.id.frag_details);
 		frag.updateContent(position);
 		mCurPosition = position;
 	}

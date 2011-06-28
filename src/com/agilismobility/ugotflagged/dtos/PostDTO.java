@@ -7,7 +7,6 @@ import org.w3c.dom.NodeList;
 
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 
-
 public class PostDTO {
 	public int totalLikes;
 	public boolean canLike;
@@ -66,5 +65,10 @@ public class PostDTO {
 		for (int i = 0; i < theReplies.getLength(); i++) {
 			replies.add(new ReplyDTO(xml, theReplies.item(i)));
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return text;
 	}
 }

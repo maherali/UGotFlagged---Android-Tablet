@@ -73,6 +73,7 @@ public class LoginActivity extends BaseActivity {
 			if (success) {
 				UserDTO user = new UserDTO(new XMLHelper(xml));
 				if (user.errors.size() == 0) {
+					MainApplication.GlobalState.setCurrentUser(user);
 					Intent newIntent = new Intent();
 					newIntent.setClass(getApplication(), FlagsActivity.class);
 					startActivity(newIntent);
