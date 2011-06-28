@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class UGotFlaggedActivity extends Activity {
+public class UGotFlaggedActivity extends BaseActivity {
 
 	private boolean remembeMe = false;
 

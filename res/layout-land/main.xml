@@ -3,8 +3,9 @@
 	android:orientation="horizontal" android:layout_width="match_parent"
 	android:layout_height="match_parent" android:id="@+id/frags">
 
-	<fragment class="com.agilismobility.ugotflagged.FlagsFragment" android:id="@+id/frag_flags"
-		android:visibility="gone" android:layout_marginTop="?android:attr/actionBarSize"
+	<fragment class="com.agilismobility.ugotflagged.FlagsFragment"
+		android:id="@+id/frag_flags" android:visibility="gone"
+		android:layout_marginTop="?android:attr/actionBarSize"
 		android:layout_width="@dimen/stream_size" android:layout_height="match_parent" />
 
 

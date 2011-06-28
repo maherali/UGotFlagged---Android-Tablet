@@ -2,7 +2,6 @@ package com.agilismobility.ugotflagged;
 
 import com.agilismobility.ugotflagged.R;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -12,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class FlagsActivity extends Activity implements TabListener {
+public class FlagsActivity extends BaseActivity implements TabListener {
 
 	private String[] ACTIONS = { "Stream", "Followers", "Help", "Settings" };
 
