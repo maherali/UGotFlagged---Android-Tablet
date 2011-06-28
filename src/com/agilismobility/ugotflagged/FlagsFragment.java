@@ -70,8 +70,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 	private void load(String url) {
 		Intent intent = new Intent(getActivity(), ImageDownloadingService.class);
 		intent.putExtra("com.agilismobility.architecture.url", url);
-		intent.putExtra("com.agilismobility.architecture.width", "300");
-		intent.putExtra("com.agilismobility.architecture.height", "300");
+		intent.putExtra("com.agilismobility.architecture.width", "100");
+		intent.putExtra("com.agilismobility.architecture.height", "100");
 		getActivity().startService(intent);
 	}
 
@@ -97,12 +97,12 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LinearLayout layout;
 			if (convertView == null) {
-				layout = (LinearLayout) mInflater.inflate(android.R.layout.activity_list_item, parent, false);
+				layout = (LinearLayout) mInflater.inflate(R.layout.stream_item, parent, false);
 			} else {
 				layout = (LinearLayout) convertView;
 			}
-			TextView text = (TextView) layout.findViewById(android.R.id.text1);
-			ImageView image = (ImageView) layout.findViewById(android.R.id.icon);
+			TextView text = (TextView) layout.findViewById(R.id.text1);
+			ImageView image = (ImageView) layout.findViewById(R.id.icon);
 
 			PostDTO post = MainApplication.GlobalState.getStream().get(position);
 			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoiPhoneURL);
@@ -134,8 +134,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			int count = view.getChildCount();
 			for (int i = 0; i < count; i++) {
 				LinearLayout layout = (LinearLayout) view.getChildAt(i);
-				TextView text = (TextView) layout.findViewById(android.R.id.text1);
-				ImageView image = (ImageView) layout.findViewById(android.R.id.icon);
+				TextView text = (TextView) layout.findViewById(R.id.text1);
+				ImageView image = (ImageView) layout.findViewById(R.id.icon);
 				if (text.getTag() != null) {
 					PostDTO post = MainApplication.GlobalState.getStream().get(first + i);
 					text.setText(post.text);
