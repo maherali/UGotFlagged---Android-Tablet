@@ -34,27 +34,29 @@ public class LoginService extends Service {
 		ServerProxy.get("/sessions?", Utils.toUrlParams("user_name", email, "password", password), new IServerResponder() {
 			@Override
 			public void success(ServerResponse response) {
-				announceLoginSuccess(startId);
+				announceLoginSuccess(startId, response);
 			}
 
 			@Override
 			public void failure(ServerResponse response) {
-				announceLoginFailure(startId);
+				announceLoginFailure(startId, response);
 			}
 
 		});
 	}
 
-	private void announceLoginSuccess(int startID) {
+	private void announceLoginSuccess(int startID, ServerResponse response) {
 		Intent newIntent = new Intent(LOGIN_SUCCESS_NOTIF);
 		newIntent.putExtra("success", true);
+		newIntent.putExtra("xml", response.getXML());
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}
 
-	private void announceLoginFailure(int startID) {
+	private void announceLoginFailure(int startID, ServerResponse response) {
 		Intent newIntent = new Intent(LOGIN_SUCCESS_NOTIF);
 		newIntent.putExtra("success", false);
+		newIntent.putExtra("xml", response.getXML());
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}

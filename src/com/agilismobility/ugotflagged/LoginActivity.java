@@ -1,7 +1,9 @@
 package com.agilismobility.ugotflagged;
 
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.LoginService;
+import com.agilismobility.ugotflagged.utils.XMLHelper;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -64,7 +66,9 @@ public class LoginActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			((Button) findViewById(R.id.login_submit)).setEnabled(true);
 			boolean success = intent.getBooleanExtra("success", true);
+			String xml = intent.getStringExtra("xml");
 			if (success) {
+				UserDTO user = new UserDTO(new XMLHelper(xml));
 				Intent newIntent = new Intent();
 				newIntent.setClass(getApplication(), FlagsActivity.class);
 				startActivity(newIntent);

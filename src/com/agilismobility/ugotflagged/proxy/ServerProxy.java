@@ -164,6 +164,7 @@ public class ServerProxy {
 			ArrayList<Object> arr = new ArrayList<Object>();
 			arr.add(xml);
 			arr.add(params[0].get(3));
+			arr.add(respcode);
 			return arr;
 		}
 
@@ -171,19 +172,19 @@ public class ServerProxy {
 		protected void onCancelled() {
 			if (conn != null) {
 				conn.disconnect();
-
 			}
 		}
 
 		protected void onPostExecute(ArrayList<Object> result) {
 			String xml = (String) result.get(0);
 			IServerResponder callBack = (IServerResponder) result.get(1);
-			callBack.failure(null);
-			// if (response.hasErrors()) {
-			// callBack.failure(response);
-			// } else {
-			// callBack.success(response);
-			// }
+			Integer responseCode = (Integer) result.get(2);
+			ServerResponse response = new ServerResponse(xml, responseCode, "");
+			if (response.hasErrors()) {
+				callBack.failure(response);
+			} else {
+				callBack.success(response);
+			}
 		}
 	}
 
