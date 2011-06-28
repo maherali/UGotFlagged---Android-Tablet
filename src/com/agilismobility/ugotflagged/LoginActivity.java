@@ -4,10 +4,13 @@ import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.LoginService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
-
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -17,7 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 
 	public static final String LOGIN_PREF = "LOGIN_PREF";
 	MyReceiver receiver;
@@ -69,10 +72,14 @@ public class LoginActivity extends Activity {
 			String xml = intent.getStringExtra("xml");
 			if (success) {
 				UserDTO user = new UserDTO(new XMLHelper(xml));
-				Intent newIntent = new Intent();
-				newIntent.setClass(getApplication(), FlagsActivity.class);
-				startActivity(newIntent);
-				finish();
+				if (user.errors.size() == 0) {
+					Intent newIntent = new Intent();
+					newIntent.setClass(getApplication(), FlagsActivity.class);
+					startActivity(newIntent);
+					finish();
+				} else {
+					showError(user.errors);
+				}
 			}
 		}
 	}

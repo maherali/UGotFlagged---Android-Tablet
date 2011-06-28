@@ -179,19 +179,18 @@ public class ServerProxy {
 			String xml = (String) result.get(0);
 			IServerResponder callBack = (IServerResponder) result.get(1);
 			Integer responseCode = (Integer) result.get(2);
-			ServerResponse response = new ServerResponse(xml, responseCode, "");
-			if (response.hasErrors()) {
-				callBack.failure(response);
+			if (responseCode == 200) {
+				callBack.success(xml);
 			} else {
-				callBack.success(response);
+				callBack.failure(xml);
 			}
 		}
 	}
 
 	public static interface IServerResponder {
 
-		public void success(ServerResponse response);
+		public void success(String xml);
 
-		public void failure(ServerResponse response);
+		public void failure(String xml);
 	}
 }

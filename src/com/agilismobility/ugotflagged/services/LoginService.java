@@ -33,30 +33,30 @@ public class LoginService extends Service {
 		Log.d(TAG, "log in using " + email + " and password " + password);
 		ServerProxy.get("/sessions?", Utils.toUrlParams("user_name", email, "password", password), new IServerResponder() {
 			@Override
-			public void success(ServerResponse response) {
-				announceLoginSuccess(startId, response);
+			public void success(String xml) {
+				announceLoginSuccess(startId, xml);
 			}
 
 			@Override
-			public void failure(ServerResponse response) {
-				announceLoginFailure(startId, response);
+			public void failure(String xml) {
+				announceLoginFailure(startId, xml);
 			}
 
 		});
 	}
 
-	private void announceLoginSuccess(int startID, ServerResponse response) {
+	private void announceLoginSuccess(int startID, String xml) {
 		Intent newIntent = new Intent(LOGIN_SUCCESS_NOTIF);
 		newIntent.putExtra("success", true);
-		newIntent.putExtra("xml", response.getXML());
+		newIntent.putExtra("xml", xml);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}
 
-	private void announceLoginFailure(int startID, ServerResponse response) {
+	private void announceLoginFailure(int startID, String xml) {
 		Intent newIntent = new Intent(LOGIN_SUCCESS_NOTIF);
 		newIntent.putExtra("success", false);
-		newIntent.putExtra("xml", response.getXML());
+		newIntent.putExtra("xml", xml);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}

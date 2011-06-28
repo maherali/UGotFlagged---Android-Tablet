@@ -7,7 +7,7 @@ import org.w3c.dom.NodeList;
 
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 
-public class UserDTO {
+public class UserDTO extends BaseDTO{
 	public String identifier;
 	public String userName;
 	public String firstName;
@@ -27,6 +27,7 @@ public class UserDTO {
 	public ArrayList<PostDTO> posts;
 
 	public UserDTO(XMLHelper xml) {
+		super(xml);
 		Node theUser = xml.nodesForXPath("user").item(0);
 		this.identifier = xml.textValueForNode(theUser, "identifier");
 		this.userName = xml.textValueForNode(theUser, "user_name");

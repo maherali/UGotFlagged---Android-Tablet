@@ -20,8 +20,5 @@ public class PlateDTO {
 		this.isFollowing = xml.boolValueForNode(plate, "is_following");
 	}
 }
-/*
- * add this to lifelog iphone server proxy request.cachePolicy =
- * NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
- * request.HTTPShouldHandleCookies = true; request.timeoutInterval = 60;
- */
+
+
