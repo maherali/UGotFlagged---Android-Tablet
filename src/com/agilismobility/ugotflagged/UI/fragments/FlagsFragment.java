@@ -1,6 +1,7 @@
-package com.agilismobility.ugotflagged;
+package com.agilismobility.ugotflagged.UI.fragments;
 
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 
@@ -70,8 +71,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 	private void load(String url) {
 		Intent intent = new Intent(getActivity(), ImageDownloadingService.class);
 		intent.putExtra("com.agilismobility.architecture.url", url);
-		intent.putExtra("com.agilismobility.architecture.width", "100");
-		intent.putExtra("com.agilismobility.architecture.height", "100");
+		intent.putExtra("com.agilismobility.architecture.width", "48");
+		intent.putExtra("com.agilismobility.architecture.height", "48");
 		getActivity().startService(intent);
 	}
 
@@ -103,22 +104,48 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			}
 			TextView text = (TextView) layout.findViewById(R.id.text1);
 			ImageView image = (ImageView) layout.findViewById(R.id.icon);
+			TextView userNameText = (TextView) layout.findViewById(R.id.user_name);
+			TextView postTitleText = (TextView) layout.findViewById(R.id.post_title);
+			ImageView picture = (ImageView) layout.findViewById(R.id.picture);
+			TextView postCommentsText = (TextView) layout.findViewById(R.id.post_comments_count);
+			TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
 
 			PostDTO post = MainApplication.GlobalState.getStream().get(position);
-			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoiPhoneURL);
+			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 			if (bitmap != null) {
 				image.setImageBitmap(bitmap);
 			} else {
-				image.setImageBitmap(null);
+				image.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
+			}
+			Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoiPhoneURL);
+			if (bitmapPicture != null) {
+				picture.setImageBitmap(bitmapPicture);
 			}
 			if (!mBusy) {
 				text.setText(post.text);
+				userNameText.setText(post.author);
+				postTitleText.setText(post.title);
+				postCommentsText.setText(post.replies.size() + " comments");
+				postUserFavs.setText(post.totalLikes + " users");
 				text.setTag(null);
 				if (bitmap == null) {
-					load(post.photoiPhoneURL);
+					load(post.authorAvatarURL);
+					image.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
+				}
+				if (bitmapPicture == null) {
+					if (post.photoiPhoneURL != null) {
+						picture.setVisibility(View.VISIBLE);
+						load(post.photoiPhoneURL);
+					} else {
+						picture.setVisibility(View.GONE);
+					}
 				}
 			} else {
 				text.setText(post.text);
+				userNameText.setText(post.author);
+				postTitleText.setText(post.title);
+				postCommentsText.setText(post.replies.size() + " comments");
+				postUserFavs.setText(post.totalLikes + " users");
 				text.setTag(this);
 			}
 			return layout;
@@ -136,16 +163,38 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 				LinearLayout layout = (LinearLayout) view.getChildAt(i);
 				TextView text = (TextView) layout.findViewById(R.id.text1);
 				ImageView image = (ImageView) layout.findViewById(R.id.icon);
+				TextView userNameText = (TextView) layout.findViewById(R.id.user_name);
+				TextView postTitleText = (TextView) layout.findViewById(R.id.post_title);
+				TextView postCommentsText = (TextView) layout.findViewById(R.id.post_comments_count);
+				TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
+				ImageView picture = (ImageView) layout.findViewById(R.id.picture);
+
 				if (text.getTag() != null) {
 					PostDTO post = MainApplication.GlobalState.getStream().get(first + i);
 					text.setText(post.text);
+					userNameText.setText(post.author);
+					postTitleText.setText(post.title);
+					postCommentsText.setText(post.replies.size() + " comments");
+					postUserFavs.setText(post.totalLikes + " users");
 					text.setTag(null);
-					Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoiPhoneURL);
+					Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 					if (bitmap != null) {
 						image.setImageBitmap(bitmap);
 					} else {
-						image.setImageBitmap(null);
-						load(post.photoiPhoneURL);
+						image.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
+						load(post.authorAvatarURL);
+					}
+					Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(
+							post.photoiPhoneURL);
+					if (bitmapPicture != null) {
+						picture.setImageBitmap(bitmapPicture);
+					} else {
+						if (post.photoiPhoneURL != null) {
+							picture.setVisibility(View.VISIBLE);
+							load(post.photoiPhoneURL);
+						} else {
+							picture.setVisibility(View.GONE);
+						}
 					}
 				}
 			}

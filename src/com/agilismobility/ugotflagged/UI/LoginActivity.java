@@ -1,6 +1,9 @@
-package com.agilismobility.ugotflagged;
+package com.agilismobility.ugotflagged.UI;
 
+import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.R.id;
+import com.agilismobility.ugotflagged.R.layout;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.LoginService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;

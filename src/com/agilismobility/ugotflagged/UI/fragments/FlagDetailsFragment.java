@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged;
+package com.agilismobility.ugotflagged.UI.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;

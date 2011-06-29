@@ -32,6 +32,8 @@ public class PostDTO {
 	public String photoMainURL;
 	public String photoiPhoneURL;
 	public String photoFeedURL;
+	public String authorAvatarURL;
+	
 	public ArrayList<ReplyDTO> replies;
 
 	public PostDTO(XMLHelper xml, Node post) {
@@ -60,6 +62,8 @@ public class PostDTO {
 		this.photoMainURL = xml.textValueForNode(post, "photos/photo/main_url");
 		this.photoiPhoneURL = xml.textValueForNode(post, "photos/photo/iphone_url");
 		this.photoFeedURL = xml.textValueForNode(post, "photos/photo/feed_url");
+		this.authorAvatarURL = xml.textValueForNode(post, "author_avatar_url");
+		
 		replies = new ArrayList<ReplyDTO>();
 		NodeList theReplies = xml.nodesForXPath(post, "replies/reply");
 		for (int i = 0; i < theReplies.getLength(); i++) {

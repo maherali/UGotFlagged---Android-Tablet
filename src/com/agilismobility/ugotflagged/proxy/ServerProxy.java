@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
+
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.utils.PipeStream;
 import android.os.AsyncTask;
@@ -20,7 +21,7 @@ public class ServerProxy {
 
 	private static final int CONNECTION_TIMEOUT = 2 * 60 * 1000;
 	private static String sessionId;
-	public static final String URL = "https://ugotflagged.heroku.com";
+	public static final String URL = "https://ugotflagged-dev.heroku.com";
 
 	public static void syncCookie() {
 		CookieSyncManager mgr = CookieSyncManager.createInstance(MainApplication.getInstance());

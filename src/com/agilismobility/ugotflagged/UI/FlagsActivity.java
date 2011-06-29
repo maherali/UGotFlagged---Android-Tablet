@@ -1,6 +1,10 @@
-package com.agilismobility.ugotflagged;
+package com.agilismobility.ugotflagged.UI;
 
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.R.id;
+import com.agilismobility.ugotflagged.R.layout;
+import com.agilismobility.ugotflagged.R.menu;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
