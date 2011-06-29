@@ -4,6 +4,7 @@ import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
+import com.agilismobility.ugotflagged.utils.Utils;
 
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -109,6 +111,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			ImageView picture = (ImageView) layout.findViewById(R.id.picture);
 			TextView postCommentsText = (TextView) layout.findViewById(R.id.post_comments_count);
 			TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
+			TextView distanceAway = (TextView) layout.findViewById(R.id.distance_away);
 
 			PostDTO post = MainApplication.GlobalState.getStream().get(position);
 			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
@@ -127,6 +130,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 				postTitleText.setText(post.title);
 				postCommentsText.setText(post.replies.size() + " comments");
 				postUserFavs.setText(post.totalLikes + " users");
+				Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
+				distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
 				text.setTag(null);
 				if (bitmap == null) {
 					load(post.authorAvatarURL);
@@ -136,7 +141,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 					if (post.photoiPhoneURL != null) {
 						picture.setVisibility(View.VISIBLE);
 						load(post.photoiPhoneURL);
-					}else{
+					} else {
 						picture.setVisibility(View.GONE);
 					}
 				}
@@ -146,6 +151,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 				postTitleText.setText(post.title);
 				postCommentsText.setText(post.replies.size() + " comments");
 				postUserFavs.setText(post.totalLikes + " users");
+				Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
+				distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
 				text.setTag(this);
 			}
 			return layout;
@@ -168,7 +175,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 				TextView postCommentsText = (TextView) layout.findViewById(R.id.post_comments_count);
 				TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
 				ImageView picture = (ImageView) layout.findViewById(R.id.picture);
-
+				TextView distanceAway = (TextView) layout.findViewById(R.id.distance_away);
+				
 				if (text.getTag() != null) {
 					PostDTO post = MainApplication.GlobalState.getStream().get(first + i);
 					text.setText(post.text);
@@ -176,6 +184,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 					postTitleText.setText(post.title);
 					postCommentsText.setText(post.replies.size() + " comments");
 					postUserFavs.setText(post.totalLikes + " users");
+					Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
+					distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));	
 					text.setTag(null);
 					Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 					if (bitmap != null) {
@@ -192,7 +202,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 						if (post.photoiPhoneURL != null) {
 							picture.setVisibility(View.VISIBLE);
 							load(post.photoiPhoneURL);
-						}else{
+						} else {
 							picture.setVisibility(View.GONE);
 						}
 					}

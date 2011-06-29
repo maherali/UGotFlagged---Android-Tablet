@@ -9,13 +9,16 @@ import com.agilismobility.ugotflagged.services.ImageResources;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 public class MainApplication extends Application {
 
 	private static Context mInstance;
 	private final String TAG = "MainApplication";
+	private Location mCurrentLocation;
 
+	
 	@Override
 	public void onCreate() {
 		mInstance = this;
@@ -57,6 +60,14 @@ public class MainApplication extends Application {
 			return users.get(currUserID).posts;
 		}
 
+	}
+
+	public Location getCurrentLocation() {
+		return mCurrentLocation;
+	}
+
+	public void updateCurrentLocation(Location location) {
+		mCurrentLocation = location;
 	}
 
 }

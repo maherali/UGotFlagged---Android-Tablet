@@ -66,5 +66,9 @@
 
 		</LinearLayout>
 
+		<TextView android:id="@+id/distance_away"
+			android:layout_width="match_parent" android:layout_height="wrap_content"
+			android:maxLines="5"  android:paddingLeft="6dip" />
+
 	</LinearLayout>
 </LinearLayout>
