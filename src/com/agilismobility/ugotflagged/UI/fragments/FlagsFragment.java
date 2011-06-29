@@ -136,7 +136,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 					if (post.photoiPhoneURL != null) {
 						picture.setVisibility(View.VISIBLE);
 						load(post.photoiPhoneURL);
-					} else {
+					}else{
 						picture.setVisibility(View.GONE);
 					}
 				}
@@ -192,7 +192,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 						if (post.photoiPhoneURL != null) {
 							picture.setVisibility(View.VISIBLE);
 							load(post.photoiPhoneURL);
-						} else {
+						}else{
 							picture.setVisibility(View.GONE);
 						}
 					}

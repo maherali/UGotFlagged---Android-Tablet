@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+
+
+	<ImageView android:id="@+id/icon" android:layout_width="48dip"
+		android:layout_height="48dip" android:paddingTop="5dip"
+		android:paddingBottom="5dip" android:paddingLeft="5dip"
+		android:paddingRight="5dip" />
+
+	<LinearLayout android:orientation="vertical"
+		android:layout_height="wrap_content" android:layout_width="match_parent"
+		android:paddingTop="1dip" android:paddingBottom="1dip"
+		android:paddingLeft="6dip" android:paddingRight="6dip"
+		android:layout_weight="6">
+
+		<TextView android:id="@+id/user_name" android:textColor="@color/user_name"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:singleLine="true" android:paddingLeft="6dip" />
+
+		<TextView android:id="@+id/post_title" android:textColor="@color/post_title"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:singleLine="true" android:paddingLeft="6dip" />
+
+		<TextView android:id="@+id/text1" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:ellipsize="end"
+			android:paddingLeft="6dip" />
+
+		<LinearLayout android:orientation="horizontal"
+			android:layout_height="wrap_content" android:layout_width="match_parent">
+
+			<ImageView android:id="@+id/picture" android:layout_width="400dip"
+				android:layout_height="400dip" android:paddingTop="5dip"
+				android:paddingBottom="5dip" android:paddingLeft="5dip"
+				android:paddingRight="5dip" />
+
+		</LinearLayout>
+
+		<LinearLayout android:orientation="horizontal"
+			android:layout_height="wrap_content" android:layout_width="match_parent">
+
+			<ImageView android:src="@drawable/comment"
+				android:layout_width="20dip" android:layout_height="20dip"
+				android:paddingTop="5dip" android:paddingBottom="5dip"
+				android:paddingLeft="5dip" android:paddingRight="5dip" />
+
+			<TextView android:id="@+id/post_comments_count"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:paddingRight="6dip" android:textColor="@color/stats_color" />
+
+			<ImageView android:src="@drawable/vote_yes"
+				android:layout_width="20dip" android:layout_height="20dip"
+				android:paddingTop="5dip" android:paddingBottom="5dip"
+				android:paddingLeft="6dip" android:paddingRight="5dip" />
+
+			<TextView android:id="@+id/post_users_favs"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:textColor="@color/stats_color" />
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+
+
+</LinearLayout>
