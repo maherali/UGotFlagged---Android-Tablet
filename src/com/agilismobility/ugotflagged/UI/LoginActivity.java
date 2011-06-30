@@ -2,18 +2,11 @@ package com.agilismobility.ugotflagged.UI;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.R.id;
-import com.agilismobility.ugotflagged.R.layout;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.LoginService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -43,22 +36,37 @@ public class LoginActivity extends BaseActivity {
 
 		((Button) findViewById(R.id.login_submit)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				SharedPreferences settings = getSharedPreferences(LOGIN_PREF, 0);
-				SharedPreferences.Editor editor = settings.edit();
-
-				editor.putString("login_email", email.getText().toString());
-				editor.putString("login_password", password.getText().toString());
-				editor.putBoolean("login_remember_me", rememberMe.isChecked());
-				editor.commit();
-
-				Intent intent = new Intent(LoginActivity.this, LoginService.class);
-				intent.putExtra("email", email.getText().toString());
-				intent.putExtra("password", password.getText().toString());
-				startService(intent);
-				((Button) findViewById(R.id.login_submit)).setEnabled(false);
+				startLogin();
 			}
 		});
 		registerReceiver();
+		if (settings.getBoolean("login_remember_me", false)) {
+			startLogin();
+		}
+	}
+
+	protected void startLogin() {
+		final TextView email = (TextView) findViewById(R.id.login_email);
+		final TextView password = (TextView) findViewById(R.id.login_password);
+		final CheckBox rememberMe = (CheckBox) findViewById(R.id.rememberme);
+		SharedPreferences settings = getSharedPreferences(LOGIN_PREF, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("login_email", email.getText().toString());
+		editor.putString("login_password", password.getText().toString());
+		editor.putBoolean("login_remember_me", rememberMe.isChecked());
+		editor.commit();
+		Intent intent = new Intent(LoginActivity.this, LoginService.class);
+		intent.putExtra("email", email.getText().toString());
+		intent.putExtra("password", password.getText().toString());
+		startService(intent);
+		((Button) findViewById(R.id.login_submit)).setEnabled(false);
+	}
+
+	public static void enableRememberMe(boolean enable) {
+		SharedPreferences settings = MainApplication.getInstance().getSharedPreferences(LOGIN_PREF, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("login_remember_me", enable);
+		editor.commit();
 	}
 
 	private void registerReceiver() {

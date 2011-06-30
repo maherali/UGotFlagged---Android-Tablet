@@ -88,6 +88,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.logout:
+			LoginActivity.enableRememberMe(false);
 			finish();
 			Intent intent = new Intent();
 			intent.setClass(getApplication(), LoginActivity.class);
