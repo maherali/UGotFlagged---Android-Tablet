@@ -7,6 +7,7 @@ import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.R.id;
 import com.agilismobility.ugotflagged.R.layout;
 import com.agilismobility.ugotflagged.R.menu;
+import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -101,5 +102,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	public void newLocationFound(Location location) {
 		((MainApplication)getApplication()).updateCurrentLocation(location);
 		Log.i("****************", "found new location");
+		FlagsFragment frag = (FlagsFragment) getFragmentManager().findFragmentById(R.id.frag_flags);
+		frag.refresh();
 	}
 }

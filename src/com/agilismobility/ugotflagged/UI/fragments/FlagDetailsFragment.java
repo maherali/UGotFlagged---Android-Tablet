@@ -18,10 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class FlagDetailsFragment extends Fragment {
-	private LinearLayout mLayout;
+	private ScrollView mLayout;
 	MyReceiver receiver;
 	private int mPosition;
 
@@ -33,7 +34,7 @@ public class FlagDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		registerReceiver();
-		mLayout = (LinearLayout) inflater.inflate(R.layout.post_details, container);
+		mLayout = (ScrollView) inflater.inflate(R.layout.post_details, container);
 		return mLayout;
 	}
 

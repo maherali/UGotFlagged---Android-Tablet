@@ -62,11 +62,15 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		getActivity().registerReceiver(receiver, filter);
 	}
 
+	public void refresh() {
+		m_adapter.notifyDataSetChanged();
+	}
+
 	public class MyReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.d("", "found an image!!!!!!!!!!!!!!!!!!!!!!");
-			m_adapter.notifyDataSetChanged();
+			refresh();
 		}
 	}
 
@@ -176,7 +180,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 				TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
 				ImageView picture = (ImageView) layout.findViewById(R.id.picture);
 				TextView distanceAway = (TextView) layout.findViewById(R.id.distance_away);
-				
+
 				if (text.getTag() != null) {
 					PostDTO post = MainApplication.GlobalState.getStream().get(first + i);
 					text.setText(post.text);
@@ -185,7 +189,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 					postCommentsText.setText(post.replies.size() + " comments");
 					postUserFavs.setText(post.totalLikes + " users");
 					Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
-					distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));	
+					distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
 					text.setTag(null);
 					Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 					if (bitmap != null) {
