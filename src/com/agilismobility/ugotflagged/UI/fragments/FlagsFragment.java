@@ -79,6 +79,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		intent.putExtra("com.agilismobility.architecture.url", url);
 		intent.putExtra("com.agilismobility.architecture.width", "48");
 		intent.putExtra("com.agilismobility.architecture.height", "48");
+		intent.putExtra("com.agilismobility.architecture.corners", "4");
 		getActivity().startService(intent);
 	}
 
@@ -126,7 +127,15 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			}
 			Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoiPhoneURL);
 			if (bitmapPicture != null) {
+				picture.setVisibility(View.VISIBLE);
 				picture.setImageBitmap(bitmapPicture);
+			} else {
+				if (post.photoiPhoneURL != null) {
+					picture.setVisibility(View.VISIBLE);
+					picture.setImageBitmap(null);
+				} else {
+					picture.setVisibility(View.GONE);
+				}
 			}
 			if (!mBusy) {
 				text.setText(post.text);
@@ -201,6 +210,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 					Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(
 							post.photoiPhoneURL);
 					if (bitmapPicture != null) {
+						picture.setVisibility(View.VISIBLE);
 						picture.setImageBitmap(bitmapPicture);
 					} else {
 						if (post.photoiPhoneURL != null) {

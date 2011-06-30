@@ -4,6 +4,7 @@ import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
+import com.agilismobility.ugotflagged.utils.Utils;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
@@ -17,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -57,6 +57,7 @@ public class FlagDetailsFragment extends Fragment {
 		intent.putExtra("com.agilismobility.architecture.url", url);
 		intent.putExtra("com.agilismobility.architecture.width", "48");
 		intent.putExtra("com.agilismobility.architecture.height", "48");
+		intent.putExtra("com.agilismobility.architecture.corners", "4");
 		getActivity().startService(intent);
 	}
 
@@ -105,7 +106,7 @@ public class FlagDetailsFragment extends Fragment {
 			}
 		} else {
 			picture.setVisibility(View.VISIBLE);
-			picture.setImageBitmap(bitmapPicture);
+			picture.setImageBitmap(Utils.getRoundedCornerBitmap(bitmapPicture, 9));
 		}
 	}
 

@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 
 import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.utils.Utils;
 
 public class ImageDownloadingService extends Service {
 
@@ -29,6 +30,10 @@ public class ImageDownloadingService extends Service {
 		String url = intent.getStringExtra("com.agilismobility.architecture.url");
 		String widthStr = intent.getStringExtra("com.agilismobility.architecture.width");
 		String heightStr = intent.getStringExtra("com.agilismobility.architecture.height");
+		String cornersStr = intent.getStringExtra("com.agilismobility.architecture.corners");
+		if(cornersStr == null){
+			cornersStr = "0";
+		}
 
 		if (((MainApplication) getApplication()).getImageCache().getImageForURL(url) != null) {
 			announceFound(url, startId, true);
@@ -38,7 +43,7 @@ public class ImageDownloadingService extends Service {
 			} else {
 				((MainApplication) getApplication()).getImageCache().markDownloadingForURL(url);
 				Integer f = startId;
-				new ImageDownloadingTask().execute(url, f.toString(), widthStr, heightStr);
+				new ImageDownloadingTask().execute(url, f.toString(), widthStr, heightStr, cornersStr);
 			}
 		}
 		return START_REDELIVER_INTENT;
@@ -48,13 +53,14 @@ public class ImageDownloadingService extends Service {
 		private String theUrl;
 		private int startId;
 		private Bitmap bmImg;
-		private int desirdWidth, desiredHeight;
+		private int desirdWidth, desiredHeight, corners;
 
 		protected Boolean doInBackground(String... params) {
 			this.theUrl = params[0];
 			this.startId = new Integer(params[1]);
 			this.desirdWidth = new Integer(params[2]);
 			this.desiredHeight = new Integer(params[3]);
+			this.corners = new Integer(params[4]);
 			downloadImage();
 			if (bmImg != null) {
 				((MainApplication) getApplication()).getImageCache().setImageForUrl(bmImg, theUrl);
@@ -86,8 +92,14 @@ public class ImageDownloadingService extends Service {
 				BitmapFactory.Options o = new BitmapFactory.Options();
 				o.inSampleSize = 1;
 				Bitmap bit = BitmapFactory.decodeStream(is, null, o);
-				bmImg = Bitmap.createScaledBitmap(bit, this.desirdWidth, this.desiredHeight, true);
+				Bitmap bm = Bitmap.createScaledBitmap(bit, this.desirdWidth, this.desiredHeight, true);
 				bit.recycle();
+				if (corners > 0) {
+					bmImg = Utils.getRoundedCornerBitmap(bm, corners);
+					bm.recycle();
+				} else {
+					bmImg = bm;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
