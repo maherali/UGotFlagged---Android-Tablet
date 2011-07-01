@@ -75,6 +75,7 @@ public class ServerProxy {
 			URL url;
 			int respcode = 0;
 			String xml = "";
+			String detailedErrorMessage = null;
 			try {
 				if (method == HTTP_METHOD.Post) {
 					url = new URL(URL + path);
@@ -161,11 +162,14 @@ public class ServerProxy {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				detailedErrorMessage = e.getMessage();
 			}
 			ArrayList<Object> arr = new ArrayList<Object>();
 			arr.add(xml);
 			arr.add(params[0].get(3));
 			arr.add(respcode);
+			arr.add(detailedErrorMessage);
+
 			return arr;
 		}
 
@@ -180,18 +184,32 @@ public class ServerProxy {
 			String xml = (String) result.get(0);
 			IServerResponder callBack = (IServerResponder) result.get(1);
 			Integer responseCode = (Integer) result.get(2);
+			String detailedErrorMessage = (String) result.get(3);
+			ServerResponseSummary srs = new ServerResponseSummary(xml, detailedErrorMessage, responseCode);
 			if (responseCode == 200) {
-				callBack.success(xml);
+				callBack.success(srs);
 			} else {
-				callBack.failure(xml);
+				callBack.failure(srs);
 			}
+		}
+	}
+
+	public static class ServerResponseSummary {
+		public String xml;
+		public String detailedErrorMessage;
+		public int responseCode;
+
+		public ServerResponseSummary(String xml, String msg, int rc) {
+			this.xml = xml;
+			this.detailedErrorMessage = msg;
+			this.responseCode = rc;
 		}
 	}
 
 	public static interface IServerResponder {
 
-		public void success(String xml);
+		public void success(ServerResponseSummary response);
 
-		public void failure(String xml);
+		public void failure(ServerResponseSummary response);
 	}
 }

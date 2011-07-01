@@ -12,8 +12,14 @@ import android.os.Bundle;
 
 public abstract class BaseActivity extends Activity {
 
+	void showError(String error) {
+		showDialog("Error", error);
+	}
+
 	void showError(ArrayList<String> errors) {
-		showDialog("Error", errors.get(0));
+		if (errors.size() > 0) {
+			showError(errors.get(0));
+		}
 	}
 
 	void showDialog(String title, String message) {

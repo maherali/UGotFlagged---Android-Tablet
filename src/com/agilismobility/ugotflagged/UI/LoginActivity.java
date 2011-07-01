@@ -70,7 +70,7 @@ public class LoginActivity extends BaseActivity {
 	}
 
 	private void registerReceiver() {
-		IntentFilter filter = new IntentFilter(LoginService.LOGIN_SUCCESS_NOTIF);
+		IntentFilter filter = new IntentFilter(LoginService.LOGIN_FINISHED_NOTIF);
 		receiver = new MyReceiver();
 		registerReceiver(receiver, filter);
 	}
@@ -92,6 +92,8 @@ public class LoginActivity extends BaseActivity {
 				} else {
 					showError(user.errors);
 				}
+			} else {
+				showError(intent.getStringExtra("error"));
 			}
 		}
 	}
