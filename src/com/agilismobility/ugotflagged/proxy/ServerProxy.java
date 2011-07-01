@@ -186,7 +186,7 @@ public class ServerProxy {
 			Integer responseCode = (Integer) result.get(2);
 			String detailedErrorMessage = (String) result.get(3);
 			ServerResponseSummary srs = new ServerResponseSummary(xml, detailedErrorMessage, responseCode);
-			if (responseCode == 200) {
+			if (responseCode == 200 && detailedErrorMessage == null) {
 				callBack.success(srs);
 			} else {
 				callBack.failure(srs);

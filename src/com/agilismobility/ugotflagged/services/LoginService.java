@@ -3,12 +3,10 @@ package com.agilismobility.ugotflagged.services;
 import com.agilismobility.ugotflagged.proxy.ServerProxy;
 import com.agilismobility.ugotflagged.proxy.ServerProxy.IServerResponder;
 import com.agilismobility.ugotflagged.proxy.ServerProxy.ServerResponseSummary;
-import com.agilismobility.ugotflagged.proxy.ServerResponse;
 import com.agilismobility.ugotflagged.utils.Utils;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
 

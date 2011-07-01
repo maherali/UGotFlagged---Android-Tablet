@@ -10,6 +10,7 @@ import com.agilismobility.ugotflagged.R.menu;
 import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 
 import android.app.ActionBar;
+import android.app.ActionBar.LayoutParams;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -20,6 +21,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class FlagsActivity extends BaseActivity implements TabListener, ILocationResponder {
 
@@ -38,6 +41,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 		bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_USE_LOGO);
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		bar.setDisplayShowHomeEnabled(true);
+		bar.setCustomView(R.layout.refresh);
 		this.mLocationAwareness = new LocationAwareness(this, this);
 	}
 

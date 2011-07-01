@@ -1,11 +1,5 @@
 package com.agilismobility.ugotflagged.UI.fragments;
 
-import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.MainApplication;
-import com.agilismobility.ugotflagged.dtos.PostDTO;
-import com.agilismobility.ugotflagged.services.ImageDownloadingService;
-import com.agilismobility.ugotflagged.utils.Utils;
-
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,10 +17,17 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.services.ImageDownloadingService;
+import com.agilismobility.ugotflagged.utils.Utils;
 
 public class FlagsFragment extends ListFragment implements ListView.OnScrollListener {
 	private int mCurPosition = -1;
@@ -50,6 +51,14 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		setListAdapter(m_adapter = new SlowAdapter(getActivity()));
 		getListView().setOnScrollListener(this);
 		registerReceiver();
+
+		((Button) getActivity().getActionBar().getCustomView().findViewById(R.id.refresh_button))
+				.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+					}
+				});
 	}
 
 	@Override
@@ -92,18 +101,22 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
+		@Override
 		public int getCount() {
 			return MainApplication.GlobalState.getStream().size();
 		}
 
+		@Override
 		public Object getItem(int position) {
 			return position;
 		}
 
+		@Override
 		public long getItemId(int position) {
 			return position;
 		}
 
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LinearLayout layout;
 			if (convertView == null) {
