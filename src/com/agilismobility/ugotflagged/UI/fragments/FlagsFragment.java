@@ -119,55 +119,47 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			TextView distanceAway = (TextView) layout.findViewById(R.id.distance_away);
 
 			PostDTO post = MainApplication.GlobalState.getStream().get(position);
+
+			text.setText(post.text);
+			userNameText.setText(post.author);
+			postTitleText.setText(post.title);
+			postCommentsText.setText(post.replies.size() + " comments");
+			postUserFavs.setText(post.totalLikes + " users");
+			Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
+			distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
+
 			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 			if (bitmap != null) {
+				image.setTag(null);
 				image.setImageBitmap(bitmap);
 			} else {
+				if (post.authorAvatarURL != null) {
+					image.setTag(this);
+					if (!mBusy) {
+						load(post.authorAvatarURL);
+					}
+				}
 				image.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
 			}
+
 			Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoiPhoneURL);
 			if (bitmapPicture != null) {
 				picture.setVisibility(View.VISIBLE);
 				picture.setImageBitmap(bitmapPicture);
+				picture.setTag(null);
 			} else {
 				if (post.photoiPhoneURL != null) {
+					picture.setTag(this);
 					picture.setVisibility(View.VISIBLE);
 					picture.setImageBitmap(null);
+					if (!mBusy) {
+						load(post.photoiPhoneURL);
+					}
 				} else {
 					picture.setVisibility(View.GONE);
 				}
 			}
-			if (!mBusy) {
-				text.setText(post.text);
-				userNameText.setText(post.author);
-				postTitleText.setText(post.title);
-				postCommentsText.setText(post.replies.size() + " comments");
-				postUserFavs.setText(post.totalLikes + " users");
-				Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
-				distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
-				text.setTag(null);
-				if (bitmap == null) {
-					load(post.authorAvatarURL);
-					image.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
-				}
-				if (bitmapPicture == null) {
-					if (post.photoiPhoneURL != null) {
-						picture.setVisibility(View.VISIBLE);
-						load(post.photoiPhoneURL);
-					} else {
-						picture.setVisibility(View.GONE);
-					}
-				}
-			} else {
-				text.setText(post.text);
-				userNameText.setText(post.author);
-				postTitleText.setText(post.title);
-				postCommentsText.setText(post.replies.size() + " comments");
-				postUserFavs.setText(post.totalLikes + " users");
-				Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
-				distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
-				text.setTag(this);
-			}
+
 			return layout;
 		}
 	}
@@ -181,35 +173,30 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			int count = view.getChildCount();
 			for (int i = 0; i < count; i++) {
 				LinearLayout layout = (LinearLayout) view.getChildAt(i);
-				TextView text = (TextView) layout.findViewById(R.id.text1);
-				ImageView image = (ImageView) layout.findViewById(R.id.icon);
-				TextView userNameText = (TextView) layout.findViewById(R.id.user_name);
-				TextView postTitleText = (TextView) layout.findViewById(R.id.post_title);
-				TextView postCommentsText = (TextView) layout.findViewById(R.id.post_comments_count);
-				TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
-				ImageView picture = (ImageView) layout.findViewById(R.id.picture);
-				TextView distanceAway = (TextView) layout.findViewById(R.id.distance_away);
+				PostDTO post = MainApplication.GlobalState.getStream().get(first + i);
 
-				if (text.getTag() != null) {
-					PostDTO post = MainApplication.GlobalState.getStream().get(first + i);
-					text.setText(post.text);
-					userNameText.setText(post.author);
-					postTitleText.setText(post.title);
-					postCommentsText.setText(post.replies.size() + " comments");
-					postUserFavs.setText(post.totalLikes + " users");
-					Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
-					distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
-					text.setTag(null);
+				ImageView image = (ImageView) layout.findViewById(R.id.icon);
+				if (image.getTag() != null) {
 					Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 					if (bitmap != null) {
+						image.setTag(null);
 						image.setImageBitmap(bitmap);
 					} else {
 						image.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
-						load(post.authorAvatarURL);
+						if (post.authorAvatarURL != null) {
+							load(post.authorAvatarURL);
+						} else {
+							image.setTag(null);
+						}
 					}
+				}
+
+				ImageView picture = (ImageView) layout.findViewById(R.id.picture);
+				if (picture.getTag() != null) {
 					Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(
 							post.photoiPhoneURL);
 					if (bitmapPicture != null) {
+						picture.setTag(null);
 						picture.setVisibility(View.VISIBLE);
 						picture.setImageBitmap(bitmapPicture);
 					} else {
