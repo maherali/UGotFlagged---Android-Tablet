@@ -57,7 +57,7 @@ public class MainApplication extends Application {
 		}
 
 		public static ArrayList<PostDTO> getStream() {
-			return users.get(currUserID).posts;
+			return users.get(currUserID) != null ? users.get(currUserID).posts : new ArrayList<PostDTO>();
 		}
 
 	}

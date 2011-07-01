@@ -101,9 +101,10 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 
 	@Override
 	public void newLocationFound(Location location) {
-		((MainApplication)getApplication()).updateCurrentLocation(location);
+		((MainApplication) getApplication()).updateCurrentLocation(location);
 		Log.i("****************", "found new location");
 		FlagsFragment frag = (FlagsFragment) getFragmentManager().findFragmentById(R.id.frag_flags);
 		frag.refresh();
 	}
+
 }

@@ -29,7 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class FlagsFragment extends ListFragment implements ListView.OnScrollListener {
-	private int mCurPosition = 0;
+	private int mCurPosition = -1;
 	private boolean mBusy;
 	private SlowAdapter m_adapter;
 	MyReceiver receiver;
@@ -44,7 +44,9 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		ListView lv = getListView();
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		lv.setCacheColorHint(Color.TRANSPARENT);
-		selectPosition(mCurPosition);
+		if (mCurPosition >= 0) {
+			selectPosition(mCurPosition);
+		}
 		setListAdapter(m_adapter = new SlowAdapter(getActivity()));
 		getListView().setOnScrollListener(this);
 		registerReceiver();

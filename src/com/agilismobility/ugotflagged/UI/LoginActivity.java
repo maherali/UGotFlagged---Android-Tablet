@@ -1,5 +1,7 @@
 package com.agilismobility.ugotflagged.UI;
 
+import java.util.ArrayList;
+
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
@@ -10,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +45,9 @@ public class LoginActivity extends BaseActivity {
 		registerReceiver();
 		if (settings.getBoolean("login_remember_me", false)) {
 			startLogin();
+			Intent newIntent = new Intent();
+			newIntent.setClass(getApplication(), FlagsActivity.class);
+			startActivity(newIntent);
 		}
 	}
 
@@ -55,7 +61,7 @@ public class LoginActivity extends BaseActivity {
 		editor.putString("login_password", password.getText().toString());
 		editor.putBoolean("login_remember_me", rememberMe.isChecked());
 		editor.commit();
-		Intent intent = new Intent(LoginActivity.this, LoginService.class);
+		Intent intent = new Intent(this, LoginService.class);
 		intent.putExtra("email", email.getText().toString());
 		intent.putExtra("password", password.getText().toString());
 		startService(intent);
@@ -78,21 +84,31 @@ public class LoginActivity extends BaseActivity {
 	public class MyReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			((Button) findViewById(R.id.login_submit)).setEnabled(true);
 			boolean success = intent.getBooleanExtra("success", true);
-			String xml = intent.getStringExtra("xml");
+			final String xml = intent.getStringExtra("xml");
+
 			if (success) {
-				UserDTO user = new UserDTO(new XMLHelper(xml));
-				if (user.errors.size() == 0) {
-					MainApplication.GlobalState.setCurrentUser(user);
-					Intent newIntent = new Intent();
-					newIntent.setClass(getApplication(), FlagsActivity.class);
-					startActivity(newIntent);
-					finish();
-				} else {
-					showError(user.errors);
-				}
+				new AsyncTask<Void, Void, UserDTO>() {
+					@Override
+					protected UserDTO doInBackground(Void... params) {
+						return new UserDTO(new XMLHelper(xml));
+					}
+
+					protected void onPostExecute(UserDTO u) {
+						((Button) findViewById(R.id.login_submit)).setEnabled(true);
+						if (u.errors.size() == 0) {
+							MainApplication.GlobalState.setCurrentUser(u);
+							Intent newIntent = new Intent();
+							newIntent.setClass(getApplication(), FlagsActivity.class);
+							startActivity(newIntent);
+							finish();
+						} else {
+							showError(u.errors);
+						}
+					}
+				}.execute();
 			} else {
+				((Button) findViewById(R.id.login_submit)).setEnabled(true);
 				showError(intent.getStringExtra("error"));
 			}
 		}
