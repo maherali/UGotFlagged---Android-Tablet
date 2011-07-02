@@ -50,7 +50,7 @@ public class LoginActivity extends BaseActivity {
 			newIntent.setClass(getApplication(), FlagsActivity.class);
 			startActivity(newIntent);
 			try {
-				Thread.sleep(1000 * 2);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

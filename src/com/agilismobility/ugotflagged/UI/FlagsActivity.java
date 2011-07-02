@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.agilismobility.LocationAwareness;
 import com.agilismobility.LocationAwareness.ILocationResponder;
@@ -43,25 +45,31 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 		addInterestingNotificationName(Constants.PARSING_USER_DATA);
 	}
 
+	private void showProgress() {
+		((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setVisibility(View.GONE);
+		((ProgressBar) getActionBar().getCustomView().findViewById(R.id.progress)).setVisibility(View.VISIBLE);
+	}
+
+	private void hideProgress() {
+		((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setVisibility(View.VISIBLE);
+		((ProgressBar) getActionBar().getCustomView().findViewById(R.id.progress)).setVisibility(View.GONE);
+	}
+
 	@Override
 	protected void receivedDoingInterestingNotification(String notif) {
 		if (Constants.LOGGING_IN.equals(notif)) {
-			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(false);
-			Log.d("FlagsActivity", "888888888888888  receivedDoingInterestingNotification 8888888888");
+			showProgress();
 		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
-			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(false);
-			Log.d("FlagsActivity", "888888888888888  receivedDoingInterestingNotification 8888888888");
+			showProgress();
 		}
 	}
 
 	@Override
 	protected void receivedFinishedDoingInterestingNotification(String notif) {
 		if (Constants.LOGGING_IN.equals(notif)) {
-			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(true);
-			Log.d("FlagsActivity", "888888888888888  receivedFinishedDoingInterestingNotification 8888888888");
+			hideProgress();
 		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
-			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(true);
-			Log.d("FlagsActivity", "888888888888888  receivedFinishedDoingInterestingNotification 8888888888");
+			hideProgress();
 		}
 	}
 
