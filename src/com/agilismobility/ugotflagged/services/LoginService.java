@@ -1,14 +1,15 @@
 package com.agilismobility.ugotflagged.services;
 
-import com.agilismobility.ugotflagged.proxy.ServerProxy;
-import com.agilismobility.ugotflagged.proxy.ServerProxy.IServerResponder;
-import com.agilismobility.ugotflagged.proxy.ServerProxy.ServerResponseSummary;
-import com.agilismobility.ugotflagged.utils.Utils;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.agilismobility.ugotflagged.proxy.ServerProxy;
+import com.agilismobility.ugotflagged.proxy.ServerProxy.IServerResponder;
+import com.agilismobility.ugotflagged.proxy.ServerProxy.ServerResponseSummary;
+import com.agilismobility.ugotflagged.utils.Utils;
+import com.agilismobility.utils.Constants;
 
 public class LoginService extends Service {
 
@@ -30,18 +31,19 @@ public class LoginService extends Service {
 
 	private void login(String email, String password, final int startId) {
 		Log.d(TAG, "log in using " + email + " and password " + password);
-		ServerProxy.get("/sessions?", Utils.toUrlParams("user_name", email, "password", password), new IServerResponder() {
-			@Override
-			public void success(ServerResponseSummary srs) {
-				announceLoginSuccess(startId, srs);
-			}
+		ServerProxy.get(Constants.LOGGING_IN, "/sessions?", Utils.toUrlParams("user_name", email, "password", password),
+				new IServerResponder() {
+					@Override
+					public void success(ServerResponseSummary srs) {
+						announceLoginSuccess(startId, srs);
+					}
 
-			@Override
-			public void failure(ServerResponseSummary srs) {
-				announceLoginFailure(startId, srs);
-			}
+					@Override
+					public void failure(ServerResponseSummary srs) {
+						announceLoginFailure(startId, srs);
+					}
 
-		});
+				});
 	}
 
 	private void announceLoginSuccess(int startID, ServerResponseSummary srs) {

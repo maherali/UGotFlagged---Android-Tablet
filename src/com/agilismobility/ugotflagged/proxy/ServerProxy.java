@@ -6,16 +6,18 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
-import com.agilismobility.ugotflagged.MainApplication;
-import com.agilismobility.ugotflagged.utils.PipeStream;
 import android.os.AsyncTask;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import java.net.URL;
+
+import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.utils.PipeStream;
+import com.agilismobility.utils.Constants;
 
 public class ServerProxy {
 
@@ -42,22 +44,24 @@ public class ServerProxy {
 		return method == HTTP_METHOD.Post ? "POST" : method == HTTP_METHOD.Get ? "GET" : null;
 	}
 
-	public static void post(String path, String data, IServerResponder result) {
-		makeAServerCall(HTTP_METHOD.Post, path, data, result);
+	public static void post(String funcName, String path, String data, IServerResponder result) {
+		makeAServerCall(funcName, HTTP_METHOD.Post, path, data, result);
 	}
 
-	public static void get(String path, String data, IServerResponder result) {
-		makeAServerCall(HTTP_METHOD.Get, path, data, result);
+	public static void get(String funcName, String path, String data, IServerResponder result) {
+		makeAServerCall(funcName, HTTP_METHOD.Get, path, data, result);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void makeAServerCall(HTTP_METHOD method, String path, String data, IServerResponder result) {
+	public static void makeAServerCall(String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
 		ArrayList<Object> params = new ArrayList<Object>();
 		params.add(method);
 		params.add(path);
 		params.add(data);
 		params.add(result);
+		params.add(funcName);
 		ServerCallTask task = new ServerCallTask();
+		Constants.broadcastDoingSomethingNotification(funcName);
 		task.execute(params);
 	}
 
@@ -65,6 +69,7 @@ public class ServerProxy {
 		HttpURLConnection conn;
 		private int tryCount = 0;
 
+		@Override
 		@SuppressWarnings("static-access")
 		protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
 			tryCount++;
@@ -169,7 +174,7 @@ public class ServerProxy {
 			arr.add(params[0].get(3));
 			arr.add(respcode);
 			arr.add(detailedErrorMessage);
-
+			arr.add(params[0].get(4));
 			return arr;
 		}
 
@@ -180,7 +185,9 @@ public class ServerProxy {
 			}
 		}
 
+		@Override
 		protected void onPostExecute(ArrayList<Object> result) {
+			Constants.broadcastFinishedDoingSomethingNotification((String) result.get(4));
 			String xml = (String) result.get(0);
 			IServerResponder callBack = (IServerResponder) result.get(1);
 			Integer responseCode = (Integer) result.get(2);

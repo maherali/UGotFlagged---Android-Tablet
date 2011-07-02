@@ -1,8 +1,31 @@
 package com.agilismobility.utils;
 
 import android.app.AlarmManager;
+import android.content.Intent;
+
+import com.agilismobility.ugotflagged.MainApplication;
 
 public class Constants {
+
+	public static final String NOTIFICATION = "NOTIFICATION";
+	public static final String CURRENTLY_DOING_SOMETHING_NOTIF = "CURRENTLY_DOING_SOMETHING_NOTIF";
+	public static final String FINISHED_DOING_SOMETHING_NOTIF = "FINISHED_DOING_SOMETHING_NOTIF";
+
+	public static final String LOGGING_IN = "LOGGING_IN";
+	public static final String REFRESHING_STREAM = "REFRESHING_STREAM";
+	public static final String PARSING_USER_DATA = "PARSING_USER_DATA";
+
+	public static void broadcastDoingSomethingNotification(String notifName) {
+		Intent newIntent = new Intent(CURRENTLY_DOING_SOMETHING_NOTIF);
+		newIntent.putExtra(NOTIFICATION, notifName);
+		MainApplication.getInstance().sendBroadcast(newIntent);
+	}
+
+	public static void broadcastFinishedDoingSomethingNotification(String notifName) {
+		Intent newIntent = new Intent(FINISHED_DOING_SOMETHING_NOTIF);
+		newIntent.putExtra(NOTIFICATION, notifName);
+		MainApplication.getInstance().sendBroadcast(newIntent);
+	}
 
 	/**
 	 * TODO **P1** You must put your Google Places API key here. You can get
@@ -106,4 +129,5 @@ public class Constants {
 	public static int CHECKIN_NOTIFICATION = 0;
 
 	public static String NEW_LOCATION_FOUND_ACTION = "com.agilismobility.NEW_LOCATION_FOUND_ACTION";
+
 }

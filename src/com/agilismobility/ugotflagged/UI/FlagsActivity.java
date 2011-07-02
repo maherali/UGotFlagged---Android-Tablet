@@ -1,19 +1,9 @@
 package com.agilismobility.ugotflagged.UI;
 
-import com.agilismobility.LocationAwareness;
-import com.agilismobility.LocationAwareness.ILocationResponder;
-import com.agilismobility.ugotflagged.MainApplication;
-import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.R.id;
-import com.agilismobility.ugotflagged.R.layout;
-import com.agilismobility.ugotflagged.R.menu;
-import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
-
 import android.app.ActionBar;
-import android.app.ActionBar.LayoutParams;
-import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -21,8 +11,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
+
+import com.agilismobility.LocationAwareness;
+import com.agilismobility.LocationAwareness.ILocationResponder;
+import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
+import com.agilismobility.utils.Constants;
 
 public class FlagsActivity extends BaseActivity implements TabListener, ILocationResponder {
 
@@ -43,6 +39,30 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 		bar.setDisplayShowHomeEnabled(true);
 		bar.setCustomView(R.layout.refresh);
 		this.mLocationAwareness = new LocationAwareness(this, this);
+		addInterestingNotificationName(Constants.LOGGING_IN);
+		addInterestingNotificationName(Constants.PARSING_USER_DATA);
+	}
+
+	@Override
+	protected void receivedDoingInterestingNotification(String notif) {
+		if (Constants.LOGGING_IN.equals(notif)) {
+			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(false);
+			Log.d("FlagsActivity", "888888888888888  receivedDoingInterestingNotification 8888888888");
+		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
+			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(false);
+			Log.d("FlagsActivity", "888888888888888  receivedDoingInterestingNotification 8888888888");
+		}
+	}
+
+	@Override
+	protected void receivedFinishedDoingInterestingNotification(String notif) {
+		if (Constants.LOGGING_IN.equals(notif)) {
+			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(true);
+			Log.d("FlagsActivity", "888888888888888  receivedFinishedDoingInterestingNotification 8888888888");
+		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
+			((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setEnabled(true);
+			Log.d("FlagsActivity", "888888888888888  receivedFinishedDoingInterestingNotification 8888888888");
+		}
 	}
 
 	@Override
