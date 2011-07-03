@@ -3,7 +3,7 @@
 	android:layout_width="fill_parent" android:layout_height="wrap_content"
 	android:layout_centerHorizontal="true">
 
-	<LinearLayout android:background="@drawable/picture_frame"
+	<LinearLayout android:background="@drawable/picture_frame" android:id="@+id/frame"
 		android:layout_width="fill_parent" android:layout_margin="30dip"
 		android:orientation="vertical" android:layout_height="wrap_content">
 
@@ -33,7 +33,7 @@
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="wrap_content">
-			<ImageView android:src="@drawable/comment"
+			<ImageView android:src="@drawable/comment"  android:id="@+id/post_comments_image"
 				android:layout_width="20dip" android:layout_height="20dip"
 				android:paddingTop="5dip" android:paddingBottom="5dip"
 				android:paddingLeft="5dip" android:paddingRight="5dip" />
@@ -42,7 +42,7 @@
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:paddingRight="6dip" android:textColor="@color/stats_color" />
 
-			<ImageView android:src="@drawable/vote_yes"
+			<ImageView android:src="@drawable/vote_yes" android:id="@+id/post_users_image"
 				android:layout_width="20dip" android:layout_height="20dip"
 				android:paddingTop="5dip" android:paddingBottom="5dip"
 				android:paddingLeft="6dip" android:paddingRight="5dip" />

@@ -34,6 +34,12 @@ public class FlagDetailsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		registerReceiver();
 		mLayout = (ScrollView) inflater.inflate(R.layout.post_details, container);
+		View frame = mLayout.findViewById(R.id.frame);
+		frame.setVisibility(View.GONE);
+		View commentsImage = mLayout.findViewById(R.id.post_comments_image);
+		commentsImage.setVisibility(View.GONE);
+		View usersFavsImage = mLayout.findViewById(R.id.post_users_image);
+		usersFavsImage.setVisibility(View.GONE);
 		return mLayout;
 	}
 
@@ -68,6 +74,12 @@ public class FlagDetailsFragment extends Fragment {
 	}
 
 	void updateContent(int position) {
+		View frame = mLayout.findViewById(R.id.frame);
+		frame.setVisibility(View.VISIBLE);
+		View commentsImage = mLayout.findViewById(R.id.post_comments_image);
+		commentsImage.setVisibility(View.VISIBLE);
+		View usersFavsImage = mLayout.findViewById(R.id.post_users_image);
+		usersFavsImage.setVisibility(View.VISIBLE);
 		TextView text = (TextView) mLayout.findViewById(R.id.text1);
 		ImageView image = (ImageView) mLayout.findViewById(R.id.icon);
 		TextView userNameText = (TextView) mLayout.findViewById(R.id.user_name);
