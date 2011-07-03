@@ -3,9 +3,10 @@
 	android:layout_width="fill_parent" android:layout_height="wrap_content"
 	android:layout_centerHorizontal="true">
 
-	<LinearLayout android:background="@drawable/picture_frame" android:id="@+id/frame"
-		android:layout_width="fill_parent" android:layout_margin="30dip"
-		android:orientation="vertical" android:layout_height="wrap_content">
+	<LinearLayout android:background="@drawable/picture_frame"
+		android:id="@+id/frame" android:layout_width="fill_parent"
+		android:layout_margin="30dip" android:orientation="vertical"
+		android:layout_height="wrap_content">
 
 		<ImageView android:id="@+id/icon" android:layout_width="48dip"
 			android:layout_height="48dip" android:paddingTop="5dip"
@@ -27,9 +28,21 @@
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
-			<ImageView android:id="@+id/license_plate_image" android:layout_width="fill_parent"
-				android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
-				android:paddingTop="20dip" android:paddingBottom="20dip" />
+
+			<FrameLayout android:layout_height="match_parent"
+				android:layout_width="match_parent">
+				<ImageView android:id="@+id/license_plate_image"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal" android:paddingTop="20dip"
+					android:paddingBottom="20dip" />
+
+				<TextView android:id="@+id/plate_no" android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:layout_gravity="center_horizontal|center_vertical"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:paddingTop="20dip" android:paddingBottom="20dip"
+					android:textColor="@color/black" />
+
+			</FrameLayout>
 		</LinearLayout>
 
 		<LinearLayout android:orientation="horizontal"
@@ -41,7 +54,7 @@
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="wrap_content">
-			<ImageView android:src="@drawable/comment"  android:id="@+id/post_comments_image"
+			<ImageView android:src="@drawable/comment" android:id="@+id/post_comments_image"
 				android:layout_width="20dip" android:layout_height="20dip"
 				android:paddingTop="5dip" android:paddingBottom="5dip"
 				android:paddingLeft="5dip" android:paddingRight="5dip" />
@@ -59,6 +72,9 @@
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:textColor="@color/stats_color" />
 		</LinearLayout>
+
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_margin="60dip" />
 
 	</LinearLayout>
 </ScrollView>
