@@ -25,6 +25,14 @@ public class ImageDownloadingService extends Service {
 
 	public static final String IMAGE_AVAILABLE_NOTIF = "IMAGE_AVAILABLE_NOTIF";
 
+	private String fileNameOfCachedImage(String url) {
+		String afterCleaning = url.replace(":", "");
+		afterCleaning = afterCleaning.replace("/", "");
+		afterCleaning = afterCleaning.replace(".", "");
+		afterCleaning = afterCleaning + ".jpg";
+		return getCacheDir() + afterCleaning;
+	}
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -39,11 +47,14 @@ public class ImageDownloadingService extends Service {
 		if (cornersStr == null) {
 			cornersStr = "0";
 		}
-
 		if (((MainApplication) getApplication()).getImageCache().getImageForURL(url) != null) {
 			announceFound(url, startId, true);
 		} else {
-			if (((MainApplication) getApplication()).getImageCache().isImageDownloadingForURL(url)) {
+			Bitmap img = Utils.getImageFromFile(fileNameOfCachedImage(url));
+			if (img != null) {
+				((MainApplication) getApplication()).getImageCache().setImageForUrl(img, url);
+				announceFound(url, startId, true);
+			} else if (((MainApplication) getApplication()).getImageCache().isImageDownloadingForURL(url)) {
 
 			} else {
 				((MainApplication) getApplication()).getImageCache().markDownloadingForURL(url);
@@ -74,6 +85,7 @@ public class ImageDownloadingService extends Service {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (bmImg != null) {
+				Utils.saveImageToFile(bmImg, fileNameOfCachedImage(theUrl));
 				((MainApplication) getApplication()).getImageCache().setImageForUrl(bmImg, theUrl);
 			} else {
 				((MainApplication) getApplication()).getImageCache().markNotDownloadingForURL(theUrl);

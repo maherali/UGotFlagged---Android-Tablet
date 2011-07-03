@@ -96,6 +96,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	protected void onResume() {
 		super.onResume();
 		mLocationAwareness.hasResumed();
+		refreshFlags();
 	}
 
 	@Override

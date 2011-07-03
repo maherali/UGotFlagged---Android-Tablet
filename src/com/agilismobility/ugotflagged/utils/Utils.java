@@ -1,5 +1,8 @@
 package com.agilismobility.ugotflagged.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -20,6 +23,39 @@ import android.location.Location;
 import com.agilismobility.ugotflagged.MainApplication;
 
 public class Utils {
+
+	public static Bitmap getImageFromFile(String fileName) {
+		Bitmap bitmap = null;
+		FileInputStream is = null;
+		try {
+			File imageFile = new File(fileName);
+			is = new FileInputStream(imageFile);
+			bitmap = BitmapFactory.decodeStream(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return bitmap;
+	}
+
+	public static void saveImageToFile(Bitmap img, String fileName) {
+		try {
+			File imageFile = new File(fileName);
+			FileOutputStream fos = new FileOutputStream(imageFile);
+			img.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+			fos.close();
+			fos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static Bitmap getImageAsset(String fileName) {
 		Bitmap bitmap = null;
