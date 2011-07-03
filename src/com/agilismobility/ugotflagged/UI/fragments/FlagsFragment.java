@@ -121,6 +121,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			TextView postCommentsText = (TextView) layout.findViewById(R.id.post_comments_count);
 			TextView postUserFavs = (TextView) layout.findViewById(R.id.post_users_favs);
 			TextView distanceAway = (TextView) layout.findViewById(R.id.distance_away);
+			TextView timeAgo = (TextView) layout.findViewById(R.id.timeago);
 
 			PostDTO post = MainApplication.GlobalState.getStream().get(position);
 
@@ -131,6 +132,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			postUserFavs.setText(post.totalLikes + " users");
 			Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
 			distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
+			timeAgo.setText(post.timeAgo);
 
 			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 			if (bitmap != null) {
