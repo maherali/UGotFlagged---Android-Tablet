@@ -25,7 +25,7 @@ public class LoginActivity extends BaseActivity {
 	private static final String SP_LOGIN_USER_NAME = "login_user_name";
 	private static final String SP_LOGIN_REMEMBER_ME = "login_remember_me";
 	public static final String LOGIN_PREF_FILE_NAME = "LOGIN_PREF";
-	
+
 	LoginReceiver mLoginReceiver;
 
 	@Override
@@ -90,40 +90,42 @@ public class LoginActivity extends BaseActivity {
 		registerReceiver(mLoginReceiver, filter);
 	}
 
+	private void parseLoginAndGo(final String xml) {
+		Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
+		new AsyncTask<Void, Void, UserDTO>() {
+			@Override
+			protected UserDTO doInBackground(Void... params) {
+				return new UserDTO(new XMLHelper(xml));
+			}
+
+			@Override
+			protected void onPostExecute(UserDTO u) {
+				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
+				enableButton(R.id.login_submit, true);
+				if (u.errors.size() == 0) {
+					MainApplication.GlobalState.setCurrentUser(u);
+					Intent newIntent = new Intent();
+					newIntent.setClass(getApplication(), FlagsActivity.class);
+					startActivity(newIntent);
+					finish();
+				} else {
+					showError(u.errors);
+				}
+			}
+		}.execute();
+	}
+
 	public class LoginReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			boolean success = intent.getBooleanExtra(LoginService.SUCCESS_ARG, true);
-			final String xml = intent.getStringExtra(LoginService.XML_ARG);
-
-			if (success) {
-				Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
-				new AsyncTask<Void, Void, UserDTO>() {
-					@Override
-					protected UserDTO doInBackground(Void... params) {
-						return new UserDTO(new XMLHelper(xml));
-					}
-
-					@Override
-					protected void onPostExecute(UserDTO u) {
-						Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
-						enableButton(R.id.login_submit, true);
-						if (u.errors.size() == 0) {
-							MainApplication.GlobalState.setCurrentUser(u);
-							Intent newIntent = new Intent();
-							newIntent.setClass(getApplication(), FlagsActivity.class);
-							startActivity(newIntent);
-							finish();
-						} else {
-							showError(u.errors);
-						}
-					}
-				}.execute();
+			if (intent.getBooleanExtra(LoginService.SUCCESS_ARG, false)) {
+				parseLoginAndGo(intent.getStringExtra(LoginService.XML_ARG));
 			} else {
 				enableButton(R.id.login_submit, true);
 				showError(intent.getStringExtra(LoginService.ERROR_ARG));
 			}
 		}
+
 	}
 
 	@Override
