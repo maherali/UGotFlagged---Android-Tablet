@@ -3,14 +3,14 @@ package com.agilismobility.ugotflagged;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.agilismobility.ugotflagged.dtos.PostDTO;
-import com.agilismobility.ugotflagged.dtos.UserDTO;
-import com.agilismobility.ugotflagged.services.ImageResources;
-
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+
+import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.dtos.UserDTO;
+import com.agilismobility.ugotflagged.services.ImageResources;
 
 public class MainApplication extends Application {
 
@@ -18,7 +18,6 @@ public class MainApplication extends Application {
 	private final String TAG = "MainApplication";
 	private Location mCurrentLocation;
 
-	
 	@Override
 	public void onCreate() {
 		mInstance = this;
@@ -58,6 +57,10 @@ public class MainApplication extends Application {
 
 		public static ArrayList<PostDTO> getStream() {
 			return users.get(currUserID) != null ? users.get(currUserID).posts : new ArrayList<PostDTO>();
+		}
+
+		public static UserDTO getCurrentUser() {
+			return users.get(currUserID);
 		}
 
 	}

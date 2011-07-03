@@ -29,7 +29,9 @@
 		</activity>
 
 		<service android:enabled="true" android:name=".services.LoginService"></service>
+		<service android:enabled="true" android:name=".services.RefreshService"></service>
 		<service android:enabled="true" android:name=".services.ImageDownloadingService"></service>
+
 
 		<!-- Location Support -->
 		<receiver android:name="com.agilismobility.utils.LocationChangedReceiver" />

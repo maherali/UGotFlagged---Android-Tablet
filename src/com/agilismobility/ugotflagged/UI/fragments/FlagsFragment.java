@@ -17,7 +17,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -51,14 +50,6 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		setListAdapter(m_adapter = new SlowAdapter(getActivity()));
 		getListView().setOnScrollListener(this);
 		registerReceiver();
-
-		((Button) getActivity().getActionBar().getCustomView().findViewById(R.id.refresh_button))
-				.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-
-					}
-				});
 	}
 
 	@Override

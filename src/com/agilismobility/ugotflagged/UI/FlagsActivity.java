@@ -4,10 +4,13 @@ import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +23,9 @@ import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
+import com.agilismobility.ugotflagged.dtos.UserDTO;
+import com.agilismobility.ugotflagged.services.RefreshService;
+import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
 public class FlagsActivity extends BaseActivity implements TabListener, ILocationResponder {
@@ -27,10 +33,12 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	private String[] ACTIONS = { "Stream", "Followers", "Help", "Settings" };
 
 	LocationAwareness mLocationAwareness;
+	RefreshReceiver mRefreshReceiver;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		registerReceiver();
 		setContentView(R.layout.main);
 		ActionBar bar = getActionBar();
 		for (int i = 0; i < ACTIONS.length; i++) {
@@ -43,6 +51,13 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 		this.mLocationAwareness = new LocationAwareness(this, this);
 		addInterestingNotificationName(Constants.LOGGING_IN);
 		addInterestingNotificationName(Constants.PARSING_USER_DATA);
+		addInterestingNotificationName(Constants.REFRESHING_STREAM);
+		((Button) findViewById(R.id.refresh_button)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				refreshStream();
+			}
+		});
 	}
 
 	private void showProgress() {
@@ -61,6 +76,8 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 			showProgress();
 		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
 			showProgress();
+		} else if (Constants.REFRESHING_STREAM.equals(notif)) {
+			showProgress();
 		}
 	}
 
@@ -69,6 +86,8 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 		if (Constants.LOGGING_IN.equals(notif)) {
 			hideProgress();
 		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
+			hideProgress();
+		} else if (Constants.REFRESHING_STREAM.equals(notif)) {
 			hideProgress();
 		}
 	}
@@ -88,25 +107,20 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	@Override
 	protected void onDestroy() {
 		mLocationAwareness.hasDestroyed();
+		unregisterReceiver(mRefreshReceiver);
 		super.onDestroy();
 	}
 
 	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -134,9 +148,60 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	@Override
 	public void newLocationFound(Location location) {
 		((MainApplication) getApplication()).updateCurrentLocation(location);
-		Log.i("****************", "found new location");
+		refreshFlags();
+	}
+
+	private void refreshFlags() {
 		FlagsFragment frag = (FlagsFragment) getFragmentManager().findFragmentById(R.id.frag_flags);
 		frag.refresh();
+	}
+
+	private void refreshStream() {
+		UserDTO currUser = MainApplication.GlobalState.getCurrentUser();
+		if (currUser != null) {
+			Intent intent = new Intent(this, RefreshService.class);
+			intent.putExtra(RefreshService.USER_NAME_ARG, currUser.userName);
+			startService(intent);
+		}
+	}
+
+	private void registerReceiver() {
+		IntentFilter filter = new IntentFilter(RefreshService.REFRESHING_FINISHED_NOTIF);
+		mRefreshReceiver = new RefreshReceiver();
+		registerReceiver(mRefreshReceiver, filter);
+	}
+
+	public class RefreshReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getBooleanExtra(RefreshService.SUCCESS_ARG, false)) {
+				parseRefreshAndGo(intent.getStringExtra(RefreshService.XML_ARG));
+			} else {
+				showError(intent.getStringExtra(RefreshService.ERROR_ARG));
+			}
+		}
+	}
+
+	private void parseRefreshAndGo(final String xml) {
+
+		Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
+		new AsyncTask<Void, Void, UserDTO>() {
+			@Override
+			protected UserDTO doInBackground(Void... params) {
+				return new UserDTO(new XMLHelper(xml));
+			}
+
+			@Override
+			protected void onPostExecute(UserDTO u) {
+				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
+				if (u.errors.size() == 0) {
+					MainApplication.GlobalState.setCurrentUser(u);
+					refreshFlags();
+				} else {
+					showError(u.errors);
+				}
+			}
+		}.execute();
 	}
 
 }
