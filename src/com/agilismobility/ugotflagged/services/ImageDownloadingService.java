@@ -68,17 +68,21 @@ public class ImageDownloadingService extends Service {
 			this.desiredHeight = new Integer(params[3]);
 			this.corners = new Integer(params[4]);
 			downloadImage();
-			if (bmImg != null) {
-				((MainApplication) getApplication()).getImageCache().setImageForUrl(bmImg, theUrl);
-			} else {
-				((MainApplication) getApplication()).getImageCache().markNotDownloadingForURL(theUrl);
-			}
 			return bmImg != null;
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			announceFound(theUrl, startId, result);
+			if (bmImg != null) {
+				((MainApplication) getApplication()).getImageCache().setImageForUrl(bmImg, theUrl);
+			} else {
+				((MainApplication) getApplication()).getImageCache().markNotDownloadingForURL(theUrl);
+			}
+			if (result) {
+				announceFound(theUrl, startId, result);
+			} else {
+				stopSelf(startId);
+			}
 		}
 
 		private void downloadImage() {
