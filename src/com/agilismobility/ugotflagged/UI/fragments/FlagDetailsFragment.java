@@ -100,9 +100,9 @@ public class FlagDetailsFragment extends Fragment {
 		postCommentsText.setText(post.replies.size() + " comments");
 		postUserFavs.setText(post.totalLikes + " users");
 
-		if (mPosition != position) {
-			picture.setImageBitmap(null);
-		}
+		// if (mPosition != position) {
+		// picture.setImageBitmap(null);
+		// }
 		mPosition = position;
 		if (bitmap == null) {
 			if (post.authorAvatarURL != null) {
