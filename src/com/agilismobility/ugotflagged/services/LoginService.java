@@ -13,6 +13,12 @@ import com.agilismobility.utils.Constants;
 
 public class LoginService extends Service {
 
+	public static final String ERROR_ARG = "error";
+	public static final String XML_ARG = "xml";
+	public static final String SUCCESS_ARG = "success";
+	public static final String PASSWORD_ARG = "password";
+	public static final String USER_NAME_ARG = "user_name";
+
 	private static String TAG = "LoginService";
 	public static final String LOGIN_FINISHED_NOTIF = "LOGIN_FINISHED_NOTIF";
 
@@ -23,15 +29,15 @@ public class LoginService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, final int startId) {
-		String email = intent.getStringExtra("email");
-		String password = intent.getStringExtra("password");
-		login(email, password, startId);
+		String userName = intent.getStringExtra(USER_NAME_ARG);
+		String password = intent.getStringExtra(PASSWORD_ARG);
+		login(userName, password, startId);
 		return START_REDELIVER_INTENT;
 	}
 
-	private void login(String email, String password, final int startId) {
-		Log.d(TAG, "log in using " + email + " and password " + password);
-		ServerProxy.get(Constants.LOGGING_IN, "/sessions?", Utils.toUrlParams("user_name", email, "password", password),
+	private void login(String userName, String password, final int startId) {
+		Log.d(TAG, "log in using " + userName + " and password " + password);
+		ServerProxy.get(Constants.LOGGING_IN, "/sessions?", Utils.toUrlParams(USER_NAME_ARG, userName, PASSWORD_ARG, password),
 				new IServerResponder() {
 					@Override
 					public void success(ServerResponseSummary srs) {
@@ -42,26 +48,24 @@ public class LoginService extends Service {
 					public void failure(ServerResponseSummary srs) {
 						announceLoginFailure(startId, srs);
 					}
-
 				});
 	}
 
-	private void announceLoginSuccess(int startID, ServerResponseSummary srs) {
+	private void anounceLoginFinished(int startID, ServerResponseSummary srs, boolean success) {
 		Intent newIntent = new Intent(LOGIN_FINISHED_NOTIF);
-		newIntent.putExtra("success", true);
-		newIntent.putExtra("xml", srs.xml);
-		newIntent.putExtra("error", srs.detailedErrorMessage);
+		newIntent.putExtra(SUCCESS_ARG, success);
+		newIntent.putExtra(XML_ARG, srs.xml);
+		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}
 
+	private void announceLoginSuccess(int startID, ServerResponseSummary srs) {
+		anounceLoginFinished(startID, srs, true);
+	}
+
 	private void announceLoginFailure(int startID, ServerResponseSummary srs) {
-		Intent newIntent = new Intent(LOGIN_FINISHED_NOTIF);
-		newIntent.putExtra("success", false);
-		newIntent.putExtra("xml", srs.xml);
-		newIntent.putExtra("error", srs.detailedErrorMessage);
-		sendBroadcast(newIntent);
-		stopSelf(startID);
+		anounceLoginFinished(startID, srs, false);
 	}
 
 }

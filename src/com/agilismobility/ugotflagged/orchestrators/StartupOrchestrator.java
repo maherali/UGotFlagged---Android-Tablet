@@ -1,10 +1,10 @@
 package com.agilismobility.ugotflagged.orchestrators;
 
-import com.agilismobility.ugotflagged.UI.FlagsActivity;
-import com.agilismobility.ugotflagged.UI.LoginActivity;
-
 import android.app.Activity;
 import android.content.Intent;
+
+import com.agilismobility.ugotflagged.UI.FlagsActivity;
+import com.agilismobility.ugotflagged.UI.LoginActivity;
 
 public class StartupOrchestrator {
 	private Activity mContext;
@@ -28,3 +28,8 @@ public class StartupOrchestrator {
 		this.mContext = null;
 	}
 }
+
+// Start
+// if remember me is set, ask the service for a cached login
+// if there are no cached data the ...
+// if there are cached data, start the FlagsActivity

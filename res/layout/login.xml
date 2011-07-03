@@ -9,17 +9,17 @@
 	<RelativeLayout android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<EditText android:id="@+id/login_email" android:inputType="textEmailAddress"
-			android:hint="Email" android:layout_width="match_parent"
+		<EditText android:id="@+id/user_name" android:inputType="textEmailAddress"
+			android:hint="User Name" android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<EditText android:id="@+id/login_password"
-			android:layout_below="@id/login_email" android:password="true"
+		<EditText android:id="@+id/password"
+			android:layout_below="@id/user_name" android:password="true"
 			android:hint="Password" android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
 		<CheckBox android:text="Remember me" android:id="@+id/rememberme"
-			android:layout_below="@id/login_password" android:layout_width="wrap_content"
+			android:layout_below="@id/password" android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 		</CheckBox>
 		<Button android:layout_width="wrap_content"  

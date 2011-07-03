@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.widget.Button;
 
 import com.agilismobility.utils.Constants;
 
@@ -125,4 +126,9 @@ public abstract class BaseActivity extends Activity {
 					}).create();
 		}
 	}
+
+	protected void enableButton(int id, boolean enabled) {
+		((Button) findViewById(id)).setEnabled(enabled);
+	}
+
 }
