@@ -87,6 +87,7 @@ public class FlagDetailsFragment extends Fragment {
 		ImageView picture = (ImageView) mLayout.findViewById(R.id.picture);
 		TextView postCommentsText = (TextView) mLayout.findViewById(R.id.post_comments_count);
 		TextView postUserFavs = (TextView) mLayout.findViewById(R.id.post_users_favs);
+		ImageView licensePlatePicture = (ImageView) mLayout.findViewById(R.id.license_plate_image);
 
 		PostDTO post = MainApplication.GlobalState.getStream().get(position);
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
@@ -121,6 +122,8 @@ public class FlagDetailsFragment extends Fragment {
 			picture.setVisibility(View.VISIBLE);
 			picture.setImageBitmap(Utils.getRoundedCornerBitmap(bitmapPicture, 9));
 		}
+
+		licensePlatePicture.setImageBitmap(Utils.getImageAsset(post.plateIssuer.toUpperCase() + ".jpg"));
 	}
 
 	@Override

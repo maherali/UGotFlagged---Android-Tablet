@@ -1,11 +1,14 @@
 package com.agilismobility.ugotflagged.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Formatter;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
@@ -14,7 +17,29 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.location.Location;
 
+import com.agilismobility.ugotflagged.MainApplication;
+
 public class Utils {
+
+	public static Bitmap getImageAsset(String fileName) {
+		Bitmap bitmap = null;
+		InputStream is = null;
+		try {
+			is = MainApplication.getInstance().getAssets().open(fileName);
+			bitmap = BitmapFactory.decodeStream(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return bitmap;
+	}
 
 	public static String toUrlParams(String... params) {
 		StringBuffer urlParams = new StringBuffer();

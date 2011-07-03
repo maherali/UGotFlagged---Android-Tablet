@@ -24,6 +24,14 @@
 			android:layout_height="wrap_content" android:ellipsize="end"
 			android:paddingLeft="6dip" />
 
+
+		<LinearLayout android:orientation="horizontal"
+			android:layout_height="wrap_content" android:layout_width="fill_parent">
+			<ImageView android:id="@+id/license_plate_image" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+				android:paddingTop="20dip" android:paddingBottom="20dip" />
+		</LinearLayout>
+
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
 			<ImageView android:id="@+id/picture" android:layout_width="fill_parent"
