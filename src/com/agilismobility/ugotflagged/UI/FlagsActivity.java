@@ -102,6 +102,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	protected void onPause() {
 		super.onPause();
 		mLocationAwareness.hasPaused();
+		((MainApplication) getApplication()).getImageCache().clear();
 	}
 
 	@Override
