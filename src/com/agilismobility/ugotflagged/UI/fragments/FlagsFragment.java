@@ -87,10 +87,10 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 
 	private void load(String url) {
 		Intent intent = new Intent(getActivity(), ImageDownloadingService.class);
-		intent.putExtra("com.agilismobility.architecture.url", url);
-		intent.putExtra("com.agilismobility.architecture.width", "48");
-		intent.putExtra("com.agilismobility.architecture.height", "48");
-		intent.putExtra("com.agilismobility.architecture.corners", "4");
+		intent.putExtra(ImageDownloadingService.URL_ARG, url);
+		intent.putExtra(ImageDownloadingService.WIDTH_ARG, "48");
+		intent.putExtra(ImageDownloadingService.HEIGHT_ARG, "48");
+		intent.putExtra(ImageDownloadingService.CORNERS_ARG, "4");
 		getActivity().startService(intent);
 	}
 

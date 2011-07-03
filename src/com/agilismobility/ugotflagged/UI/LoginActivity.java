@@ -57,9 +57,7 @@ public class LoginActivity extends BaseActivity {
 		});
 
 		if (settings.getBoolean(SP_LOGIN_REMEMBER_ME, false)) {
-			Intent newIntent = new Intent();
-			newIntent.setClass(getApplication(), FlagsActivity.class);
-			startActivity(newIntent);
+			startFlagActivity();
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -104,9 +102,7 @@ public class LoginActivity extends BaseActivity {
 				enableButton(R.id.login_submit, true);
 				if (u.errors.size() == 0) {
 					MainApplication.GlobalState.setCurrentUser(u);
-					Intent newIntent = new Intent();
-					newIntent.setClass(getApplication(), FlagsActivity.class);
-					startActivity(newIntent);
+					startFlagActivity();
 					finish();
 				} else {
 					showError(u.errors);
@@ -125,13 +121,18 @@ public class LoginActivity extends BaseActivity {
 				showError(intent.getStringExtra(LoginService.ERROR_ARG));
 			}
 		}
-
 	}
 
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mLoginReceiver);
 		super.onDestroy();
+	}
+
+	private void startFlagActivity() {
+		Intent newIntent = new Intent();
+		newIntent.setClass(getApplication(), FlagsActivity.class);
+		startActivity(newIntent);
 	}
 
 }

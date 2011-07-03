@@ -17,7 +17,12 @@ import com.agilismobility.ugotflagged.utils.Utils;
 
 public class ImageDownloadingService extends Service {
 
+	public static final String CORNERS_ARG = "CORNERS_ARG";
+	public static final String HEIGHT_ARG = "HEIGHT_ARG";
+	public static final String WIDTH_ARG = "WIDTH_ARG";
+	public static final String URL_ARG = "URL_ARG";
 	private static String TAG = "ImageDownloadingService";
+
 	public static final String IMAGE_AVAILABLE_NOTIF = "IMAGE_AVAILABLE_NOTIF";
 
 	@Override
@@ -27,11 +32,11 @@ public class ImageDownloadingService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, final int startId) {
-		String url = intent.getStringExtra("com.agilismobility.architecture.url");
-		String widthStr = intent.getStringExtra("com.agilismobility.architecture.width");
-		String heightStr = intent.getStringExtra("com.agilismobility.architecture.height");
-		String cornersStr = intent.getStringExtra("com.agilismobility.architecture.corners");
-		if(cornersStr == null){
+		String url = intent.getStringExtra(URL_ARG);
+		String widthStr = intent.getStringExtra(WIDTH_ARG);
+		String heightStr = intent.getStringExtra(HEIGHT_ARG);
+		String cornersStr = intent.getStringExtra(CORNERS_ARG);
+		if (cornersStr == null) {
 			cornersStr = "0";
 		}
 
@@ -55,6 +60,7 @@ public class ImageDownloadingService extends Service {
 		private Bitmap bmImg;
 		private int desirdWidth, desiredHeight, corners;
 
+		@Override
 		protected Boolean doInBackground(String... params) {
 			this.theUrl = params[0];
 			this.startId = new Integer(params[1]);
@@ -68,10 +74,12 @@ public class ImageDownloadingService extends Service {
 			return bmImg != null;
 		}
 
+		@Override
 		protected void onProgressUpdate(Integer... progress) {
 
 		}
 
+		@Override
 		protected void onPostExecute(Boolean result) {
 			announceFound(theUrl, startId, result);
 		}
@@ -112,7 +120,7 @@ public class ImageDownloadingService extends Service {
 
 	public void announceFound(String url, int startID, Boolean success) {
 		Intent newIntent = new Intent(IMAGE_AVAILABLE_NOTIF);
-		newIntent.putExtra("com.agilismobility.architecture.url", url);
+		newIntent.putExtra(URL_ARG, url);
 		newIntent.putExtra("com.agilismobility.architecture.success", success);
 		sendBroadcast(newIntent);
 		stopSelf(startID);

@@ -1,11 +1,5 @@
 package com.agilismobility.ugotflagged.UI.fragments;
 
-import com.agilismobility.ugotflagged.MainApplication;
-import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.dtos.PostDTO;
-import com.agilismobility.ugotflagged.services.ImageDownloadingService;
-import com.agilismobility.ugotflagged.utils.Utils;
-
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,6 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.services.ImageDownloadingService;
+import com.agilismobility.ugotflagged.utils.Utils;
 
 public class FlagDetailsFragment extends Fragment {
 	private ScrollView mLayout;
@@ -54,18 +54,18 @@ public class FlagDetailsFragment extends Fragment {
 
 	private void loadAvatar(String url) {
 		Intent intent = new Intent(getActivity(), ImageDownloadingService.class);
-		intent.putExtra("com.agilismobility.architecture.url", url);
-		intent.putExtra("com.agilismobility.architecture.width", "48");
-		intent.putExtra("com.agilismobility.architecture.height", "48");
-		intent.putExtra("com.agilismobility.architecture.corners", "4");
+		intent.putExtra(ImageDownloadingService.URL_ARG, url);
+		intent.putExtra(ImageDownloadingService.WIDTH_ARG, "48");
+		intent.putExtra(ImageDownloadingService.HEIGHT_ARG, "48");
+		intent.putExtra(ImageDownloadingService.CORNERS_ARG, "4");
 		getActivity().startService(intent);
 	}
 
 	private void loadPhoto(String url) {
 		Intent intent = new Intent(getActivity(), ImageDownloadingService.class);
-		intent.putExtra("com.agilismobility.architecture.url", url);
-		intent.putExtra("com.agilismobility.architecture.width", "400");
-		intent.putExtra("com.agilismobility.architecture.height", "400");
+		intent.putExtra(ImageDownloadingService.URL_ARG, url);
+		intent.putExtra(ImageDownloadingService.WIDTH_ARG, "400");
+		intent.putExtra(ImageDownloadingService.HEIGHT_ARG, "400");
 		getActivity().startService(intent);
 	}
 
