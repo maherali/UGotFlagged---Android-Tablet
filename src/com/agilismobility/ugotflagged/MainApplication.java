@@ -63,6 +63,10 @@ public class MainApplication extends Application {
 			return users.get(currUserID);
 		}
 
+		public static void clearData() {
+			users.clear();
+		}
+
 	}
 
 	public Location getCurrentLocation() {
@@ -71,6 +75,11 @@ public class MainApplication extends Application {
 
 	public void updateCurrentLocation(Location location) {
 		mCurrentLocation = location;
+	}
+
+	public void clearData() {
+		GlobalState.clearData();
+		getImageCache().clear();
 	}
 
 }
