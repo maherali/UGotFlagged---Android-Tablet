@@ -70,6 +70,8 @@ public class ImageDownloadingService extends Service {
 			downloadImage();
 			if (bmImg != null) {
 				((MainApplication) getApplication()).getImageCache().setImageForUrl(bmImg, theUrl);
+			} else {
+				((MainApplication) getApplication()).getImageCache().markNotDownloadingForURL(theUrl);
 			}
 			return bmImg != null;
 		}

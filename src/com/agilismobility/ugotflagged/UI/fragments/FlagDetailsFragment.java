@@ -68,7 +68,6 @@ public class FlagDetailsFragment extends Fragment {
 	}
 
 	void updateContent(int position) {
-		mPosition = position;
 		TextView text = (TextView) mLayout.findViewById(R.id.text1);
 		ImageView image = (ImageView) mLayout.findViewById(R.id.icon);
 		TextView userNameText = (TextView) mLayout.findViewById(R.id.user_name);
@@ -87,6 +86,10 @@ public class FlagDetailsFragment extends Fragment {
 		postCommentsText.setText(post.replies.size() + " comments");
 		postUserFavs.setText(post.totalLikes + " users");
 
+		if (mPosition != position) {
+			picture.setImageBitmap(null);
+		}
+		mPosition = position;
 		if (bitmap == null) {
 			if (post.authorAvatarURL != null) {
 				loadAvatar(post.authorAvatarURL);

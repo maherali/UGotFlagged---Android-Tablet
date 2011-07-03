@@ -41,6 +41,15 @@ public class ImageResources {
 		map.put(url, new ImageResource(null, true, url));
 	}
 
+	public void markNotDownloadingForURL(String url) {
+		ImageResource imgRs = map.get(url);
+		if (imgRs != null) {
+			imgRs.downloading = false;
+		} else {
+			map.put(url, new ImageResource(null, false, url));
+		}
+	}
+
 	public void setImageForUrl(Bitmap bitmap, String url) {
 		ImageResource imgRs = map.get(url);
 		if (imgRs != null) {
