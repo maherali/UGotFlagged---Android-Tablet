@@ -75,11 +75,6 @@ public class ImageDownloadingService extends Service {
 		}
 
 		@Override
-		protected void onProgressUpdate(Integer... progress) {
-
-		}
-
-		@Override
 		protected void onPostExecute(Boolean result) {
 			announceFound(theUrl, startId, result);
 		}
@@ -121,7 +116,6 @@ public class ImageDownloadingService extends Service {
 	public void announceFound(String url, int startID, Boolean success) {
 		Intent newIntent = new Intent(IMAGE_AVAILABLE_NOTIF);
 		newIntent.putExtra(URL_ARG, url);
-		newIntent.putExtra("com.agilismobility.architecture.success", success);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}
