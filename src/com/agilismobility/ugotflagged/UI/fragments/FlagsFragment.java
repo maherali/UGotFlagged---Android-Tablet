@@ -33,6 +33,14 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 	private SlowAdapter m_adapter;
 	MyReceiver receiver;
 
+	public int getCurrentPosition() {
+		return mCurPosition;
+	}
+
+	public void setCurrentPosition(int pos) {
+		mCurPosition = pos;
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);

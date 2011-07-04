@@ -76,25 +76,6 @@ public class FlagDetailsFragment extends Fragment {
 		getActivity().startService(intent);
 	}
 
-	/*
-	 * LinearLayout listLayout = (LinearLayout)findViewById(R.id.list);
-	 * listLayout.removeAllViews(); for(CurrencyItem currency : currencies){
-	 * LayoutInflater vi =
-	 * (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE
-	 * ); View v = vi.inflate(R.layout.currency_item, null);
-	 * 
-	 * TextView currencyTypeView = (TextView)
-	 * v.findViewById(R.id.currency_type_text);
-	 * currencyTypeView.setText(currency.getCurrencyTypeText()); TextView
-	 * currencyCountryView = (TextView)
-	 * v.findViewById(R.id.currency_country_text);
-	 * currencyCountryView.setText(currency.getCountryName()); TextView
-	 * exchangeAmountView = (TextView)
-	 * v.findViewById(R.id.exchange_amount_formatted);
-	 * exchangeAmountView.setText(currency.getExchangeAmountFormatted());
-	 * listLayout.addView(v); }
-	 */
-
 	private void addReplies(ArrayList<ReplyDTO> replies) {
 		LinearLayout repliesLayout = (LinearLayout) mLayout.findViewById(R.id.replies);
 		repliesLayout.removeAllViews();
