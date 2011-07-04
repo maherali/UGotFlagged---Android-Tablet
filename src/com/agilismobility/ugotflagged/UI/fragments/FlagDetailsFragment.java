@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
@@ -25,7 +24,7 @@ import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.Utils;
 
 public class FlagDetailsFragment extends Fragment {
-	private ScrollView mLayout;
+	private View mLayout;
 	MyReceiver receiver;
 	private int mPosition;
 
@@ -37,7 +36,7 @@ public class FlagDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		registerReceiver();
-		mLayout = (ScrollView) inflater.inflate(R.layout.post_details, container);
+		mLayout = inflater.inflate(R.layout.post_details, null);
 		View frame = mLayout.findViewById(R.id.frame);
 		frame.setVisibility(View.GONE);
 		View commentsImage = mLayout.findViewById(R.id.post_comments_image);

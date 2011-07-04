@@ -3,11 +3,13 @@ package com.agilismobility.ugotflagged.UI;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import com.agilismobility.LocationAwareness;
 import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
@@ -30,14 +33,20 @@ import com.agilismobility.utils.Constants;
 
 public class FlagsActivity extends BaseActivity implements TabListener, ILocationResponder {
 
+	private static final String SELECTED_TAB = "selected_tab";
+
 	private String[] ACTIONS = { "Stream", "Followers", "Help", "Settings" };
 
 	LocationAwareness mLocationAwareness;
 	RefreshReceiver mRefreshReceiver;
 
+	private int mSelectedTabPosition;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		((MainApplication) getApplication()).createFragments();
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		registerReceiver();
 		setContentView(R.layout.main);
 		ActionBar bar = getActionBar();
@@ -58,6 +67,42 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 				refreshStream();
 			}
 		});
+		if (savedInstanceState != null) {
+			mSelectedTabPosition = savedInstanceState.getInt(SELECTED_TAB);
+			getActionBar().setSelectedNavigationItem(mSelectedTabPosition);
+		}
+		setupCurrentFragment();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(SELECTED_TAB, getActionBar().getSelectedTab().getPosition());
+	}
+
+	private void setupCurrentFragment() {
+		Fragment flagsFrag = getFragmentManager().findFragmentById(R.id.frag_flags);
+		Fragment flagDetailsFrag = getFragmentManager().findFragmentById(R.id.frag_details);
+		if (mSelectedTabPosition == getActionBar().getTabAt(0).getPosition()) {
+			if (flagsFrag == null) {
+				FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.add(R.id.frag_flags, newFragment).commit();
+			} else {
+				FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.replace(R.id.frag_flags, newFragment).commit();
+			}
+			if (flagDetailsFrag == null) {
+				FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.add(R.id.frag_details, newFragment).commit();
+			} else {
+				FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.replace(R.id.frag_details, newFragment).commit();
+			}
+		}
 	}
 
 	private void showProgress() {
@@ -119,6 +164,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		mSelectedTabPosition = tab.getPosition();
 	}
 
 	@Override
@@ -156,7 +202,9 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 
 	private void refreshFlags() {
 		FlagsFragment frag = (FlagsFragment) getFragmentManager().findFragmentById(R.id.frag_flags);
-		frag.refresh();
+		if (frag != null) {
+			frag.refresh();
+		}
 	}
 
 	private void refreshStream() {

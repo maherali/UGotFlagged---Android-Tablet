@@ -14,18 +14,23 @@
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:name=".MainApplication">
-		<activity android:name=".UI.UGotFlaggedActivity" android:launchMode="singleTop"
-			 android:label="@string/app_name">
+		<activity android:name=".UI.UGotFlaggedActivity"
+			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
+			android:launchMode="singleTop" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".UI.FlagsActivity" android:launchMode="singleTop">
+		<activity android:name=".UI.FlagsActivity"
+			android:configChanges="orientation|keyboardHidden"
+			android:launchMode="singleTop" android:screenOrientation="landscape">
 		</activity>
 
-		<activity android:name=".UI.LoginActivity" android:launchMode="singleTop">
+		<activity android:name=".UI.LoginActivity"
+			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
+			android:launchMode="singleTop">
 		</activity>
 
 		<service android:enabled="true" android:name=".services.LoginService"></service>

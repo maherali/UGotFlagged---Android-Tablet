@@ -239,7 +239,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 	}
 
 	private void showAt(int position) {
-		FlagDetailsFragment frag = (FlagDetailsFragment) getFragmentManager().findFragmentById(R.id.frag_details);
+		FlagDetailsFragment frag = ((MainApplication) MainApplication.getInstance()).getFlagDetailsFragment();
 		frag.updateContent(position);
 		mCurPosition = position;
 	}

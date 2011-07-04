@@ -8,6 +8,8 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
+import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
+import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.ImageResources;
@@ -17,6 +19,22 @@ public class MainApplication extends Application {
 	private static Context mInstance;
 	private final String TAG = "MainApplication";
 	private Location mCurrentLocation;
+
+	private FlagsFragment flagsFragment;
+	private FlagDetailsFragment flagDetailsFragment;
+
+	public FlagDetailsFragment getFlagDetailsFragment() {
+		return flagDetailsFragment;
+	}
+
+	public FlagsFragment getFlagsFragment() {
+		return flagsFragment;
+	}
+
+	public void createFragments() {
+		flagsFragment = new FlagsFragment();
+		flagDetailsFragment = new FlagDetailsFragment();
+	}
 
 	@Override
 	public void onCreate() {
