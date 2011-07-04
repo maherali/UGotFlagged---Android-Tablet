@@ -123,6 +123,27 @@ public class FlagDetailsFragment extends Fragment {
 		}
 	}
 
+	private Bitmap postTypeImageForPostType(int postType) {
+		Bitmap img = null;
+		switch (postType) {
+		case 0:
+			img = Utils.getImageAsset("shame_48.png");
+			break;
+		case 1:
+			img = Utils.getImageAsset("asshole_48.png");
+			break;
+		case 2:
+			img = Utils.getImageAsset("kudos_48.png");
+			break;
+		case 3:
+			img = Utils.getImageAsset("warning_48.png");
+			break;
+		default:
+			break;
+		}
+		return img;
+	}
+
 	void updateContent(int position) {
 		mPosition = position;
 		View frame = mLayout.findViewById(R.id.frame);
@@ -140,6 +161,7 @@ public class FlagDetailsFragment extends Fragment {
 		TextView postUserFavs = (TextView) mLayout.findViewById(R.id.post_users_favs);
 		ImageView licensePlatePicture = (ImageView) mLayout.findViewById(R.id.license_plate_image);
 		TextView plateNoText = (TextView) mLayout.findViewById(R.id.plate_no);
+		ImageView postTypePicture = (ImageView) mLayout.findViewById(R.id.post_type);
 
 		PostDTO post = MainApplication.GlobalState.getStream().get(position);
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
@@ -151,6 +173,7 @@ public class FlagDetailsFragment extends Fragment {
 		postCommentsText.setText(post.replies.size() + " comments");
 		postUserFavs.setText(post.totalLikes + " users");
 		addReplies(post.replies);
+		postTypePicture.setImageBitmap(postTypeImageForPostType(post.postType));
 		if (bitmap == null) {
 			if (post.authorAvatarURL != null) {
 				loadAvatar(post.authorAvatarURL);
