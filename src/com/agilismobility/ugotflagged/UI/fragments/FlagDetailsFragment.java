@@ -1,5 +1,7 @@
 package com.agilismobility.ugotflagged.UI.fragments;
 
+import java.util.ArrayList;
+
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,12 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.dtos.ReplyDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.Utils;
 
@@ -73,7 +77,54 @@ public class FlagDetailsFragment extends Fragment {
 		getActivity().startService(intent);
 	}
 
+	/*
+	 * LinearLayout listLayout = (LinearLayout)findViewById(R.id.list);
+	 * listLayout.removeAllViews(); for(CurrencyItem currency : currencies){
+	 * LayoutInflater vi =
+	 * (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE
+	 * ); View v = vi.inflate(R.layout.currency_item, null);
+	 * 
+	 * TextView currencyTypeView = (TextView)
+	 * v.findViewById(R.id.currency_type_text);
+	 * currencyTypeView.setText(currency.getCurrencyTypeText()); TextView
+	 * currencyCountryView = (TextView)
+	 * v.findViewById(R.id.currency_country_text);
+	 * currencyCountryView.setText(currency.getCountryName()); TextView
+	 * exchangeAmountView = (TextView)
+	 * v.findViewById(R.id.exchange_amount_formatted);
+	 * exchangeAmountView.setText(currency.getExchangeAmountFormatted());
+	 * listLayout.addView(v); }
+	 */
+
+	private void addReplies(ArrayList<ReplyDTO> replies) {
+		LinearLayout repliesLayout = (LinearLayout) mLayout.findViewById(R.id.replies);
+		repliesLayout.removeAllViews();
+		LayoutInflater inflator = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		for (ReplyDTO reply : replies) {
+			View v = inflator.inflate(R.layout.reply, null);
+			ImageView avatarImageView = (ImageView) v.findViewById(R.id.avatar);
+			TextView userNameText = (TextView) v.findViewById(R.id.user_name);
+			TextView replyText = (TextView) v.findViewById(R.id.reply_text);
+			TextView timeAgoText = (TextView) v.findViewById(R.id.timeago);
+			Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(reply.authorAvatarURL);
+			if (bitmap == null) {
+				if (reply.authorAvatarURL != null) {
+					loadAvatar(reply.authorAvatarURL);
+				}
+				avatarImageView.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.user));
+			} else {
+				avatarImageView.setImageBitmap(bitmap);
+			}
+			userNameText.setText(reply.author);
+			replyText.setText(reply.text);
+			timeAgoText.setText(reply.timeAgo);
+			repliesLayout.addView(v);
+		}
+	}
+
 	void updateContent(int position) {
+		mPosition = position;
 		View frame = mLayout.findViewById(R.id.frame);
 		frame.setVisibility(View.VISIBLE);
 		View commentsImage = mLayout.findViewById(R.id.post_comments_image);
@@ -99,11 +150,7 @@ public class FlagDetailsFragment extends Fragment {
 		postTitleText.setText(post.title);
 		postCommentsText.setText(post.replies.size() + " comments");
 		postUserFavs.setText(post.totalLikes + " users");
-
-		// if (mPosition != position) {
-		// picture.setImageBitmap(null);
-		// }
-		mPosition = position;
+		addReplies(post.replies);
 		if (bitmap == null) {
 			if (post.authorAvatarURL != null) {
 				loadAvatar(post.authorAvatarURL);
