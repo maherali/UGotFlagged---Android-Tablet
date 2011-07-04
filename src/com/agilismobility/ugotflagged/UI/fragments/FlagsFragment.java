@@ -128,8 +128,8 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 			text.setText(post.text);
 			userNameText.setText(post.author);
 			postTitleText.setText(post.title);
-			postCommentsText.setText(post.replies.size() + " comments");
-			postUserFavs.setText(post.totalLikes + " users");
+			postCommentsText.setText(post.replies.size() == 1 ? (post.replies.size() + " comment") : (post.replies.size() + " comments"));
+			postUserFavs.setText(post.totalLikes == 1 ? (post.totalLikes + " user") : (post.totalLikes + " users"));
 			Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
 			distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
 			timeAgo.setText(post.timeAgo);

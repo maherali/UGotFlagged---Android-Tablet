@@ -162,6 +162,9 @@ public class FlagDetailsFragment extends Fragment {
 		ImageView licensePlatePicture = (ImageView) mLayout.findViewById(R.id.license_plate_image);
 		TextView plateNoText = (TextView) mLayout.findViewById(R.id.plate_no);
 		ImageView postTypePicture = (ImageView) mLayout.findViewById(R.id.post_type);
+		TextView addressText = (TextView) mLayout.findViewById(R.id.address);
+		TextView distanceAway = (TextView) mLayout.findViewById(R.id.distance_away);
+		TextView timeAgo = (TextView) mLayout.findViewById(R.id.timeago);
 
 		PostDTO post = MainApplication.GlobalState.getStream().get(position);
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
@@ -170,10 +173,14 @@ public class FlagDetailsFragment extends Fragment {
 		text.setText(post.text);
 		userNameText.setText(post.author);
 		postTitleText.setText(post.title);
-		postCommentsText.setText(post.replies.size() + " comments");
-		postUserFavs.setText(post.totalLikes + " users");
+		postCommentsText.setText(post.replies.size() == 1 ? (post.replies.size() + " comment") : (post.replies.size() + " comments"));
+		postUserFavs.setText(post.totalLikes == 1 ? (post.totalLikes + " user") : (post.totalLikes + " users"));
 		addReplies(post.replies);
 		postTypePicture.setImageBitmap(postTypeImageForPostType(post.postType));
+		addressText.setText(postAddress(post));
+		distanceAway.setText(Utils.distanceAway(((MainApplication) getActivity().getApplication()).getCurrentLocation(), post.lat, post.lng));
+		timeAgo.setText(post.timeAgo);
+
 		if (bitmap == null) {
 			if (post.authorAvatarURL != null) {
 				loadAvatar(post.authorAvatarURL);
@@ -196,6 +203,18 @@ public class FlagDetailsFragment extends Fragment {
 		licensePlatePicture.setImageBitmap(Utils.getImageAsset(post.plateIssuer.toUpperCase() + ".jpg"));
 		plateNoText.setText(post.plateNumber);
 		licensePlatePicture.invalidate();
+	}
+
+	private String postAddress(PostDTO post) {
+		String addr = post.street != null ? (post.street + ", ") : "";
+		addr = addr + (post.city != null ? (post.city + ", ") : "");
+		addr = addr + (post.state != null ? post.state : "");
+		if (post.street == null && post.city == null && post.state == null) {
+			if ((post.lat >= -90.0f && post.lat <= 90) && (post.lng >= -180 && post.lng <= 180)) {
+				addr = "Latitude/Longitude: (" + post.lat + ", " + post.lng + ")";
+			}
+		}
+		return addr;
 	}
 
 	@Override

@@ -2,7 +2,7 @@
 <resources>
 	<color name="white">#ffffffff</color>
 	<color name="black">#ff000000</color>
-	<color name="user_name">#ff0000ff</color>
+	<color name="user_name">#ff7cfc00</color>
 	<color name="post_title">#ffffffff</color>
 	<color name="stats_color">#ff00ffff</color>
 	<color name="post_text">#ffffffff</color>
