@@ -28,6 +28,10 @@ public class FlagDetailsFragment extends Fragment {
 	MyReceiver receiver;
 	private int mPosition;
 
+	public void setCurrentPosition(int pos) {
+		mPosition = pos;
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -44,6 +48,14 @@ public class FlagDetailsFragment extends Fragment {
 		View usersFavsImage = mLayout.findViewById(R.id.post_users_image);
 		usersFavsImage.setVisibility(View.GONE);
 		return mLayout;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (isVisible()) {
+			updateContent(mPosition);
+		}
 	}
 
 	private void registerReceiver() {

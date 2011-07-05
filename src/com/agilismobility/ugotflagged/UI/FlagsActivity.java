@@ -198,8 +198,11 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 			mSelectedTabPosition = tab.getPosition();
 		} else {
 			mSelectedTabPosition = tab.getPosition();
+			int curPos = ((MainApplication) getApplication()).getFlagsFragment().getCurrentPosition();
 			((MainApplication) getApplication()).createFragments();
 			setupCurrentFragment();
+			((MainApplication) getApplication()).getFlagsFragment().setCurrentPosition(curPos);
+			((MainApplication) getApplication()).getFlagDetailsFragment().setCurrentPosition(curPos);
 		}
 	}
 

@@ -28,7 +28,7 @@ import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.Utils;
 
 public class FlagsFragment extends ListFragment implements ListView.OnScrollListener {
-	private int mCurPosition = -1;
+	private int mCurPosition;
 	private boolean mBusy;
 	private SlowAdapter m_adapter;
 	MyReceiver receiver;
@@ -39,6 +39,12 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 
 	public void setCurrentPosition(int pos) {
 		mCurPosition = pos;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		selectPosition(mCurPosition);
 	}
 
 	@Override
@@ -248,7 +254,9 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 
 	private void showAt(int position) {
 		FlagDetailsFragment frag = ((MainApplication) MainApplication.getInstance()).getFlagDetailsFragment();
-		frag.updateContent(position);
+		if (frag != null && frag.isVisible()) {
+			frag.updateContent(position);
+		}
 		mCurPosition = position;
 	}
 
