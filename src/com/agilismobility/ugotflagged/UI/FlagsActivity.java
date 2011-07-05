@@ -85,59 +85,67 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 
 	private void setupCurrentFragment() {
 		if (getActionBar().getTabCount() == 0 || mSelectedTabPosition == getActionBar().getTabAt(0).getPosition()) {
-			setContentView(R.layout.main);
-			Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
-			Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
-			if (leftFrag == null) {
-				FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.left_frag, newFragment).commit();
-			} else {
-				FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.replace(R.id.left_frag, newFragment).commit();
-			}
-			if (rightFrag == null) {
-				FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.right_frag, newFragment).commit();
-			} else {
-				FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.replace(R.id.right_frag, newFragment).commit();
-			}
+			setupTabOneView();
 		} else if (mSelectedTabPosition == getActionBar().getTabAt(1).getPosition()) {
-			setContentView(R.layout.followed);
-			Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
-			Fragment middleFrag = getFragmentManager().findFragmentById(R.id.middle_frag);
-			Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
-			if (leftFrag == null) {
-				FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.left_frag, newFragment).commit();
-			} else {
-				FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.replace(R.id.left_frag, newFragment).commit();
-			}
-			if (middleFrag == null) {
-				UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.middle_frag, newFragment).commit();
-			} else {
-				UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.replace(R.id.middle_frag, newFragment).commit();
-			}
-			if (rightFrag == null) {
-				FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.right_frag, newFragment).commit();
-			} else {
-				FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.replace(R.id.right_frag, newFragment).commit();
-			}
+			setupTabTwoView();
+		}
+	}
+
+	private void setupTabTwoView() {
+		setContentView(R.layout.followed);
+		Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
+		Fragment middleFrag = getFragmentManager().findFragmentById(R.id.middle_frag);
+		Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
+		if (leftFrag == null) {
+			FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.left_frag, newFragment).commit();
+		} else {
+			FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.left_frag, newFragment).commit();
+		}
+		if (middleFrag == null) {
+			UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.middle_frag, newFragment).commit();
+		} else {
+			UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.middle_frag, newFragment).commit();
+		}
+		if (rightFrag == null) {
+			FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.right_frag, newFragment).commit();
+		} else {
+			FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.right_frag, newFragment).commit();
+		}
+	}
+
+	private void setupTabOneView() {
+		setContentView(R.layout.main);
+		Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
+		Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
+		if (leftFrag == null) {
+			FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.left_frag, newFragment).commit();
+		} else {
+			FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.left_frag, newFragment).commit();
+		}
+		if (rightFrag == null) {
+			FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(R.id.right_frag, newFragment).commit();
+		} else {
+			FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.replace(R.id.right_frag, newFragment).commit();
 		}
 	}
 
