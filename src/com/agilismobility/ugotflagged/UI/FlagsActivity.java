@@ -28,6 +28,7 @@ import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
+import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
@@ -37,7 +38,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 
 	private static final String SELECTED_TAB = "selected_tab";
 
-	private String[] ACTIONS = { "Stream", "Followed", "Help", "Settings" };
+	private String[] ACTIONS = { "Stream", "Followed" };
 
 	LocationAwareness mLocationAwareness;
 	RefreshReceiver mRefreshReceiver;
@@ -83,54 +84,70 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	}
 
 	private void setupCurrentFragment() {
-		Fragment leftFrag = getFragmentManager().findFragmentById(R.id.frag_flags);
-		Fragment rightFrag = getFragmentManager().findFragmentById(R.id.frag_details);
 		if (getActionBar().getTabCount() == 0 || mSelectedTabPosition == getActionBar().getTabAt(0).getPosition()) {
+			setContentView(R.layout.main);
+			Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
+			Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
 			if (leftFrag == null) {
 				FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.frag_flags, newFragment).commit();
+				ft.add(R.id.left_frag, newFragment).commit();
 			} else {
 				if (!(leftFrag instanceof FlagsFragment)) {
 					FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.frag_flags, newFragment).commit();
+					ft.replace(R.id.left_frag, newFragment).commit();
 				}
 			}
 			if (rightFrag == null) {
 				FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.frag_details, newFragment).commit();
+				ft.add(R.id.right_frag, newFragment).commit();
 			} else {
 				if (!(rightFrag instanceof FlagDetailsFragment)) {
 					FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.frag_details, newFragment).commit();
+					ft.replace(R.id.right_frag, newFragment).commit();
 				}
 			}
 		} else if (mSelectedTabPosition == getActionBar().getTabAt(1).getPosition()) {
+			setContentView(R.layout.followed);
+			Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
+			Fragment middleFrag = getFragmentManager().findFragmentById(R.id.middle_frag);
+			Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
 			if (leftFrag == null) {
 				FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.frag_flags, newFragment).commit();
+				ft.add(R.id.left_frag, newFragment).commit();
 			} else {
 				if (!(leftFrag instanceof FollowedUsersFragment)) {
 					FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.frag_flags, newFragment).commit();
+					ft.replace(R.id.left_frag, newFragment).commit();
 				}
 			}
+			if (middleFrag == null) {
+				UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.add(R.id.middle_frag, newFragment).commit();
+			} else {
+				if (!(middleFrag instanceof UserFlagsFragment)) {
+					UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+					ft.replace(R.id.middle_frag, newFragment).commit();
+				}
+			}
+
 			if (rightFrag == null) {
 				FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(R.id.frag_details, newFragment).commit();
+				ft.add(R.id.right_frag, newFragment).commit();
 			} else {
 				if (!(leftFrag instanceof FollowersFragment)) {
 					FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
 					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.frag_details, newFragment).commit();
+					ft.replace(R.id.right_frag, newFragment).commit();
 				}
-
 			}
 		}
 	}
@@ -240,7 +257,7 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	}
 
 	private void refreshFlags() {
-		Fragment frag = getFragmentManager().findFragmentById(R.id.frag_flags);
+		Fragment frag = getFragmentManager().findFragmentById(R.id.left_frag);
 		if (frag != null && frag instanceof FlagsFragment) {
 			((FlagsFragment) frag).refresh();
 		}

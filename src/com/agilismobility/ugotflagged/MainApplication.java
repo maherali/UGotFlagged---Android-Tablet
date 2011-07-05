@@ -12,6 +12,7 @@ import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
+import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.ImageResources;
@@ -26,6 +27,7 @@ public class MainApplication extends Application {
 	private FlagDetailsFragment flagDetailsFragment;
 	private FollowedUsersFragment followedUsersFragment;
 	private FollowersFragment followersFragment;
+	private UserFlagsFragment followedUserFlags;
 
 	public FlagDetailsFragment getFlagDetailsFragment() {
 		return flagDetailsFragment;
@@ -43,11 +45,16 @@ public class MainApplication extends Application {
 		return followersFragment;
 	}
 
+	public UserFlagsFragment getFollowedUserFlagsFragment() {
+		return followedUserFlags;
+	}
+
 	public void createFragments() {
 		flagsFragment = new FlagsFragment();
 		flagDetailsFragment = new FlagDetailsFragment();
 		followedUsersFragment = new FollowedUsersFragment();
 		followersFragment = new FollowersFragment();
+		followedUserFlags = new UserFlagsFragment();
 	}
 
 	@Override
