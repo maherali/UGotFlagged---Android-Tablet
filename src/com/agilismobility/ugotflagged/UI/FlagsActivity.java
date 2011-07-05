@@ -131,11 +131,9 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
 				ft.add(R.id.middle_frag, newFragment).commit();
 			} else {
-				if (!(middleFrag instanceof UserFlagsFragment)) {
-					UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
-					FragmentTransaction ft = getFragmentManager().beginTransaction();
-					ft.replace(R.id.middle_frag, newFragment).commit();
-				}
+				UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				ft.replace(R.id.middle_frag, newFragment).commit();
 			}
 
 			if (rightFrag == null) {
