@@ -1,0 +1,85 @@
+package com.sabre.tripcase.util;
+
+import javax.microedition.location.Criteria;
+import javax.microedition.location.Location;
+import javax.microedition.location.LocationException;
+import javax.microedition.location.LocationProvider;
+
+import net.rim.device.api.gps.GPSSettings;
+import net.rim.device.api.system.RadioInfo;
+
+public class GPSManager {	
+	private static GPSManager instance;
+	
+	private LocationProvider lp;
+	
+	private GPSManager(){
+		setupGPSProvider();
+	}
+	public static GPSManager getInstance(){
+		if(instance == null)
+			instance = new GPSManager();
+		return instance;
+	}
+	
+	public LocationProvider getProvider(){
+		setupGPSProvider();
+		return lp;
+	}
+	
+	public Location getLocation(){
+		Location lc = null;
+		if(lp != null){
+			try{
+				lc = lp.getLocation(-1);
+			}catch(Exception e){
+				
+			}
+		}
+		return lc;
+	}
+		
+	private void setupGPSProvider(){
+		Logger.debug("Setting up GPS provider");
+    	try{
+			Criteria criteria = buildCriteria();
+    		lp = LocationProvider.getInstance(criteria);
+			if((lp != null) && (lp.getState() == LocationProvider.OUT_OF_SERVICE || lp.getState() == LocationProvider.TEMPORARILY_UNAVAILABLE))
+				lp = null;
+	    }catch (Throwable t)
+	    {
+	    	t.printStackTrace();
+	    }
+	}
+	
+	private Criteria buildCriteria() {
+		Logger.debug("Building GPS criteria");
+		Criteria criteria = new Criteria();
+		int network = RadioInfo.getNetworkType();
+		if(network == RadioInfo.NETWORK_CDMA){
+			// CDMA network
+			Logger.debug("CDMA network...");
+			String networkName = RadioInfo.getCurrentNetworkName().toUpperCase();
+			Logger.debug("Carrier is " + networkName);
+			if(networkName.indexOf("SPRINT") != -1){
+				GPSSettings.setPDEInfo("68.28.31.49", 5017);
+				// Mode: MS-Based
+				Logger.debug("GPS Mode: MS-Based");
+				criteria.setCostAllowed(true);
+				criteria.setHorizontalAccuracy(100);
+				criteria.setVerticalAccuracy(100);
+				criteria.setPreferredPowerConsumption(Criteria.POWER_USAGE_MEDIUM);
+			}else{
+				// Mode: Standalone
+				Logger.debug("GPS Mode: Standalone");
+				criteria.setCostAllowed(false);
+				criteria.setPreferredPowerConsumption(Criteria.POWER_USAGE_MEDIUM);					
+			}
+		}else if(network == RadioInfo.NETWORK_GPRS){
+			// 
+		}else{
+			
+		}
+		return criteria;
+	}
+}

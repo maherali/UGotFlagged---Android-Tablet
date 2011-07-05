@@ -1,9 +1,6 @@
 package com.agilismobility.ugotflagged.dtos;
 
-import org.w3c.dom.Node;
-
-import com.agilismobility.ugotflagged.utils.XMLHelper;
-
+import com.agilismobility.util.xpath.OpenXml;
 
 public class PlateDTO {
 	public int identifier;
@@ -12,13 +9,12 @@ public class PlateDTO {
 	public int timesReported;
 	public boolean isFollowing;
 
-	public PlateDTO(XMLHelper xml, Node plate) {
-		this.identifier = xml.intValueForNode(plate, "identifier");
-		this.tag = xml.textValueForNode(plate, "tag");
-		this.issuer = xml.textValueForNode(plate, "issuer");
-		this.timesReported = xml.intValueForNode(plate, "times_reported");
-		this.isFollowing = xml.boolValueForNode(plate, "is_following");
+	public PlateDTO(OpenXml plate) {
+		this.identifier = plate.integer("identifier/text()");
+		this.tag = plate.string("tag/text()");
+		this.issuer = plate.string("issuer/text()");
+		this.timesReported = plate.integer("times_reported/text()");
+		this.isFollowing = plate.bool("is_following/text()");
 	}
+
 }
-
-

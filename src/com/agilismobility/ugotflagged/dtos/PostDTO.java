@@ -1,11 +1,9 @@
 package com.agilismobility.ugotflagged.dtos;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.agilismobility.ugotflagged.utils.XMLHelper;
+import com.agilismobility.util.xpath.OpenXml;
 
 public class PostDTO {
 	public int totalLikes;
@@ -33,44 +31,47 @@ public class PostDTO {
 	public String photoiPhoneURL;
 	public String photoFeedURL;
 	public String authorAvatarURL;
-	
+
 	public ArrayList<ReplyDTO> replies;
 
-	public PostDTO(XMLHelper xml, Node post) {
-		this.totalLikes = xml.intValueForNode(post, "total_likes");
-		this.liked = xml.boolValueForNode(post, "liked");
-		this.canLike = xml.intValueForNode(post, "can_like") == 1;
-		this.identifier = xml.intValueForNode(post, "identifier");
-		this.postType = xml.intValueForNode(post, "post_type");
-		this.totalLikes = xml.intValueForNode(post, "total_likes");
-		this.plateNumber = xml.textValueForNode(post, "plate_number");
-		this.plateIssuer = xml.textValueForNode(post, "plate_issuer");
-		this.vehicleType = xml.intValueForNode(post, "vehicle_type");
-		this.vehicle = xml.textValueForNode(post, "vehicle");
-		this.title = xml.textValueForNode(post, "title");
-		this.text = xml.textValueForNode(post, "text");
-		this.lat = xml.floatValueForNode(post, "lat");
-		this.lng = xml.floatValueForNode(post, "lng");
-		this.street = xml.textValueForNode(post, "street");
-		this.city = xml.textValueForNode(post, "city");
-		this.state = xml.textValueForNode(post, "state");
-		this.country = xml.textValueForNode(post, "country");
-		this.author = xml.textValueForNode(post, "author");
-		this.adminAuthor = xml.boolValueForNode(post, "admin_author");
-		this.timeAgo = xml.textValueForNode(post, "timeago");
-		this.photoID = xml.intValueForNode(post, "photos/photo/identifier");
-		this.photoMainURL = xml.textValueForNode(post, "photos/photo/main_url");
-		this.photoiPhoneURL = xml.textValueForNode(post, "photos/photo/iphone_url");
-		this.photoFeedURL = xml.textValueForNode(post, "photos/photo/feed_url");
-		this.authorAvatarURL = xml.textValueForNode(post, "author_avatar_url");
-		
+	public PostDTO(OpenXml post) {
+		this.liked = post.bool("liked/text()");
+		this.canLike = post.integer("can_like/text()") == 1;
+		this.identifier = post.integer("identifier/text()");
+		this.postType = post.integer("post_type/text()");
+		this.totalLikes = post.integer("total_likes/text()");
+		this.plateNumber = post.string("plate_number/text()");
+		this.plateIssuer = post.string("plate_issuer/text()");
+		this.vehicleType = post.integer("vehicle_type/text()");
+		this.vehicle = post.string("vehicle/text()");
+		this.title = post.string("title/text()");
+		this.text = post.string("text/text()");
+		this.lat = post.real("lat/text()");
+		this.lng = post.real("lng/text()");
+		this.street = post.string("street/text()");
+		this.city = post.string("city/text()");
+		this.state = post.string("state/text()");
+		this.country = post.string("country/text()");
+		this.author = post.string("author/text()");
+		this.adminAuthor = post.bool("admin_author/text()");
+		this.timeAgo = post.string("timeago/text()");
+		this.photoID = post.integer("photos/photo/identifier/text()");
+		this.photoMainURL = post.string("photos/photo/main_url/text()");
+		this.photoMainURL = !"".equals(this.photoMainURL) ? this.photoMainURL : null;
+		this.photoiPhoneURL = post.string("photos/photo/iphone_url/text()");
+		this.photoiPhoneURL = !"".equals(this.photoiPhoneURL) ? this.photoiPhoneURL : null;
+		this.photoFeedURL = post.string("photos/photo/feed_url/text()");
+		this.photoFeedURL = !"".equals(this.photoFeedURL) ? this.photoFeedURL : null;
+		this.authorAvatarURL = post.string("author_avatar_url/text()");
+		this.authorAvatarURL = !"".equals(this.authorAvatarURL) ? this.authorAvatarURL : null;
+
 		replies = new ArrayList<ReplyDTO>();
-		NodeList theReplies = xml.nodesForXPath(post, "replies/reply");
-		for (int i = 0; i < theReplies.getLength(); i++) {
-			replies.add(new ReplyDTO(xml, theReplies.item(i)));
+		Vector<OpenXml> theReplies = post.elements("replies/reply");
+		for (int i = 0; i < theReplies.size(); i++) {
+			replies.add(new ReplyDTO(theReplies.get(i)));
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return text;

@@ -1,0 +1,134 @@
+package com.agilismobility.util.xpath;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Vector;
+
+import org.kxml2.io.KXmlParser;
+import org.kxml2.kdom.Document;
+import org.kxml2.kdom.Element;
+import org.kxml2.kdom.Node;
+
+import com.agilismobility.util.DateFormatter;
+
+public class OpenXml {
+	public Element element;
+	public String documentXml;
+
+	public OpenXml(Element element) {
+		this.element = element;
+	}
+
+	public static OpenXml parse(String xml) {
+		return parse(new ByteArrayInputStream(xml.getBytes()));
+	}
+
+	public static OpenXml parse(InputStream input) {
+		try {
+			KXmlParser parser = new KXmlParser();
+			parser.setInput(input, "UTF-8");
+			Document document = new Document();
+			document.parse(parser);
+			return new OpenXml(document.getRootElement());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return emptyXml();
+	}
+
+	public static OpenXml emptyXml() {
+		Element emptyElement = new Element();
+		emptyElement.setName("Empty");
+		emptyElement.setNamespace("");
+		return new OpenXml(emptyElement);
+	}
+
+	public Vector elements(String xpath) {
+		XPathExpression xpls = new XPathExpression(element, xpath);
+		Vector result = xpls.getResult();
+		Vector newResult = new Vector();
+		for (int i = 0; i < result.size(); i++) {
+			if (result.elementAt(i) instanceof Element) {
+				newResult.addElement(new OpenXml((Element) result.elementAt(i)));
+			} else {
+				newResult.addElement(result.elementAt(i));
+			}
+		}
+		return newResult;
+	}
+
+	public Object element(String xpath) {
+		Vector result = elements(xpath);
+		return (result.size() == 0) ? null : result.elementAt(0);
+	}
+
+	public String string(String xpath) {
+		int index = xpath.trim().indexOf("/text()");
+		if (index != -1) {
+			xpath = xpath.substring(0, index);
+			return text(xpath);
+		} else {
+			Object result = element(xpath);
+			return (result == null) ? "" : result.toString();
+		}
+	}
+
+	public String text(String xpath) {
+		StringBuffer result = new StringBuffer();
+		Node node = null;
+		if ("".equals(xpath)) {
+			node = element;
+		} else {
+			Vector elements = elements(xpath);
+			if (elements.size() > 0) {
+				node = ((OpenXml) elements.elementAt(0)).element;
+			}
+		}
+
+		if (node != null) {
+			int nChildren = node.getChildCount();
+			for (int i = 0; i < nChildren; i++) {
+				String child = (String) (node.getChild(i));
+				result.append(child);
+			}
+		}
+		return result.toString();
+	}
+
+	public boolean bool(String xpath) {
+		return Boolean.parseBoolean(string(xpath));
+	}
+
+	public float real(String xpath) {
+		return Float.parseFloat(string(xpath));
+	}
+
+	public int integer(String xpath) {
+		String str = string(xpath);
+		if (!(str == null || "".equals(str))) {
+			return Integer.parseInt(string(xpath));
+		} else {
+			return 0;
+		}
+	}
+
+	public String time(String xpath) {
+		return DateFormatter.time(string(xpath));
+	}
+
+	public String dateShort(String xpath) {
+		return DateFormatter.dateShort(string(xpath));
+	}
+
+	public String dateYear(String xpath) {
+		return DateFormatter.dateYear(string(xpath));
+	}
+
+	public String dateYearTime(String xpath) {
+		return DateFormatter.dateYearTime(string(xpath));
+	}
+
+	public String timeAgo(String xpath) {
+		return DateFormatter.timeAgo(string(xpath));
+	}
+}

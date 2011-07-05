@@ -1,0 +1,166 @@
+package com.sabre.tripcase.util;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import net.rim.device.api.i18n.DateFormat;
+import net.rim.device.api.i18n.SimpleDateFormat;
+import net.rim.device.api.io.http.HttpDateParser;
+
+public class DateFormatter {
+
+	static Calendar calendar = Calendar.getInstance();
+	static {
+		calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+	}
+	public static DateFormat timeFormat = new SimpleDateFormat("h:mm aa");
+	public static DateFormat dateFormat = new SimpleDateFormat("EEE, MMM d");
+	public static DateFormat dateTimeFormat = new SimpleDateFormat("MMM d h:mm aa");
+	public static DateFormat dateShortFormat = new SimpleDateFormat("MMM d");
+	public static DateFormat dateYearFormat = new SimpleDateFormat("MMM d, yyyy");	
+	public static DateFormat weekDateTimeFormat = new SimpleDateFormat("EEE, MMM d h:mm aa");
+	public static DateFormat weekDateYearFormat = new SimpleDateFormat("EEE, MMM d, yyyy");
+	public static DateFormat dateYearTimeFormat = new SimpleDateFormat("MMM d, yyyy h:mm aa");
+	public static DateFormat dateYearTimeLongFormat = new SimpleDateFormat("EEE, MMM d, yyyy h:mm aa");
+
+	static synchronized private void setTime(String yyyyMMddTHHmmss) {
+		calendar.setTime(new Date(parse(yyyyMMddTHHmmss)));
+	}
+
+	static synchronized public long parse(String yyyyMMddTHHmmss) {
+		return HttpDateParser.parse(yyyyMMddTHHmmss);
+	}
+	
+//	static synchronized public long parseLocal(String yyyyMMddTHHmmss) {
+//		// Use the default timezone.
+//		long t = HttpDateParser.parse(yyyyMMddTHHmmss);
+//		Calendar c = Calendar.getInstance();
+//		return t-TimeZone.getDefault().getOffset(1,
+//				c.get(Calendar.YEAR),
+//				c.get(Calendar.MONTH),
+//				c.get(Calendar.DATE),
+//				c.get(Calendar.DAY_OF_WEEK),
+//				c.get(Calendar.HOUR_OF_DAY)*3600000 + c.get(Calendar.MINUTE)*60000 + c.get(Calendar.SECOND)*1000 + c.get(Calendar.MILLISECOND)
+//		);
+//	}	
+
+	static synchronized public String time(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return timeFormat.format(calendar).toString();
+    }
+
+	static synchronized public String date(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return dateFormat.format(calendar).toString();
+	}
+
+	static synchronized public String dateTime(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return dateTimeFormat.format(calendar).toString();
+	}
+	
+	static synchronized public String dateShort(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return dateShortFormat.format(calendar).toString();
+	}
+
+	static synchronized public String dateYear(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return dateYearFormat.format(calendar).toString();
+	}
+
+	static synchronized public String weekDateYear(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return weekDateYearFormat.format(calendar).toString();
+	}
+
+	static synchronized public String weekDateTime(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return weekDateTimeFormat.format(calendar).toString();
+	}
+
+	static synchronized public String dateYearTime(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return dateYearTimeFormat.format(calendar).toString();
+	}
+
+	static synchronized public String dateYearTimeLong(String yyyyMMddTHHmmss) {
+		setTime(yyyyMMddTHHmmss);
+		return dateYearTimeLongFormat.format(calendar).toString();
+	}
+
+	static synchronized public String timeAgo(String yyyyMMddTHHmmss) {
+    	double littleOverAWeek = 11520.0;
+    	Date date = new Date(HttpDateParser.parse(yyyyMMddTHHmmss));
+    	Date now = new Date();
+
+    	double deltaMinutes = (now.getTime() - date.getTime())/60000;
+
+    	if(deltaMinutes < littleOverAWeek){
+    		return distanceOfTimeInWords(deltaMinutes) + " ago";
+    	} else {
+    		return "on " + dateYear(yyyyMMddTHHmmss);
+    	}
+    }
+
+	static synchronized private String distanceOfTimeInWords(double minutes) {
+    	String hourString = " hour";
+    	if((int)((minutes/60.0) + 0.5) > 1.0){
+    		hourString = " hours";
+    	}
+
+    	Object[] array = new Object[] {
+    		new Object[]{new Integer(1), "less than a minute"},
+    		new Object[]{new Integer(20), "a few minutes"},
+    		new Object[]{new Integer(45), "about half an hour"},
+    		new Object[]{new Integer(90), "about one hour"},
+    		new Object[]{new Integer(1080), (int)(minutes/60) + hourString},
+    		new Object[]{new Integer(1441), "one day"},
+    		new Object[]{new Integer(2880), "about one day"},
+    		new Object[]{new Integer(8640), "a few days"},
+    		new Object[]{new Integer(11520), "about a week"}
+    	};
+
+    	for(int i=0; i < array.length; i++){
+    		Object[] map = (Object[])array[i];
+    		if(minutes < ((Integer)map[0]).intValue()){
+    			return (String)map[1];
+    		}
+    	}
+    	return "";
+    }
+
+	static synchronized public String dateInServerFormat(long time){
+    	// Convert the time to a format accepted by the server YYYY-MM-DD
+    	Calendar date = Calendar.getInstance();
+    	date.setTime(new Date(time));
+//    	date.setTimeZone(TimeZone.getTimeZone("GMT"));
+    	int year = date.get(Calendar.YEAR);
+    	int month = date.get(Calendar.MONTH) + 1;
+    	int dateOfMonth = date.get(Calendar.DATE);
+
+    	return year + "-" + (month < 10 ? "0" + String.valueOf(month) : String.valueOf(month)) + "-" + (dateOfMonth < 10 ? "0" + String.valueOf(dateOfMonth) : String.valueOf(dateOfMonth));
+    }
+
+	static synchronized public String datetimeInServerFormat(long time){
+    	// Convert the time to a format accepted by the server YYYY-MM-DDTHH:mm:ss
+    	Calendar date = Calendar.getInstance();
+    	date.setTimeZone(TimeZone.getTimeZone("GMT"));
+    	date.setTime(new Date(time));
+    	int year = date.get(Calendar.YEAR);
+    	int month = date.get(Calendar.MONTH) + 1;
+    	int dateOfMonth = date.get(Calendar.DATE);
+    	int hour = date.get(Calendar.HOUR_OF_DAY);
+    	int minute = date.get(Calendar.MINUTE);
+    	int second = date.get(Calendar.SECOND);
+
+    	return year + "-" + (month < 10 ? "0" + String.valueOf(month) : String.valueOf(month)) + "-" + (dateOfMonth < 10 ? "0" + String.valueOf(dateOfMonth) : String.valueOf(dateOfMonth)) +
+    	"T" + (hour < 10 ? "0" + String.valueOf(hour) : String.valueOf(hour)) + ":" + (minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute)) + ":" + (second < 10 ? "0" + String.valueOf(second) : String.valueOf(second));
+    }
+
+	static synchronized public String timeAMPMFromString2(String s){
+		setTime("2009-07-31 " + s);
+		return timeFormat.format(calendar).toString();
+    }
+}

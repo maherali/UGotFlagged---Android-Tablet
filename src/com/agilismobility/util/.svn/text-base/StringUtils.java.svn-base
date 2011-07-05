@@ -1,0 +1,9 @@
+package com.sabre.tripcase.util;
+
+public class StringUtils {
+
+	public static boolean isBlank(String string) {
+		return null == string || string.compareTo("") == 0;
+	}
+
+}

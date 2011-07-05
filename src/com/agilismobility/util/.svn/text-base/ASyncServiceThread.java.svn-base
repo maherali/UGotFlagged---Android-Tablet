@@ -1,0 +1,6 @@
+package com.sabre.tripcase.util;
+
+public class ASyncServiceThread extends Thread {
+	public void stop(){}
+	
+}

@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/sts/!svn/ver/24767/tripyn/blackberry/main/src/com/sabre/tripcase/util
+END
+Utils.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/sts/!svn/ver/24646/tripyn/blackberry/main/src/com/sabre/tripcase/util/Utils.java
+END
+DateFormatter.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/sts/!svn/ver/24767/tripyn/blackberry/main/src/com/sabre/tripcase/util/DateFormatter.java
+END
+RMSCookieConnector.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/sts/!svn/ver/22545/tripyn/blackberry/main/src/com/sabre/tripcase/util/RMSCookieConnector.java
+END
+PipeStream.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/sts/!svn/ver/22017/tripyn/blackberry/main/src/com/sabre/tripcase/util/PipeStream.java
+END
+QueryParams.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/sts/!svn/ver/21878/tripyn/blackberry/main/src/com/sabre/tripcase/util/QueryParams.java
+END
+Logger.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/sts/!svn/ver/22017/tripyn/blackberry/main/src/com/sabre/tripcase/util/Logger.java
+END
+HttpRequestFillerBase.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/sts/!svn/ver/20285/tripyn/blackberry/main/src/com/sabre/tripcase/util/HttpRequestFillerBase.java
+END
+Params.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/sts/!svn/ver/14311/tripyn/blackberry/main/src/com/sabre/tripcase/util/Params.java
+END
+GPSManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/sts/!svn/ver/22470/tripyn/blackberry/main/src/com/sabre/tripcase/util/GPSManager.java
+END
+PNGEncoder.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/sts/!svn/ver/24294/tripyn/blackberry/main/src/com/sabre/tripcase/util/PNGEncoder.java
+END
+HttpRequestFiller.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/sts/!svn/ver/14311/tripyn/blackberry/main/src/com/sabre/tripcase/util/HttpRequestFiller.java
+END
+ASyncServiceThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/sts/!svn/ver/22571/tripyn/blackberry/main/src/com/sabre/tripcase/util/ASyncServiceThread.java
+END
+StringUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/sts/!svn/ver/21392/tripyn/blackberry/main/src/com/sabre/tripcase/util/StringUtils.java
+END
+KeyStrokeMonitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/sts/!svn/ver/21706/tripyn/blackberry/main/src/com/sabre/tripcase/util/KeyStrokeMonitor.java
+END
+AsyncServiceRunner.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/sts/!svn/ver/24294/tripyn/blackberry/main/src/com/sabre/tripcase/util/AsyncServiceRunner.java
+END
+HttpConnectionManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/sts/!svn/ver/21984/tripyn/blackberry/main/src/com/sabre/tripcase/util/HttpConnectionManager.java
+END

@@ -1,0 +1,63 @@
+package com.sabre.tripcase.util;
+
+import net.rim.device.api.system.EventLogger;
+
+public class Logger{
+	private final static long ID 		= 0xac88ad1d4a135f61L;
+	private final static String NAME 	= "TripCase";	
+	private static int defaultLevel = EventLogger.getMinimumLevel();
+	public static String[][] LOG_LEVELS = {{"SEVERE ERROR", String.valueOf(EventLogger.SEVERE_ERROR)},
+										   {"ERROR", String.valueOf(EventLogger.ERROR)},
+										   {"WARNING", String.valueOf(EventLogger.WARNING)},
+										   {"INFO", String.valueOf(EventLogger.INFORMATION)},
+										   {"DEBUG", String.valueOf(EventLogger.DEBUG_INFO)}};
+	
+	{
+		EventLogger.register(ID, "TripCase", EventLogger.VIEWER_STRING);
+	}
+
+	public static int getDefaultLevel() {
+		return defaultLevel;
+	}
+
+	public static void setDefaultLevel(int dLevel) {
+		defaultLevel = dLevel;
+		EventLogger.setMinimumLevel(defaultLevel) ;
+	}
+
+	public static void fatal(String message){
+		log(message, EventLogger.SEVERE_ERROR);
+	}
+
+	public static void error(String message){
+		log(message, EventLogger.ERROR);
+	}
+	
+	public static void warning(String message){
+		log(message, EventLogger.WARNING);
+	}
+
+	public static void info(String message){
+		log(message, EventLogger.INFORMATION);	
+	}
+
+	public static void debug(String message){
+		log(message, EventLogger.DEBUG_INFO);	
+	}
+
+	public static void stack(Throwable t){
+		log(t.getMessage(), EventLogger.WARNING);
+		t.printStackTrace();
+	}
+	
+	private static void log(String message, int level){
+		if(message != null){
+			EventLogger.logEvent(ID, message.getBytes(), level );
+			if(level <= defaultLevel){
+				System.out.println(NAME + ": " + message);
+			}
+		}
+	}
+
+}
+

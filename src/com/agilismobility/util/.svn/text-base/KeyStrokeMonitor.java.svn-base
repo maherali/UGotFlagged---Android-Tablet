@@ -1,0 +1,62 @@
+package com.sabre.tripcase.util;
+
+import java.util.Vector;
+
+import com.sabre.tripcase.presenters.SecretConfigPresenter;
+import com.sabre.tripcase.views.util.ScreenHelper;
+
+public class KeyStrokeMonitor {
+    private Vector keyStrokes = new Vector();
+    private final static char[] secretKeySeries = {'t', 'c', 'd', 'b'};
+    private final static int KEY_STROKE_TIME = 20;	// 20 seconds
+
+    public void inspectKeyStroke(char c, int status, int time){
+    	collectKeyStrokes(c, status, time);
+    	if(triggerConfig()){
+    		// show secret config screen
+    		ScreenHelper.pushScreen(new SecretConfigPresenter(), false);
+    	}
+    }
+    
+    private void collectKeyStrokes(char c, int status, int time){
+    	if(keyStrokes.size() == secretKeySeries.length){
+    		keyStrokes.removeElementAt(0);
+    	}
+    	keyStrokes.addElement(new KeyStroke(c, status, time));
+    }
+    
+    private boolean triggerConfig(){
+    	boolean bResult = true;
+    	int size = keyStrokes.size();
+    	if(size == secretKeySeries.length){
+    		int startT = 0;
+    		int endT = 0;
+    		for(int i = 0; i < size; i ++){
+    			KeyStroke key = (KeyStroke)keyStrokes.elementAt(i);
+    			if(i == 0)
+    				startT = key.time;
+    			if(i == size - 1)
+    				endT = key.time;
+    			
+    			if(key.c != secretKeySeries[i]){
+    				bResult = false;
+    				break;
+    			}
+    		}
+    		
+    		if(bResult && (endT - startT) > 1000 * KEY_STROKE_TIME)
+    			bResult = false;
+    	}else
+    		bResult = false;
+    	return bResult;
+    }
+    
+    private class KeyStroke{
+    	private char c;
+    	private int time;
+    	public KeyStroke(char c, int status, int time){
+    		this.c = c;
+    		this.time = time;
+    	}
+    }
+}

@@ -1,0 +1,530 @@
+//#preprocess
+package com.sabre.tripcase.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.Vector;
+
+import javax.microedition.location.QualifiedCoordinates;
+
+import net.rim.blackberry.api.browser.Browser;
+import net.rim.blackberry.api.invoke.Invoke;
+import net.rim.blackberry.api.invoke.MapsArguments;
+import net.rim.blackberry.api.invoke.PhoneArguments;
+import net.rim.device.api.applicationcontrol.ApplicationPermissions;
+import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
+import net.rim.device.api.compress.GZIPInputStream;
+import net.rim.device.api.compress.GZIPOutputStream;
+import net.rim.device.api.crypto.SHA1Digest;
+import net.rim.device.api.i18n.Locale;
+import net.rim.device.api.io.http.HttpHeaders;
+import net.rim.device.api.math.Fixed32;
+import net.rim.device.api.system.ApplicationDescriptor;
+import net.rim.device.api.system.ApplicationManager;
+import net.rim.device.api.system.Bitmap;
+import net.rim.device.api.system.CodeModuleManager;
+import net.rim.device.api.system.DeviceInfo;
+import net.rim.device.api.system.Display;
+import net.rim.device.api.system.EncodedImage;
+import net.rim.device.api.system.JPEGEncodedImage;
+import net.rim.device.api.ui.Graphics;
+import net.rim.device.api.ui.Manager;
+import net.rim.device.api.ui.XYRect;
+import net.rim.device.api.ui.component.Dialog;
+import net.rim.device.api.util.MathUtilities;
+
+import com.sabre.tripcase.Constants;
+import com.sabre.tripcase.model.ConfigProxy;
+import com.sabre.tripcase.model.data.FlightItem;
+import com.sabre.tripcase.presenters.PhoneCallHelpPresenter;
+import com.sabre.tripcase.presenters.WebImageFullPresenter;
+import com.sabre.tripcase.views.util.ScreenHelper;
+
+public class Utils {
+	private static String deviceOSVer;
+	public static int defaultCountryIndex;
+
+	static
+	{
+		ApplicationManager appMan = ApplicationManager.getApplicationManager();
+		ApplicationDescriptor[] appDes = appMan.getVisibleApplications();
+
+		//check for the version of a standard RIM app.
+		int size = appDes.length;
+
+		for (int i = size-1; i>=0; --i){
+			if ((appDes[i].getModuleName()).equals("net_rim_bb_ribbon_app")){
+				deviceOSVer = appDes[i].getVersion();
+				break;
+			}
+		}
+	}
+
+	public static String getDeviceOSVer(){return deviceOSVer;}
+
+	public static void sleep(long milliSeconds) {
+		try {
+			Thread.sleep(milliSeconds);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static byte[] compress(String data) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		GZIPOutputStream gzipStream = new GZIPOutputStream(baos, GZIPOutputStream.COMPRESSION_BEST, GZIPOutputStream.MAX_LOG2_WINDOW_LENGTH );
+	    try {
+	        gzipStream.write(data.getBytes());
+	        gzipStream.flush();
+	        return baos.toByteArray();
+	    }
+	    catch(IOException ioe) {
+	    	ioe.printStackTrace();
+	        return data.getBytes();
+	    } finally {
+	    	try {
+				gzipStream.close();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+	    }
+	}
+
+	public static String decompress(byte[] data) {
+		ByteArrayInputStream bais = new ByteArrayInputStream(data);
+	    GZIPInputStream gzis = new GZIPInputStream(bais);
+	    StringBuffer sb = new StringBuffer();
+		try {
+		    int i;
+		    while ((i = gzis.read()) != -1) {
+		      sb.append((char)i);
+		    }
+		    return sb.toString();
+		} catch(IOException ioe) {
+	    	ioe.printStackTrace();
+			return new String(data);
+		} finally {
+	    	try {
+	    		gzis.close();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+	    }
+	}
+
+	public static boolean openWebResourceExt(String url) {
+		return openWebResourceExt(url, false, null);
+	}
+
+	public static boolean openWebResourceExt(String url, boolean supportCookie, String[][] exHeaders) {
+		boolean result = false;
+		try {
+			synchronized (net.rim.device.api.system.Application.getEventLock()) {
+				HttpHeaders headers = new HttpHeaders();
+				if(supportCookie){
+					headers.addProperty("Alt-Cookie", RMSCookieConnector.getCookie(url));
+				}
+				
+				if(exHeaders != null){
+					for(int i = 0; i < exHeaders.length; i ++){
+						headers.addProperty(exHeaders[i][0], exHeaders[i][1]);
+					}
+				}
+				Browser.getDefaultSession().displayPage(url, "", headers, null);
+			}
+			result = true;
+		} catch (Exception e) {
+		}
+		return result;
+	}
+
+	public static void drawCenterImg(Graphics g, XYRect rect, Bitmap img) {
+		try {
+			int imgWidth = img.getWidth();
+			int imgHeight = img.getHeight();
+
+			int x = rect.x; // Left edge of the destination region
+			int y = rect.y; // Top edge of the destination region.
+			int imX = 0; // Left edge of region within bitmap to draw.
+			int imY = 0; // Top edge of region within bitmap to draw.
+			int destWidth; // Width of the destination region.
+			int destHeight; // Height of the destination region.
+
+			if (imgWidth >= rect.width) {
+				x = rect.x;
+				imX = (imgWidth - rect.width) / 2;
+				destWidth = rect.width;
+			} else {
+				x = rect.x + (rect.width - imgWidth) / 2;
+				imX = 0;
+				destWidth = imgWidth;
+			}
+
+			if (imgHeight >= rect.height) {
+				y = rect.y;
+				imY = (imgHeight - rect.height) / 2;
+				destHeight = rect.height;
+			} else {
+				y = rect.y + (rect.height - imgHeight) / 2;
+				imY = 0;
+				destHeight = imgHeight;
+			}
+
+			g.drawBitmap(x, y, destWidth, destHeight, img, imX, imY);
+		} catch (Exception e) {
+		}
+	}
+
+//	public static Bitmap scaleBitmap(String file, double scaleX, double scaleY)
+//	{
+//        EncodedImage orgImage = EncodedImage.getEncodedImageResource(file);
+//    	return scaleBitmap(orgImage, scaleX, scaleY);
+//	}
+//
+//	public static EncodedImage scaleImage(String file, double scaleX, double scaleY)
+//	{
+//        EncodedImage orgImage = EncodedImage.getEncodedImageResource(file);
+//    	return scaleImage(orgImage, scaleX, scaleY);
+//	}
+//
+//	public static Bitmap scaleBitmap(EncodedImage orgImage, double scaleX, double scaleY){
+//		return scaleImage(orgImage, scaleX, scaleY).getBitmap();
+//	}
+
+	public static EncodedImage scaleImage(EncodedImage orgImage, double scaleX, double scaleY){
+
+        int srcWidthFixed32 = Fixed32.toFP(orgImage.getWidth());
+        int srcHeightFixed32 = Fixed32.toFP(orgImage.getHeight());
+
+        int destWidth = (int)(orgImage.getWidth() * scaleX);
+        int destHeight = (int)(orgImage.getHeight() * scaleY);
+
+
+        int requiredWidthFixed32 = Fixed32.toFP(destWidth);
+        int requiredHeightFixed32 = Fixed32.toFP(destHeight);
+
+        int scaleXFixed32 = Fixed32.div(srcWidthFixed32, requiredWidthFixed32);
+        int scaleYFixed32 = Fixed32.div(srcHeightFixed32, requiredHeightFixed32);
+
+        EncodedImage newImage = orgImage.scaleImage32(scaleXFixed32, scaleYFixed32);
+
+        return newImage;
+	}
+
+	public static EncodedImage compressImage(EncodedImage image) {
+		if (image == null) return image;
+    	EncodedImage compressedImage = null;
+    	try {
+    		int width = image.getWidth();
+    		int height = image.getHeight();
+    		int max = Math.max(Constants.UPLOAD_PHOTO_MAX_DIM, Math.max(width, height));
+
+//#ifdef JDE_VER_4.2
+			compressedImage = image;
+//#else
+    		// JPEGEncodedImage.encode() is only supported on OS 4.3.0 and higher.
+    		if(max != Constants.UPLOAD_PHOTO_MAX_DIM){
+	    		double ratio = (double)Constants.UPLOAD_PHOTO_MAX_DIM / max;
+	        	compressedImage = JPEGEncodedImage.encode(scaleImage(image, ratio, ratio).getBitmap(), 60);
+    		}else{
+    			compressedImage = image;
+    		}
+//#endif
+    		}catch(Throwable t) {
+    	}
+    	return compressedImage;
+	}
+
+	public static EncodedImage compressImage(EncodedImage image, int toWidth, int toHeight) {
+		if (image == null) return image;
+    	EncodedImage compressedImage = null;
+    	try {
+    		int width = image.getWidth();
+    		int height = image.getHeight();
+
+//#ifdef JDE_VER_4.2
+			compressedImage = image;
+//#else
+    		// JPEGEncodedImage.encode() is only supported on OS 4.3.0 and higher.
+			double ratioX = (double)toWidth / width;
+			double ratioY = (double)toHeight / height;
+	        compressedImage = JPEGEncodedImage.encode(scaleImage(image, ratioX, ratioY).getBitmap(), 60);
+//#endif
+    		}catch(Throwable t) {
+    	}
+    	return compressedImage;
+	}
+
+	public static void showMap(double latitude, double longitude, String label, String desc){
+    	try{
+    		showBlackBerryMap(latitude, longitude, label, desc);
+    	}catch(Exception e){
+    		Logger.error(e.getMessage());
+    		showCustomMap(latitude, longitude, label, desc);
+    	}
+	}
+
+	private static void showBlackBerryMap(double latitude, double longitude, String label, String desc) throws Exception{
+		String locDoc = "<lbs><location y='" + (int)(latitude * 100000) + "' x='" + (int)(longitude * 100000) + "' label='" + label + "' description='" + desc + "' zoom='4'/></lbs>";
+		try{
+			int handle = CodeModuleManager.getModuleHandle("net_rim_bb_lbs");	// BlackBerry Map module
+			if(handle == 0)
+				throw new Exception("BlackBerry Map is not available!");
+			Invoke.invokeApplication(Invoke.APP_TYPE_MAPS, new MapsArguments( MapsArguments.ARG_LOCATION_DOCUMENT, locDoc));
+		}catch(Exception t){
+			throw new Exception("Error opening BlackBerry Map!");
+		}
+	}
+
+	public static void showCustomMap(double latitude, double longitude, String label, String desc) {
+		String mapUrl = "http://map.access.mapquest.com/mq/mqserver.dll?e=0&GetMapDirect.1=Session:3,FeatureCollection:1,PointFeature:,3072,0,,,0.000000," + latitude + "," + longitude + ",32767,32767,CoverageStyle:1,,DTStyle:3072,0,2147483647,MQ00031,1,1,1,-1,,-1,-1,16711680,-1,2,-1,MapState:,navt," + latitude + "," + longitude + ",9.444444,9.402777,150000,DisplayState.1:0,72,1,Authentication.2:a7e7w~G4rcUKf660,34264,,";
+		String icon = "TC_service_map.png";
+		String text = "Loading map ...";
+		
+		ScreenHelper.pushScreen(new WebImageFullPresenter(mapUrl, icon, text, null), false);
+	}
+	
+	public static boolean isMetric(){
+		boolean bMetric = true;
+
+		Locale systemLocale = Locale.getDefaultForSystem();
+		String countryCode = systemLocale.getCountry();
+		if("US".equalsIgnoreCase(countryCode) || "LR".equalsIgnoreCase(countryCode) || "MM".equalsIgnoreCase(countryCode)){
+			// Only US, Liberia, and Myanmar use "English" system
+			bMetric = false;
+		}
+		return bMetric;
+	}
+
+	public static String getDeviceNameOS(){
+		String name = "BlackBerry" + DeviceInfo.getDeviceName();
+		String ver = "OS" + getDeviceOSVer();
+
+		return name + "/" + ver;
+	}
+
+//	public static EncodedImage loadPhoto(File file) {
+//		EncodedImage img = null;
+//       	FileConnection fc = null;
+//       	InputStream input = null;
+//        try {
+//        	fc = (FileConnection)Connector.open("file:///" + file.getFile());
+//        	if (fc.exists()) {
+//        		input = fc.openInputStream();
+//        		DataBuffer db = new DataBuffer();
+//        		byte[] data = new byte[2048];
+//        		int length = -1;
+//        		while((length = input.read(data)) != -1){
+//        			db.write(data, 0, length);
+//        		}
+//        		byte[] content = db.toArray();
+//        		img = EncodedImage.createEncodedImage(content,0,content.length);
+//        	}
+//
+//        } catch (Throwable e) {
+//			e.printStackTrace();
+//		} finally {
+//            if (fc != null) {
+//                try {
+//                	input.close();
+//                    fc.close();
+//                    fc = null;
+//                } catch (Exception ioex) {}
+//            }
+//        }
+//		return img;
+//	}
+
+	public static long string2Long(String strValue){
+		SHA1Digest sha1Digest = new SHA1Digest();
+
+		//convert the string value to a byte array and pass it into the hash algorithm
+		sha1Digest .update(strValue.getBytes() );
+
+		//retrieve a byte array containing the digest
+		byte[] hashValBytes = sha1Digest.getDigest();
+
+		long hashValLong = 0;
+
+		//create a long value from the byte array
+		for( int i = 0; i < 8; i++ ) {
+		    hashValLong |= ((long)(hashValBytes[i]) & 0x0FF)<<(8*i);
+		}
+
+		return hashValLong;
+	}
+
+	public static void makePhoneCall(String phoneNumber) {
+		PhoneArguments call = new PhoneArguments(PhoneArguments.ARG_CALL, phoneNumber);
+		boolean bHelpNeeded = false;
+		try{
+			ApplicationPermissionsManager apm = ApplicationPermissionsManager.getInstance();
+			ApplicationPermissions permissions = apm.getApplicationPermissions();
+			if(permissions.containsPermissionKey(ApplicationPermissions.PERMISSION_PHONE)){
+				int permsn = permissions.getPermission(ApplicationPermissions.PERMISSION_PHONE);
+				if(permsn == ApplicationPermissions.VALUE_DENY){
+					bHelpNeeded = true;
+				}
+			}
+			Invoke.invokeApplication(Invoke.APP_TYPE_PHONE, call);
+		}catch(Exception e){
+			Logger.warning(e.getMessage());
+			if(bHelpNeeded)
+				ScreenHelper.pushScreen(new PhoneCallHelpPresenter(), false);
+		}
+	}
+
+	public static String getUserAgent() {
+		ConfigProxy config = ConfigProxy.getInstance();
+		ApplicationDescriptor ad = ApplicationDescriptor.currentApplicationDescriptor();
+		Locale systemLocale = Locale.getDefaultForSystem();
+		String strLocale = systemLocale.toString();
+		int index = strLocale.indexOf("__");
+		if(index != -1)
+			strLocale = strLocale.substring(0, index);
+
+		String source = config.getDistrChannel();
+		if(source == null || "".equals(source))
+		{
+			source = "";
+		}else{
+			source = " Source/" + source + ";";
+		}
+		String result = "TripCase/" + config.getServerApiVer() + " (Device/BlackBerry; AppVersion/" + ad.getVersion() + ";" + source + " Model/" + DeviceInfo.getDeviceName() + "; OSV/" + getDeviceOSVer() + "; Locale/" + strLocale + "; Network/" + HttpConnectionManager.CONN_TYPE_STRINGS[HttpConnectionManager.connType] + "; ScreenSize/" + Display.getWidth() + "x" + Display.getHeight()+ ";)";
+		Logger.debug(result);
+		return result;
+	}
+
+	public static void upgradeApplication(String url, String msg, boolean bForceUpgrade){
+		if(url == null || "".equals(url)){
+			Dialog.alert(msg);
+		}else{
+			String[] options = bForceUpgrade ? new String[]{"Update Now"} : new String[]{"Update Now", "Update Later"};
+			Dialog dlg = new Dialog(msg, options, null, 0, Bitmap.getPredefinedBitmap(Bitmap.EXCLAMATION), Manager.NO_HORIZONTAL_SCROLL);
+			dlg.doModal();
+			if(dlg.getSelectedValue() == 0){
+				Utils.openWebResourceExt(url);
+			}
+		}
+	}
+
+	public static boolean isLargeScreen(){
+		return Display.getWidth() * Display.getHeight() >= 480 * 320; // we use Bold device as referrence
+	}
+
+
+
+	public static QualifiedCoordinates getEmptyLocation(){
+		return new QualifiedCoordinates(0, 0, Float.NaN, Float.NaN, Float.NaN);
+	}
+	
+    public static boolean isFlightArrivalUpdateAvailable(FlightItem flightItem) {
+		String strNumFollowing = flightItem.getNumFollowing();
+		int numFollowing = 0;
+		try{
+			numFollowing = Integer.parseInt(strNumFollowing);
+		}catch(Exception e){}
+
+
+		return numFollowing > 0 || !(flightItem.getFlight().isCompleted());
+//		String statusCode = flightItem.getFlight().getStatusCode();
+//		if("".equals(statusCode)){
+//			if(DateFormatter.parse(flightItem.getFlight().getArrivalDate()) > System.currentTimeMillis()){
+//				return true;
+//			}else{
+//				return numFollowing > 0;
+//			}
+//		}else{
+//			return numFollowing > 0 || !("L".equals(statusCode) || "C".equals(statusCode));
+//		}
+	}  
+    
+    public static String[] split(String str, String c) 
+    {
+        String r[] =  null;
+        if(str!=null)
+        {
+            int lenght = str.length();
+            int first = 0;            
+            Vector lista = new Vector();
+            if(str.indexOf(c)!=-1)
+            {
+                for(int i = 0; i < lenght;i++)
+                {
+                    if(i+c.length()<=lenght)
+                    {
+                        if(str.substring(i,i+c.length()).equals(c))
+                        {
+                            lista.addElement(str.substring(first,i));
+                            first = i+c.length();
+                        }
+                    }
+                }
+                if(!str.endsWith(c))
+                {
+                    lista.addElement(str.substring(first,lenght));
+                }
+            }else
+            {
+                lista.addElement(str);
+            }
+            r= new String[lista.size()];
+            for(int i=0;i<lista.size();i++)
+            {
+                r[i] = lista.elementAt(i).toString();
+            }
+        }
+        return r;
+    }
+    
+    public static int compareOSVer(String v1, String v2){
+    	String ver1[] = split(v1, ".");
+    	String ver2[] = split(v2, ".");
+    	
+    	int size1 = ver1.length;
+    	int size2 = ver2.length;
+    	int minSize = Math.min(size1, size2);
+    	
+    	int result = size1 > size2 ? 1 : (size1 < size2 ? -1 : 0);
+
+    	for(int i = 0; i < minSize; i ++){
+    		try{
+				int num1 = Integer.parseInt(ver1[i]);
+				int num2 = Integer.parseInt(ver2[i]);
+				if(num1 > num2){
+					result = 1;
+					break;
+				}else if(num1 < num2){
+					result = -1;
+					break;
+				}
+    		}catch(Exception e){
+    			break;
+    		}
+		}
+   	
+    	return result;
+    }
+    
+	public static double pow(double x, double y){
+		return MathUtilities.exp(MathUtilities.log(x) * y);
+	}
+
+	public static boolean notEmptyOrNull(String s) {
+		return s != null && !("".equalsIgnoreCase(s));
+	} 
+	
+	public static long currentTimeMillisX(){
+		Calendar c = Calendar.getInstance();
+		return c.getTime().getTime() + TimeZone.getDefault().getOffset(1,
+				c.get(Calendar.YEAR),
+				c.get(Calendar.MONTH),
+				c.get(Calendar.DATE),
+				c.get(Calendar.DAY_OF_WEEK),
+				c.get(Calendar.HOUR_OF_DAY)*3600000 + c.get(Calendar.MINUTE)*60000 + c.get(Calendar.SECOND)*1000 + c.get(Calendar.MILLISECOND)
+		);
+	}
+}

@@ -1,13 +1,12 @@
 package com.agilismobility.ugotflagged.dtos;
 
 import java.util.ArrayList;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.Vector;
 
 import com.agilismobility.ugotflagged.utils.XMLHelper;
+import com.agilismobility.util.xpath.OpenXml;
 
-public class UserDTO extends BaseDTO{
+public class UserDTO extends BaseDTO {
 	public int identifier;
 	public String userName;
 	public String firstName;
@@ -28,27 +27,27 @@ public class UserDTO extends BaseDTO{
 
 	public UserDTO(XMLHelper xml) {
 		super(xml);
-		Node theUser = xml.nodesForXPath("user").item(0);
-		this.identifier = xml.intValueForNode(theUser, "identifier");
-		this.userName = xml.textValueForNode(theUser, "user_name");
-		this.firstName = xml.textValueForNode(theUser, "first_name");
-		this.lastName = xml.textValueForNode(theUser, "last_name");
-		this.email = xml.textValueForNode(theUser, "email");
-		this.admin = xml.boolValueForNode(theUser, "admin");
-		this.totalPosts = xml.intValueForNode(theUser, "total_posts");
-		this.noFollowedUsers = xml.intValueForNode(theUser, "no_followed_users");
-		this.noFollowedPlates = xml.intValueForNode(theUser, "no_followed_plates");
-		this.jonedTimeAgo = xml.textValueForNode(theUser, "joined_timeago");
-		this.noFollowers = xml.intValueForNode(theUser, "no_of_followers");
-		this.isFollowed = xml.boolValueForNode(theUser, "is_followed");
-		this.canFollow = xml.boolValueForNode(theUser, "can_follow");
-		this.avatarID = xml.intValueForNode(theUser, "avatar/identifier");
-		this.avatarMainURL = xml.textValueForNode(theUser, "avatar/main_url");
-
+		OpenXml theUser = xml.getDoc();
+		this.identifier = theUser.integer("identifier/text()");
+		this.userName = theUser.string("user_name/text()");
+		this.firstName = theUser.string("first_name/text()");
+		this.lastName = theUser.string("last_name/text()");
+		this.email = theUser.string("email/text()");
+		this.admin = theUser.bool("admin/text()");
+		this.totalPosts = theUser.integer("total_posts/text()");
+		this.noFollowedUsers = theUser.integer("no_followed_users/text()");
+		this.noFollowedPlates = theUser.integer("no_followed_plates/text()");
+		this.jonedTimeAgo = theUser.string("joined_timeago/text()");
+		this.noFollowers = theUser.integer("no_of_followers/text()");
+		this.isFollowed = theUser.bool("is_followed/text()");
+		this.canFollow = theUser.bool("can_follow/text()");
+		this.avatarID = theUser.integer("avatar/identifier/text()");
+		this.avatarMainURL = theUser.string("avatar/main_url/text()");
+		this.avatarMainURL = !"".equals(this.avatarMainURL) ? this.avatarMainURL : null;
 		posts = new ArrayList<PostDTO>();
-		NodeList thePosts = xml.nodesForXPath(theUser, "posts/post");
-		for (int i = 0; i < thePosts.getLength(); i++) {
-			posts.add(new PostDTO(xml, thePosts.item(i)));
+		Vector<OpenXml> thePosts = theUser.elements("posts/post");
+		for (int i = 0; i < thePosts.size(); i++) {
+			posts.add(new PostDTO(thePosts.get(i)));
 		}
 	}
 }

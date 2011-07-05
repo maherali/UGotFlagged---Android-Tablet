@@ -1,0 +1,82 @@
+package com.sabre.tripcase.util;
+
+import javax.microedition.io.HttpConnection;
+
+import net.rim.device.api.ui.UiApplication;
+
+import com.sabre.tripcase.model.DataObjectService;
+import com.sabre.tripcase.model.data.HttpDataObjectResponse;
+import com.sabre.tripcase.views.components.ActivityIndicatorScreen;
+
+public class AsyncServiceRunner {
+	
+	public static void callServiceAsync(final DataObjectService service){
+		final ActivityIndicatorScreen spinner = new ActivityIndicatorScreen();
+		
+		ASyncServiceThread thread = new ASyncServiceThread(){
+			private HttpDataObjectResponse response;
+			private boolean bStopRequested;
+			
+			public void run() {	
+				showBusyCursor(spinner);			
+				
+				response = service.getDataObject();
+				
+				killBusyCursorAndCompleteOperation(spinner, new Runnable(){
+					public void run() {
+						if(!bStopRequested){
+							if (response.isSuccessResponse()){
+								service.processDataObject(response.getDataObject());
+							}
+							else if (response.isInvalidVersion()){
+								service.processUpgradeRequired(response);
+							}else if(response.isSessionInvalid()){
+								service.processInvalidSession(response.getErrorMessage());
+							}else if (!response.isValidResponse()){
+								service.processConnectionProblems();
+							}else {
+								service.processFailure(response.getErrorMessage());
+							}
+						}
+					}		
+				});
+		
+			}
+			
+			public void stop(){
+				bStopRequested = true;
+				if(response != null){
+					try{
+						HttpConnection conn = response.getConnection();
+						conn.close();
+					}catch(Exception e){}
+				}
+			}			
+		};
+		
+		spinner.setAsyncThread(thread);
+		thread.start();
+		
+	}
+	
+	private static void showBusyCursor(final ActivityIndicatorScreen spinner) {
+		UiApplication.getUiApplication().invokeLater(new Thread() {
+	        public void run() {
+	        	UiApplication.getUiApplication().pushModalScreen(spinner);
+	        }
+	    });
+	}
+    
+	private static void killBusyCursorAndCompleteOperation(final ActivityIndicatorScreen spinner, final Runnable operation) {
+		UiApplication.getUiApplication().invokeLater(new Thread() {
+			public void run() {
+				operation.run();				
+				if(spinner.isDisplayed()){
+					// Only pop if it's still on stack.
+					UiApplication.getUiApplication().popScreen(spinner);
+				}
+	  		}
+		});
+	} 
+
+}

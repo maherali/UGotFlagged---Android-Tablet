@@ -1,9 +1,6 @@
 package com.agilismobility.ugotflagged.dtos;
 
-import org.w3c.dom.Node;
-
-import com.agilismobility.ugotflagged.utils.XMLHelper;
-
+import com.agilismobility.util.xpath.OpenXml;
 
 public class ReplyDTO {
 	public int identifier;
@@ -14,14 +11,15 @@ public class ReplyDTO {
 	public String timeAgo;
 	public String text;
 
-	public ReplyDTO(XMLHelper xml, Node reply) {
-		this.identifier = xml.intValueForNode(reply, "identifier");
-		this.authorAvatarURL = xml.textValueForNode(reply, "author_avatar_url");
-		this.ownerID = xml.intValueForNode(reply, "owner_id");
-		this.author = xml.textValueForNode(reply, "author");
-		this.timeAgo = xml.textValueForNode(reply, "timeago");
-		this.postID = xml.intValueForNode(reply, "post_id");
-		this.text = xml.textValueForNode(reply, "text");
+	public ReplyDTO(OpenXml reply) {
+		this.identifier = reply.integer("identifier/text()");
+		this.authorAvatarURL = reply.string("author_avatar_url/text()");
+		this.authorAvatarURL = !"".equals(this.authorAvatarURL) ? this.authorAvatarURL : null;
+		this.ownerID = reply.integer("owner_id/text()");
+		this.author = reply.string("author/text()");
+		this.timeAgo = reply.string("timeago/text()");
+		this.postID = reply.integer("post_id/text()");
+		this.text = reply.string("text/text()");
 	}
 
 }

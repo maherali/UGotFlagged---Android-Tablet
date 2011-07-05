@@ -1,0 +1,287 @@
+package com.sabre.tripcase.util;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Hashtable;
+
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
+
+/**
+ * Simple way of putting persistent cookie support into the framework. Use
+ * RMSCookieConnector.open() instead of Connector.open()
+ */
+public class RMSCookieConnector {
+    private RMSCookieConnector() {}
+
+    // The default name of the RMS to store cookies.
+
+//    static Vector cookieStore;
+//    static String cookieString = "";
+    static Hashtable cookieStore = new Hashtable();
+
+    // Open a new connection and save cookie into the specified store.
+    public static HttpConnection open(String url) throws Exception {
+
+        // Open a new connection.
+        HttpConnection c = (HttpConnection) Connector.open(url);
+        // Find cookies from the store and add to the connection header.
+        addCookie(c, url);
+        // Cookie aware wrapper to the connection object.
+        HttpConnection sc = new HttpRMSCookieConnection(c);
+        return sc;
+    }
+
+    // Close the connection and streams.
+    synchronized public static void close(HttpConnection conn,
+                             InputStream is,
+                             OutputStream os) {
+        if (is != null) {
+            try {
+                is.close();
+            } catch (IOException ignore) {
+                // ignore
+            }
+        }
+
+        if (os != null) {
+            try {
+                os.close();
+            } catch (IOException ignore) {
+                // ignore
+            }
+        }
+
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (IOException ignore) {
+                // ignore
+            }
+        }
+    }
+
+    // Retreive cookies from the connection header and save
+    // them into the cookie store.
+    //
+    // In the store, each cookie is associated with a domain.
+    //
+    // The record store format is:
+    // cookie1, domain1, cookie2, domain2 ...
+    synchronized static void getCookie(HttpConnection c) throws IOException {
+    	if(c.getResponseCode() == HttpConnection.HTTP_OK){
+	    	String host = c.getHost();
+	    	StringBuffer cookieString = new StringBuffer();
+	      int k = 0;
+	      try {
+	        // Iterate through connection headers and find "set-cookie" fields.
+	        while (c.getHeaderFieldKey(k) != null) {
+	          String key = c.getHeaderFieldKey(k);
+	          String value = c.getHeaderField(k);
+	          Logger.debug(key + ":" + value);
+	          if (key.toUpperCase().equals("SET-COOKIE")) {
+	//        	  String[] cookieParts = Utils.split(value, ";");
+	        	  if(cookieString.length() == 0){
+	        		  cookieString.append(value.trim());
+	        	  }else{
+	        		  cookieString.append(",").append(value.trim());
+	        	  }
+	          }
+	          k++;
+	        }
+	      } catch ( Exception e ) {
+	        throw new IOException( e.getMessage() );
+	      }
+	      if(cookieString.length() > 0){
+	    	  Logger.debug("Host = " + host);
+	    	  Logger.debug("Cookie=" + cookieString.toString());
+	    	  cookieStore.put(host, cookieString.toString());
+	      }
+    	}
+    }
+
+    // This method matches cookies in the store with the domain
+    // of the connection. The matched cookies are set into the
+    // headers of the connection.
+    synchronized static void addCookie(HttpConnection c, String url) throws Exception {
+        String host = c.getHost();
+        String cookie = (String)cookieStore.get(host);
+        if(cookie != null && !("".equals(cookie))){
+      	  Logger.debug("Host = " + host);
+    	  Logger.debug("Cookie=" + cookie);
+        	c.setRequestProperty( "Cookie", cookie );
+        }
+    }
+
+    public synchronized static String getCookie(String url){
+    	int index1 = url.indexOf("http://");
+    	int index2 = -1;
+    	int index3 = -1;
+    	if(index1 == -1){
+    		index1 = url.indexOf("https://");
+    		index2 = index1 + 8;
+    	}else{
+    		index2 = index1 + 7;
+    	}
+    	if(index1 != -1){
+    		String host = "";
+    		index3 = url.indexOf(':', index2);
+    		if(index3 == -1)
+    			index3 = url.indexOf('/', index2);
+    		if(index3 != -1){
+    			host = url.substring(index2, index3);
+    		}else{
+    			host = url.substring(index2);
+    		}
+    		return (String)cookieStore.get(host);
+    	}else
+    		return "";
+    }
+
+}
+
+// Wrapper (decorator) class.
+class HttpRMSCookieConnection implements HttpConnection {
+    private HttpConnection c;
+
+    public HttpRMSCookieConnection(HttpConnection c) {
+        this.c = c;
+    }
+
+    public String getURL() {
+        return c.getURL();
+    }
+
+    public String getProtocol() {
+        return c.getProtocol();
+    }
+
+    public String getHost() {
+        return c.getHost();
+    }
+
+    public String getFile() {
+        return c.getFile();
+    }
+
+    public String getRef() {
+        return c.getRef();
+    }
+
+    public String getQuery() {
+        return c.getQuery();
+    }
+
+    public int getPort() {
+        return c.getPort();
+    }
+
+    public String getRequestMethod() {
+        return c.getRequestMethod();
+    }
+
+    public void setRequestMethod(String method) throws IOException {
+        c.setRequestMethod(method);
+    }
+
+    public String getRequestProperty(String key) {
+        return c.getRequestProperty(key);
+    }
+
+    public void setRequestProperty(String key, String value)
+        throws IOException {
+        c.setRequestProperty(key, value);
+    }
+
+    public int getResponseCode() throws IOException {
+        return c.getResponseCode();
+    }
+
+    public String getResponseMessage() throws IOException {
+        return c.getResponseMessage();
+    }
+
+    public long getExpiration() throws IOException {
+        return c.getExpiration();
+    }
+
+    public long getDate() throws IOException {
+        return c.getDate();
+    }
+
+    public long getLastModified() throws IOException {
+        return c.getLastModified();
+    }
+
+    public String getHeaderField(String name) throws IOException {
+        return c.getHeaderField(name);
+    }
+
+    public int getHeaderFieldInt(String name, int def)
+        throws IOException {
+        return c.getHeaderFieldInt(name, def);
+    }
+
+    public long getHeaderFieldDate(String name, long def)
+        throws IOException {
+        return c.getHeaderFieldDate(name, def);
+    }
+
+    public String getHeaderField(int n) throws IOException {
+        return c.getHeaderField(n);
+    }
+
+    public String getHeaderFieldKey(int n) throws IOException  {
+        return c.getHeaderFieldKey(n);
+    }
+
+    public String getType() {
+        return c.getType();
+    }
+
+    public String getEncoding() {
+        return c.getEncoding();
+    }
+
+    public long getLength() {
+        return c.getLength();
+    }
+
+    public void close() throws IOException {
+        c.close();
+    }
+
+    // The cookies have to be retrieved when we open the input stream.
+    public InputStream openInputStream() throws IOException {
+//        checkResponseCode();
+        RMSCookieConnector.getCookie(c);
+        return c.openInputStream();
+    }
+
+    // The cookies have to be retrieved when we open the input stream.
+    public DataInputStream openDataInputStream() throws IOException {
+  //      checkResponseCode();
+        RMSCookieConnector.getCookie(c);
+        return c.openDataInputStream();
+    }
+
+    public OutputStream openOutputStream()
+        throws IOException {
+        return c.openOutputStream();
+    }
+
+    public DataOutputStream openDataOutputStream()
+        throws IOException {
+        return c.openDataOutputStream();
+    }
+
+    private void checkResponseCode() throws IOException {
+        int code = c.getResponseCode();
+        if (code != HttpConnection.HTTP_OK) {
+            throw new IOException(code + "; " + c.getResponseMessage());
+        }
+    }
+}

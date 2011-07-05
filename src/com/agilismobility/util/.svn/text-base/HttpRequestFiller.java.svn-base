@@ -1,0 +1,14 @@
+package com.sabre.tripcase.util;
+
+import java.io.IOException;
+
+import javax.microedition.io.HttpConnection;
+
+public interface HttpRequestFiller {
+	/**
+	 * Populate the HTTP REQUEST header and body before sending the request.
+	 * @param conn
+	 * @throws IOException 
+	 */
+	void fill(HttpConnection conn) throws IOException;
+}

@@ -1,0 +1,68 @@
+package com.sabre.tripcase.util;
+
+import java.util.Vector;
+
+import net.rim.blackberry.api.browser.URLEncodedPostData;
+
+public class QueryParams extends Params {
+	private Vector elements = new Vector();
+
+    public QueryParams() {
+        this(null);
+    }
+
+    public QueryParams(String namespace) {
+        this.namespace = namespace;
+//        params = new URLEncodedPostData(URLEncodedPostData.DEFAULT_CHARSET, false);
+    }
+
+    public Params add(String key, String value) {
+        if (namespace != null) {
+        	elements.addElement(new String[]{namespace + "[" + key + "]", value});
+        } else {
+        	elements.addElement(new String[]{key,value});
+        }
+        return this;
+    }
+
+    public String getParam(String key){
+    	String[] result = getParams(key);
+    	if(result.length >= 1)
+    		return result[0];
+    	else
+    		return null;
+    }
+
+    public String[] getParams(String key){
+    	Vector temp = new Vector();
+    	int nElements = elements.size();
+
+    	for(int i = 0; i < nElements; i ++){
+			String[] element = (String[])elements.elementAt(i);
+			if(element[0].equals(namespace == null ? key : namespace + "[" + key + "]"))
+				temp.addElement(element[1]);
+		}
+
+    	int nResult = temp.size();
+    	String[] result = new String[nResult];
+    	for(int i = 0; i < nResult; i ++){
+    		result[i] = (String)temp.elementAt(i);
+    	}
+    	return result;
+    }
+
+    public String toString() {
+    	int nElements = elements.size();
+    	if(elements.size() == 0)
+    		return "";
+    	else{
+    		URLEncodedPostData data = new URLEncodedPostData(URLEncodedPostData.DEFAULT_CHARSET, false);
+    		for(int i = 0; i < nElements; i ++){
+    			String[] element = (String[])elements.elementAt(i);
+    			data.append(element[0], element[1]);
+    		}
+    		return data.toString();
+    	}
+    }
+
+}

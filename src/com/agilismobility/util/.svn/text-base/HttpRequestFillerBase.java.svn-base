@@ -1,0 +1,22 @@
+package com.sabre.tripcase.util;
+
+import java.io.IOException;
+
+import javax.microedition.io.HttpConnection;
+
+public class HttpRequestFillerBase implements HttpRequestFiller {
+	private int _method;	
+	public HttpRequestFillerBase(int method){
+		_method = method;
+	}
+
+	public void fill(HttpConnection conn) throws IOException {
+		if (_method == HttpConnectionManager.METHOD_GET) {
+			conn.setRequestMethod(HttpConnection.GET);
+		} else if (_method == HttpConnectionManager.METHOD_POST) {
+			conn.setRequestMethod(HttpConnection.POST);
+		}
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		conn.setRequestProperty("App-Agent", Utils.getUserAgent());
+	}
+}

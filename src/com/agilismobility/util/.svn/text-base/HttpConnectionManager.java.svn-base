@@ -1,0 +1,708 @@
+/*
+ * HttpConnectionManager.java
+ *
+ * © <your company here>, 2003-2007
+ * Confidential and proprietary.
+ */
+
+package com.sabre.tripcase.util;
+
+import java.io.IOException;
+import java.util.Hashtable;
+
+import javax.microedition.io.ConnectionNotFoundException;
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
+
+import net.rim.device.api.io.Base64OutputStream;
+import net.rim.device.api.servicebook.ServiceBook;
+import net.rim.device.api.servicebook.ServiceRecord;
+import net.rim.device.api.system.Bitmap;
+import net.rim.device.api.system.CDMAInfo;
+import net.rim.device.api.system.DeviceInfo;
+import net.rim.device.api.system.GPRSInfo;
+import net.rim.device.api.system.PersistentObject;
+import net.rim.device.api.system.PersistentStore;
+import net.rim.device.api.system.RadioException;
+import net.rim.device.api.system.RadioInfo;
+import net.rim.device.api.ui.Manager;
+import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.Dialog;
+
+import com.sabre.tripcase.model.CarrierInfoProxy;
+import com.sabre.tripcase.model.ConfigProxy;
+import com.sabre.tripcase.model.data.CarrierInfo;
+import com.sabre.tripcase.presenters.HttpAuthPresenter;
+import com.sabre.tripcase.presenters.HttpAuthPresenter.UserChoice;
+
+public class HttpConnectionManager {
+	//-------------------------- Compression constants  ----------------------------//
+	public static final int COMP_NO = 0; // Compression is not supported in the current session
+	public static final int COMP_YES = 1; // Compression is supported in the current session
+	public static final int COMP_UNKNOWN = 2; // Not sure.
+
+	private int compressionFlag = COMP_NO;
+
+	//--------------------------- HTTP methods ------------------------------------//
+	public static final int METHOD_GET = 0;
+	public static final int METHOD_POST = 1;
+
+	//--------------------------- Service book constants --------------------------//
+	private static String IPPP = "IPPP"; 
+	private static String WPTCP = "WPTCP";
+
+	private static HttpConnectionManager _manager, _managerNoCookieSupport; // Static instance of the ConnectionManager.
+
+	//--------------------------- Connection Types -------------------------------//
+	public static final int CONN_TYPE_UNKNOWN 		= 0;
+	public static final int CONN_TYPE_UNAVAIL 		= 1;
+	public static final int CONN_TYPE_BES 			= 2;
+	public static final int CONN_TYPE_BIS_B 		= 3;
+	public static final int CONN_TYPE_WAP2			= 4;
+	public static final int CONN_TYPE_TCP_IP		= 5;
+	public static final int CONN_TYPE_WAP1			= 6;
+	
+	public static final String[] CONN_TYPE_STRINGS = {"UNKNOWN", "UNAVAILABLE", "BES", "BIS-B", "WAP2", "TCP-IP", "WAP1"};
+
+	public static int connType = CONN_TYPE_UNKNOWN;
+	private static CarrierInfo carrier;
+	private static PersistentObject connOptionDB = PersistentStore.getPersistentObject(0x202ae9cc31e35256L);
+
+	private static boolean _mdsSupport; 	// Boolean representing whether MDS is supported.
+	private static boolean _bisSupport; 	// Boolean representing whether BIS-B is supported.
+	private static String wap2UID; 		// UID for WAP2 connection string
+
+	private static boolean bBESOptionFromUser = false;		// User's choice of whether to use BES service.
+	private static HttpAuthPresenter.UserChoice tempHttpAuthUserChoice;
+	private static Hashtable httpAuthUserChoices = new Hashtable();
+	
+	private static Hashtable connCfgOptions;
+	
+	private boolean cookieSupport = true;
+	
+	private static int bytesTransmitted;
+
+	static{
+		// Read MCC & MNC values.
+		try {
+			int MCC = -1;
+			int MNC = -1;
+			if (RadioInfo.getNetworkType() == RadioInfo.NETWORK_CDMA) {				
+				String imsi = GPRSInfo.imeiToString(CDMAInfo.getIMSI());
+				MCC = Integer.parseInt(imsi.substring(0, 3));
+				MNC = Integer.parseInt(imsi.substring(3, 6));
+			} else if (RadioInfo.getNetworkType() == RadioInfo.NETWORK_UMTS || RadioInfo.getNetworkType() == RadioInfo.NETWORK_GPRS) {				
+				MCC = Integer.parseInt(Integer.toHexString(GPRSInfo.getHomeMCC()));
+				MNC = Integer.parseInt(Integer.toHexString(GPRSInfo.getHomeMNC()));
+			}
+			if(MCC != -1 && MNC != -1){
+				CarrierInfoProxy proxy = CarrierInfoProxy.getInstance();
+				carrier = proxy.getCarrierInfo(MCC, MNC);
+			}	
+		} catch (Exception t) {}
+		
+		synchronized(connOptionDB)
+		{
+			connCfgOptions = (Hashtable)connOptionDB.getContents();
+			if(connCfgOptions == null)
+				connCfgOptions = new Hashtable();
+		}	
+	}
+	
+	private HttpConnectionManager() {
+		this(true);
+	}
+	
+	private HttpConnectionManager(boolean cookieSupport) {
+		this.cookieSupport = cookieSupport;
+		parseServiceBooks();
+	}
+
+	/**
+	 * Returns an instance of the ConnectionManager. This currently only
+	 * leverages providing a static instance (one per process) but could easily
+	 * be changed to provide a singleton instance for the whole system.
+	 * 
+	 * @return an instance of the ConnectionManager.
+	 */
+	public static HttpConnectionManager getInstance() {
+		return getInstance(true);
+	}
+	
+	public static HttpConnectionManager getInstance(boolean cookieSupport) {
+		if (cookieSupport) {
+			if (_manager == null) {
+				return _manager = new HttpConnectionManager(cookieSupport);
+			}
+			return _manager;
+		} 
+		if (_managerNoCookieSupport == null) {
+			return _managerNoCookieSupport = new HttpConnectionManager(cookieSupport);
+		}
+		return _managerNoCookieSupport;
+	}
+	
+	public void setCookieSupport(boolean cookieSupport) {
+		this.cookieSupport = cookieSupport;
+	}
+
+	public int getCompFlag() {
+		return compressionFlag;
+	}
+
+	public static int getConnType() {
+		return connType;
+	}
+
+	public static void setConnType(int connType) {
+		HttpConnectionManager.connType = connType;
+	}
+
+	public static boolean isBESDevice(){
+		return _mdsSupport;
+	}
+	
+//	public HttpConnection open(String url, int method)throws IllegalArgumentException, ConnectionNotFoundException, IOException, RadioException, Exception {
+//		return open(url, method, compressionFlag == COMP_YES);
+//	}
+
+	// //////////////////////////////////////////////////////////
+	// / GlobalEventListener Interface Implementation ///
+	// //////////////////////////////////////////////////////////
+
+	/**
+	 * Invoked when the specified global event occured. The eventOccurred method
+	 * provides two object parameters and two integer parameters for supplying
+	 * details about the event itself. The developer determines how the
+	 * parameters will be used.
+	 * 
+	 * For example, if the event corresponded to sending or receiving a mail
+	 * message, the object0 parameter might specify the mail message itself,
+	 * while the data0 parameter might specify the identification details of the
+	 * message, such as an address value.
+	 * 
+	 * @param guid
+	 *            - The GUID of the event.
+	 * @param data0
+	 *            - Integer value specifying information associated with the
+	 *            event.
+	 * @param data1
+	 *            - Integer value specifying information associated with the
+	 *            event.
+	 * @param object0
+	 *            - Object specifying information associated with the event.
+	 * @param object1
+	 *            - Object specifying information associated with the event.
+	 */
+	public void eventOccurred(long guid, int data0, int data1, Object object0,
+			Object object1) {
+		if (guid == ServiceBook.GUID_SB_ADDED
+				|| guid == ServiceBook.GUID_SB_CHANGED
+				|| guid == ServiceBook.GUID_SB_OTA_SWITCH
+				|| guid == ServiceBook.GUID_SB_OTA_UPDATE ||
+				// guid == ServiceBook.GUID_SB_POLICY_CHANGED ||
+				guid == ServiceBook.GUID_SB_REMOVED) {
+			// Dialog.inform( "Service Book Global Event Received" );
+			parseServiceBooks();
+		}
+	}
+
+	/**
+	 * This method provides the functionality of actually parsing through the
+	 * service books on the handheld and determining which traffic routes are
+	 * available based on that information.
+	 */
+	private void parseServiceBooks() {
+		// Add in our new items by scrolling through the ServiceBook API.
+		ServiceBook sb = ServiceBook.getSB();
+		findBISBES(sb);
+		findWAP2(sb);
+	}
+
+	private void findBISBES(ServiceBook sb) {
+		ServiceRecord[] records = sb.findRecordsByCid(IPPP); // The IPPP service represents the data channel for MDS and BIS-B
+		if (records == null) {
+			return;
+		}
+
+		int numRecords = records.length;
+		for (int i = 0; i < numRecords; i++) {
+			ServiceRecord myRecord = records[i];
+
+			// First of all, the CID itself should be equal to IPPP if this is going to be an IPPP service book.
+			if (myRecord.isValid() && !myRecord.isDisabled()) {
+				// Now we need to determine if the service book is Desktop or BIS. One could check against the
+				// name but that is unreliable. The best mechanism is to leverage the security of the service
+				// book to determine the security of the channel.
+				int encryptionMode = myRecord.getEncryptionMode();
+				if (encryptionMode == ServiceRecord.ENCRYPT_RIM) {
+					_mdsSupport = true;
+				} else {
+					_bisSupport = true;
+				}
+			}
+		}
+	}
+
+	private void findWAP2(ServiceBook sb) {
+
+		ServiceRecord[] records = sb.findRecordsByCid(WPTCP); 
+		if (records == null) {
+			return;
+		}
+
+		for (int i = 0; i < records.length; i++) {
+			// Search through all service records to find the valid non-Wi-Fi and non-MMS WAP 2.0 Gateway Service Record.
+			if (records[i].isValid() && !records[i].isDisabled()) {
+				if (records[i].getUid() != null && records[i].getUid().length() != 0) {
+					if ((records[i].getUid().toLowerCase().indexOf("wptcp") != -1) && (records[i].getUid().toLowerCase().indexOf("wifi") == -1) && (records[i].getUid().toLowerCase().indexOf("mms") == -1)) {
+						wap2UID = records[i].getUid();
+						break;
+					}
+				}
+			}
+		}
+	}
+
+//	private HttpConnection open(String url, int method, boolean bCompress) throws IllegalArgumentException, ConnectionNotFoundException, IOException, RadioException, Exception {
+//		int state = RadioInfo.getState();
+//		if (state == RadioInfo.STATE_OFF || state == RadioInfo.STATE_LOWBATT)
+//			throw new RadioException("Radio off or too low");
+//
+//		if(connType == CONN_TYPE_UNKNOWN || needsConnectionReTest())
+//			connType = testConnection();
+//		if(connType == CONN_TYPE_UNAVAIL)
+//			throw new ConnectionNotFoundException();
+//
+//		url = url + getConnString(connType);
+//
+//		HttpConnection conn = cookieSupport ? RMSCookieConnector.open(url) : (HttpConnection) Connector.open(url);
+//		if (method == METHOD_GET) {
+//			conn.setRequestMethod("GET");
+//		} else if (method == METHOD_POST) {
+//			conn.setRequestMethod("POST");
+//		}
+//		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+////		conn.setRequestProperty("User-Agent", "Profile/MIDP-2.0 Configuration/CLDC-1.0");
+//		conn.setRequestProperty("App-Agent", Utils.getUserAgent());
+//
+//        byte[] credential = getHttpAuthenticationBytes(connType);
+//        if(credential != null){
+//        	conn.setRequestProperty("Authorization", "Basic " + new String(credential));
+//        }
+//		if (bCompress)
+//			conn.setRequestProperty("Accept-Encoding", "gzip");
+//		return conn;
+//	}
+
+	public HttpConnection open(String url, HttpRequestFiller filler) throws RadioException, ConnectionNotFoundException, IOException, Exception{
+		return open(url, filler, true);
+	}
+
+	public HttpConnection open(String url, HttpRequestFiller filler, boolean bCompress) throws RadioException, ConnectionNotFoundException, IOException, Exception{
+		int state = RadioInfo.getState();
+		if (state == RadioInfo.STATE_OFF || state == RadioInfo.STATE_LOWBATT)
+			throw new RadioException("Radio off or too low");
+
+		if(connType == CONN_TYPE_UNKNOWN)
+			connType = testConnection(bCompress);
+		if(connType == CONN_TYPE_UNAVAIL)
+			throw new ConnectionNotFoundException();
+
+		url = url + getConnString(connType);
+		return open(url, filler, connType, bCompress);
+	}
+	
+	private HttpConnection open(String url, HttpRequestFiller filler, final int connType, boolean bCompress) throws IOException, Exception{
+		Logger.debug("HTTPConnectionManager::open url = " + url);
+		HttpConnection conn = cookieSupport ? RMSCookieConnector.open(url) : (HttpConnection) Connector.open(url);
+
+		byte[] credential = getHttpAuthenticationBytes(connType);
+        if(credential != null)
+        	conn.setRequestProperty("Authorization", "Basic " + new String(credential));
+		if (bCompress){
+			conn.setRequestProperty("Accept-Encoding", "gzip");
+		}
+		filler.fill(conn);
+
+		boolean keepGoing = true;
+		while(keepGoing)
+		{
+			int status = conn.getResponseCode();
+			switch (status)
+			{
+				case (HttpConnection.HTTP_OK):
+						keepGoing = false;    
+						break;
+
+				case (HttpConnection.HTTP_UNAUTHORIZED):	  
+					String authScheme = conn.getHeaderField("www-authenticate");
+					Logger.debug("HTTP Basic auth: scheme = " + authScheme);
+					if(authScheme != null && authScheme.trim().toUpperCase().startsWith("BASIC")){
+						int index = authScheme.toUpperCase().indexOf("REALM");
+						final String proxyServer = (index == -1) ? null : authScheme.substring(index + 6);
+						String domainStr = conn.getHeaderField("x-rim-authenticate");
+						Logger.debug("HTTP Basic auth: domain = " + domainStr);
+						domainStr = (domainStr == null) ? "" : domainStr;
+						index = domainStr.indexOf('=');
+						final String domain = (index == -1) ? domainStr : domainStr.substring(index + 1);
+						UiApplication.getUiApplication().invokeAndWait(new Runnable()
+						{
+							public void run()
+							{
+								String[] credential = getHttpAuthentication(connType);
+								tempHttpAuthUserChoice = HttpAuthPresenter.prompt(proxyServer, domain == null ? "" : domain, credential == null ? "" : credential[0]);
+							}
+						});
+
+						if (tempHttpAuthUserChoice.getOption() == HttpAuthPresenter.RESPONSE_OK)
+						{
+							httpAuthUserChoices.put(String.valueOf(connType), tempHttpAuthUserChoice);
+							if(tempHttpAuthUserChoice.isRememberUsername()){
+								persistAuthCredential(connType, tempHttpAuthUserChoice);
+							}
+							String login = tempHttpAuthUserChoice.getUsername() + ":" + tempHttpAuthUserChoice.getPassword();
+							conn.close();
+
+							//Encode the login information in Base64 format.
+							byte[] encoded = Base64OutputStream.encode(login.getBytes(), 0, login.length(), false, false);
+
+							conn = cookieSupport ? RMSCookieConnector.open(url) : (HttpConnection) Connector.open(url);
+							conn.setRequestProperty("Authorization", "Basic " + new String(encoded));
+							if (compressionFlag == COMP_YES)
+								conn.setRequestProperty("Accept-Encoding", "gzip");
+							filler.fill(conn);
+						}else
+						{
+							//Handle failed connection.
+							keepGoing = false;
+						}
+
+						break;
+
+					}else{
+						// Unsupported authentication scheme such as NTLM or Kerberos authentication
+						keepGoing = false;    
+						break;	                            		
+					}
+				default:
+					keepGoing = false;
+					break;
+			}
+		}
+		return conn;
+	}
+		
+	private int testConnection(boolean bCompress){		
+		int type = CONN_TYPE_UNKNOWN;
+		ConfigProxy proxy = ConfigProxy.getInstance();
+		String testURL = proxy.getConnectionTestURL();                
+
+		boolean bIsSimulator = DeviceInfo.isSimulator();
+		if(bIsSimulator){
+			type = CONN_TYPE_TCP_IP;
+		}else{
+			// First, check to see whether this application has ever been able to connect before
+			if((type = retrieveLastConnType()) != CONN_TYPE_UNKNOWN)
+			{
+				// If so, to save time, try to use that type to connect first
+				if(!canConnect(testURL, type, bCompress))
+					type = CONN_TYPE_UNKNOWN;
+			}
+			
+			if(type == CONN_TYPE_UNKNOWN)
+			{
+				boolean bMdsSupport = _mdsSupport;
+				if(bMdsSupport){
+					// BES device
+					Logger.debug("** BES device ");
+					if(everTriedMDS()){
+						if(canConnect(testURL, CONN_TYPE_BES, bCompress)){
+							type = CONN_TYPE_BES;
+						}else{
+							// TOO BAD, to avoid "split-pipe", don't try anything else
+							type = CONN_TYPE_UNAVAIL;
+						}
+					}else{
+						if(canConnect(testURL, CONN_TYPE_BIS_B, bCompress)){
+							// try BIS-B connection even if it's a BES device
+							type = CONN_TYPE_BIS_B;
+						}else if(canConnect(testURL, CONN_TYPE_WAP2, bCompress)){
+							// try WAP2 connection
+							type = CONN_TYPE_WAP2;
+						}else if (canConnect(testURL, CONN_TYPE_TCP_IP, bCompress)){
+							// try TCP/IP connection
+							type = CONN_TYPE_TCP_IP;
+						}else if (canConnect(testURL, CONN_TYPE_WAP1, bCompress)){
+							// try WAP1 connection
+							type = CONN_TYPE_WAP1;
+						}else{
+							type = CONN_TYPE_UNAVAIL;
+							// Warn the customer about enterprise MDS connection
+		    				UiApplication.getUiApplication().invokeAndWait(new Thread(){
+		    					public void run(){
+									Dialog dlg = new Dialog("Does your company's BES server block internet connection?", new String[] { "Yes", "No", "I don't know" }, null, 0, Bitmap.getPredefinedBitmap(Bitmap.EXCLAMATION), Manager.NO_HORIZONTAL_SCROLL);
+									dlg.doModal();
+									bBESOptionFromUser = dlg.getSelectedValue() == 1;
+		    					}
+		    				});
+							if(bBESOptionFromUser){
+								// try Enterprise MDS connection
+								// remember it in persistence storage, and never try any other option again!
+								saveMDSOption();
+								if(canConnect(testURL, CONN_TYPE_BES, bCompress)){
+									type = CONN_TYPE_BES;
+								}else
+									type = CONN_TYPE_UNAVAIL;
+							}								    			
+						}
+					}
+				}else if(_bisSupport){
+					// BIS device
+					if(canConnect(testURL, CONN_TYPE_BIS_B, bCompress)){
+						// try BIS-B connection
+						type = CONN_TYPE_BIS_B;
+					}else if(canConnect(testURL, CONN_TYPE_WAP2, bCompress)){
+						// try WAP2 connection
+						type = CONN_TYPE_WAP2;
+					}else if(canConnect(testURL, CONN_TYPE_TCP_IP, bCompress)){
+						// try TCP/IP connection
+						type = CONN_TYPE_TCP_IP;
+					}else if(canConnect(testURL, CONN_TYPE_WAP1, bCompress)){
+						// try WAP1 connection
+						type = CONN_TYPE_WAP1;
+					}else{
+						type = CONN_TYPE_UNAVAIL;
+					}
+				}
+			}
+			if(type != CONN_TYPE_UNAVAIL)
+			{
+				// Remember the connection type in DB.
+				rememberLastConnType(type);
+			}
+		}
+		
+		return type;
+	}
+
+	private boolean canConnect(String testURL, final int type, boolean bCompress) {
+		boolean bResult = false;
+		switch(type){
+			case CONN_TYPE_WAP1:
+				break;
+			case CONN_TYPE_WAP2:
+				if(wap2UID == null)
+					bResult = false;
+				break;
+		}
+		if((type == CONN_TYPE_WAP2 && wap2UID == null) || (type == CONN_TYPE_WAP1 && !hasCarrierAPN())){
+			bResult = false;
+		}else{
+			testURL += getConnString(type);
+			
+		    HttpConnection httpConn = null;
+		    try{
+		    	httpConn = open(testURL, new HttpRequestFillerBase(HttpConnectionManager.METHOD_GET), type, bCompress);
+		    	if(httpConn != null && httpConn.getResponseCode() == HttpConnection.HTTP_OK);
+		    		bResult = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				bResult = false;
+			}      
+		}
+		return bResult;
+	}
+
+
+    public byte[] getHttpAuthenticationBytes(int connType){
+    	String[] credential = getHttpAuthentication(connType);
+    	if(credential != null && credential[0] != null && credential[1] != null){
+			String login = credential[0] + ":" + credential[1];
+			try {
+				return Base64OutputStream.encode(login.getBytes(), 0, login.length(), false, false);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}    		
+    	}else{
+    		return null;
+    	}
+		return null;
+    }
+    private String[] getHttpAuthentication(int connType)
+    {    	
+    	String[] credential = null;
+		String username = null;
+		String password = null;
+    	
+    	UserChoice choice = (UserChoice)httpAuthUserChoices.get(String.valueOf(connType));
+    	if(choice != null){
+    		username = choice.getUsername();
+    		password = choice.getPassword();
+    		
+    	}else{
+	        username = (String)(connCfgOptions.get("CONN_HTTP_AUTH_USERNAME_FOR_TYPE_" + connType));
+    	}
+		if(username != null){
+			credential = new String[]{username, password};
+		}
+    	return credential;
+    }
+    
+	private void persistAuthCredential(int connType, UserChoice userChoice) {
+		synchronized(connOptionDB)
+		{
+			connCfgOptions.put("CONN_HTTP_AUTH_USERNAME_FOR_TYPE_" + connType, userChoice.getUsername());
+			connOptionDB.setContents(connCfgOptions);
+			connOptionDB.commit();
+		}		
+	}
+
+	private boolean everTriedMDS() {
+		boolean bResult = connCfgOptions.get("CONN_MDS_ATTEMPTED") != null;
+		return bResult;
+	}
+
+	private void saveMDSOption() {
+		synchronized(connOptionDB)
+		{
+			connCfgOptions.put("CONN_MDS_ATTEMPTED", "true");
+			connOptionDB.setContents(connCfgOptions);
+			connOptionDB.commit();
+		}		
+	}
+
+	private void rememberLastConnType(int type) {
+		synchronized(connOptionDB)
+		{
+			connCfgOptions.put("CONN_TYPE_LAST_USED", String.valueOf(type));
+			connOptionDB.setContents(connCfgOptions);
+			connOptionDB.commit();
+		}		
+	}
+
+	private int retrieveLastConnType() {
+		int type = CONN_TYPE_UNKNOWN;
+		try
+		{
+    		type = Integer.parseInt((String)connCfgOptions.get("CONN_TYPE_LAST_USED"));
+		}catch(Exception e){
+			type = CONN_TYPE_UNKNOWN;
+		}
+    	
+		return type;
+	}
+	
+	private String getConnString(int connType) {
+		String strConn = "";
+
+		switch(connType){
+			case CONN_TYPE_BES:
+				strConn = ";deviceside=false";
+				break;
+			case CONN_TYPE_BIS_B:
+				strConn = ";deviceside=false;ConnectionType=mds-public;EndToEndRequired";
+				break;
+			case CONN_TYPE_WAP2:
+				strConn = ";deviceside=true;ConnectionUID=" + wap2UID;
+				break;
+			case CONN_TYPE_TCP_IP:
+				strConn = ";deviceside=true" + getCarrierTCPAPN();				
+				break;
+			case CONN_TYPE_WAP1:
+				strConn = ";deviceside=true" + getCarrierWAP1APN();				
+				break;
+			default:
+				break;
+		}
+		return strConn;
+	}
+
+	private boolean hasCarrierAPN(){
+		return carrier != null;
+	}
+
+	private String getCarrierTCPAPN() {
+		String apn = "";
+		if(carrier != null){
+			String apnRoot = carrier.getTcpAPN();
+			String username = carrier.getTcpAPNUserName();
+			String password = carrier.getTcpAPNPassword();
+			if(apnRoot.length()>0)
+				apn += ";apn=" + apnRoot;
+			if(username.length()>0)
+				apn += ";TunnelAuthUsername=" + username;
+			if(password.length()>0)
+				apn +=";TunnelAuthPassword=" + password;
+		}
+		return apn;
+	}
+
+	private String getCarrierWAP1APN() {
+		String apn = "";
+		String gatewayIP = carrier.getWapIP();
+		String gatewayAPN = carrier.getWapAPN();
+		String gatewayPort = carrier.getWapPort();
+		String sourceIP = carrier.getWapSourceIP();
+		String sourcePort = carrier.getWapSourcePort();
+		String username = carrier.getWapUserName();
+		String password = carrier.getWapPassword();
+		
+		if(gatewayIP.length()>0){
+			apn += ";WapGatewayIP=" + gatewayIP;
+		}		
+		if(gatewayAPN.length()>0){
+			apn += ";WapGatewayAPN=" + gatewayAPN;
+		}
+		if(gatewayPort.length()>0){
+			apn += ";WapGatewayPort=" + gatewayPort;
+		}
+		if(sourceIP.length()>0){
+			apn += ";WapSourceIP=" + sourceIP;
+		}
+		if(sourcePort.length()>0){
+			apn += ";WapSourcePort=" + sourcePort;
+		}
+		if(username.length()>0){
+			apn += ";TunnelAuthUsername=" + username;
+		}
+		if(password.length()>0){
+			apn += ";TunnelAuthPassword=" + password;
+		}
+		if(carrier.isEnabaleWTLS()){
+			apn += ";WapEnableWTLS=true";
+		}
+		return apn;		
+	}
+
+	public static synchronized void addBytesTransmitted(int bytes){
+		bytesTransmitted += bytes;
+	}
+	
+	public static synchronized int getBytesTransmitted(){
+		return bytesTransmitted;
+	}
+
+	public static synchronized String getBytesTransmittedFormatted(){
+		double result = (double)bytesTransmitted / 1024;
+		String unit = "KB";
+		if(result > 1024){
+			result = result / 1024;
+			unit = "MB";
+			if(result > 1024){
+				result = result / 1024;
+				unit = "GB";
+			}
+		}
+		
+		String strResult = String.valueOf(result);
+		int dotIndex = strResult.indexOf(".");
+		int length = strResult.length();
+		if(dotIndex >= 0){
+			strResult = strResult.substring(0, (dotIndex < length - 2 ? dotIndex + 3 : dotIndex + 2));
+		}
+		return strResult + unit;
+	}
+}
+
+
