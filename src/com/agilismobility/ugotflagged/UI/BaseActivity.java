@@ -87,11 +87,11 @@ public abstract class BaseActivity extends Activity {
 		super.onDestroy();
 	}
 
-	void showError(String error) {
+	public void showError(String error) {
 		showDialog("Error", error);
 	}
 
-	void showError(ArrayList<String> errors) {
+	public void showError(ArrayList<String> errors) {
 		if (errors.size() > 0) {
 			showError(errors.get(0));
 		}

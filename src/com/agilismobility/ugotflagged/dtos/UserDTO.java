@@ -25,9 +25,7 @@ public class UserDTO extends BaseDTO {
 
 	public ArrayList<PostDTO> posts;
 
-	public UserDTO(XMLHelper xml) {
-		super(xml);
-		OpenXml theUser = xml.getDoc();
+	public UserDTO parse(OpenXml theUser) {
 		this.identifier = theUser.integer("identifier/text()");
 		this.userName = theUser.string("user_name/text()");
 		this.firstName = theUser.string("first_name/text()");
@@ -49,5 +47,16 @@ public class UserDTO extends BaseDTO {
 		for (int i = 0; i < thePosts.size(); i++) {
 			posts.add(new PostDTO(thePosts.get(i)));
 		}
+		return this;
+	}
+
+	public UserDTO() {
+
+	}
+
+	public UserDTO(XMLHelper xml) {
+		super(xml);
+		OpenXml theUser = xml.getDoc();
+		parse(theUser);
 	}
 }

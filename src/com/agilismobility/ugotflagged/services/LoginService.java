@@ -41,12 +41,12 @@ public class LoginService extends Service {
 				new IServerResponder() {
 					@Override
 					public void success(ServerResponseSummary srs) {
-						announceLoginSuccess(startId, srs);
+						anounceLoginFinished(startId, srs, true);
 					}
 
 					@Override
 					public void failure(ServerResponseSummary srs) {
-						announceLoginFailure(startId, srs);
+						anounceLoginFinished(startId, srs, false);
 					}
 				});
 	}
@@ -58,14 +58,6 @@ public class LoginService extends Service {
 		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
-	}
-
-	private void announceLoginSuccess(int startID, ServerResponseSummary srs) {
-		anounceLoginFinished(startID, srs, true);
-	}
-
-	private void announceLoginFailure(int startID, ServerResponseSummary srs) {
-		anounceLoginFinished(startID, srs, false);
 	}
 
 }

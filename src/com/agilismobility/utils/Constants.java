@@ -14,6 +14,7 @@ public class Constants {
 	public static final String LOGGING_IN = "LOGGING_IN";
 	public static final String REFRESHING_STREAM = "REFRESHING_STREAM";
 	public static final String PARSING_USER_DATA = "PARSING_USER_DATA";
+	public static final String FINDING_FOLLOWED = "FINDING_FOLLOWED";
 
 	public static void broadcastDoingSomethingNotification(String notifName) {
 		Intent newIntent = new Intent(CURRENTLY_DOING_SOMETHING_NOTIF);

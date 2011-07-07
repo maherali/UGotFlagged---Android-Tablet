@@ -15,6 +15,7 @@ import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
+import com.agilismobility.ugotflagged.dtos.UsersDTO;
 import com.agilismobility.ugotflagged.services.ImageResources;
 
 public class MainApplication extends Application {
@@ -88,6 +89,7 @@ public class MainApplication extends Application {
 
 		static int currUserID;
 		static HashMap<Integer, UserDTO> users = new HashMap<Integer, UserDTO>();
+		static UsersDTO followedUsers;
 
 		public static void setCurrentUser(UserDTO user) {
 			currUserID = user.identifier;
@@ -104,6 +106,15 @@ public class MainApplication extends Application {
 
 		public static void clearData() {
 			users.clear();
+			followedUsers = null;
+		}
+
+		public static UsersDTO getFollowedUsers() {
+			return followedUsers;
+		}
+
+		public static void setFollowedUsers(UsersDTO us) {
+			followedUsers = us;
 		}
 
 	}
