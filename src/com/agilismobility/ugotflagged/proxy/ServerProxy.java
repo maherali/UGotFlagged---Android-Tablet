@@ -41,7 +41,7 @@ public class ServerProxy {
 	}
 
 	public static String getMethod(HTTP_METHOD method) {
-		return method == HTTP_METHOD.Post ? "POST" : method == HTTP_METHOD.Get ? "GET" : null;
+		return method == HTTP_METHOD.Post ? "POST" : method == HTTP_METHOD.Get ? "GET" : method == HTTP_METHOD.Delete ? "DELETE" : null;
 	}
 
 	public static void post(String funcName, String path, String data, IServerResponder result) {
@@ -105,6 +105,7 @@ public class ServerProxy {
 				conn.setUseCaches(false);
 				conn.setRequestMethod(getMethod(method));
 				conn.setConnectTimeout(CONNECTION_TIMEOUT);
+
 				if (method == HTTP_METHOD.Post) {
 					conn.setRequestProperty("Content-Length", String.format("%d", data.length()));
 					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

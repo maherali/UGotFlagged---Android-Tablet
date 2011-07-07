@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,10 +85,6 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 				new IntentFilter(FollowedUsersService.FOLLOWED_USERS_FINISHED_NOTIF));
 	}
 
-	public void followUnFollow(UserDTO user) {
-		Log.d("", user.userName);
-	}
-
 	public void refresh() {
 		m_adapter.notifyDataSetChanged();
 	}
@@ -122,11 +117,35 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		}.execute();
 	}
 
+	private void parseUser(final String xml) {
+		Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
+		new AsyncTask<Void, Void, UserDTO>() {
+			@Override
+			protected UserDTO doInBackground(Void... params) {
+				return new UserDTO(new XMLHelper(xml));
+			}
+
+			@Override
+			protected void onPostExecute(UserDTO u) {
+				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
+				if (u.errors.size() == 0) {
+					MainApplication.GlobalState.setCurrentUser(u);
+				} else {
+					((BaseActivity) getActivity()).showError(u.errors);
+				}
+			}
+		}.execute();
+	}
+
 	public class FollowedUsersReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getBooleanExtra(FollowedUsersService.SUCCESS_ARG, false)) {
-				parseFollowed(intent.getStringExtra(FollowedUsersService.XML_ARG));
+				if (FollowedUsersService.FIND_FOLLOWED_USERS_ACTION.equals(intent.getStringExtra(FollowedUsersService.ACTION))) {
+					parseFollowed(intent.getStringExtra(FollowedUsersService.XML_ARG));
+				} else if (FollowedUsersService.UNFOLLOW_USER_ACTION.equals(intent.getStringExtra(FollowedUsersService.ACTION))) {
+					parseUser(intent.getStringExtra(FollowedUsersService.XML_ARG));
+				}
 			} else {
 				((BaseActivity) getActivity()).showError(intent.getStringExtra(FollowedUsersService.ERROR_ARG));
 			}
@@ -189,7 +208,7 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 				@Override
 				public void onClick(View v) {
 					UserDTO user = (UserDTO) v.getTag();
-					followUnFollow(user);
+					unFollowUser(user);
 				}
 			});
 
@@ -251,7 +270,18 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 	}
 
 	public void findFollowedUsers() {
-		getActivity().startService(new Intent(getActivity(), FollowedUsersService.class));
+		Intent intent = new Intent(getActivity(), FollowedUsersService.class);
+		intent.putExtra(FollowedUsersService.ACTION, FollowedUsersService.FIND_FOLLOWED_USERS_ACTION);
+		getActivity().startService(intent);
+	}
+
+	public void unFollowUser(UserDTO user) {
+		Intent intent = new Intent(getActivity(), FollowedUsersService.class);
+		intent.putExtra(FollowedUsersService.ACTION, FollowedUsersService.UNFOLLOW_USER_ACTION);
+		intent.putExtra(FollowedUsersService.USER_NAME_ARG, user.userName);
+		getActivity().startService(intent);
+		MainApplication.GlobalState.removeFollowedUser(user);
+		refresh();
 	}
 
 	@Override

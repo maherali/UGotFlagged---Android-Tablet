@@ -117,6 +117,16 @@ public class MainApplication extends Application {
 			followedUsers = us;
 		}
 
+		public static void removeFollowedUser(UserDTO user) {
+			for (int i = 0; i < getFollowedUsers().getUsers().size(); i++) {
+				UserDTO aUser = getFollowedUsers().getUsers().get(i);
+				if (aUser.userName.equals(user.userName)) {
+					getFollowedUsers().getUsers().remove(i);
+					break;
+				}
+			}
+		}
+
 	}
 
 	public Location getCurrentLocation() {
