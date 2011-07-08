@@ -41,7 +41,7 @@ public class ServerProxy {
 	}
 
 	public static String getMethod(HTTP_METHOD method) {
-		return method == HTTP_METHOD.Post ? "POST" : method == HTTP_METHOD.Get ? "GET" : method == HTTP_METHOD.Delete ? "DELETE" : null;
+		return method == HTTP_METHOD.Post ? "POST" : method == HTTP_METHOD.Get ? "GET" : null;
 	}
 
 	public static void post(String funcName, String path, String data, IServerResponder result) {
@@ -77,7 +77,7 @@ public class ServerProxy {
 			HTTP_METHOD method = (HTTP_METHOD) params[0].get(0);
 			String path = (String) params[0].get(1);
 			String data = (String) params[0].get(2);
-			URL url;
+			URL url = null;
 			int respcode = 0;
 			String xml = "";
 			String detailedErrorMessage = null;
@@ -171,12 +171,33 @@ public class ServerProxy {
 				detailedErrorMessage = e.getMessage();
 			}
 			ArrayList<Object> arr = new ArrayList<Object>();
-			arr.add(xml);
-			arr.add(params[0].get(3));
-			arr.add(respcode);
-			arr.add(detailedErrorMessage);
-			arr.add(params[0].get(4));
-			return arr;
+			if (MainApplication.isNetworkConnected()) {
+				if (respcode == 200) {
+					MainApplication.getInstance().setXML(url.toExternalForm(), xml);
+				}
+				arr.add(xml);
+				arr.add(params[0].get(3));
+				arr.add(respcode);
+				arr.add(detailedErrorMessage);
+				arr.add(params[0].get(4));
+				return arr;
+			} else {
+				String x = MainApplication.getInstance().getXML(url.toExternalForm());
+				if (x != null) {
+					arr.add(x);
+					arr.add(params[0].get(3));
+					arr.add(200);
+					arr.add(null);
+				} else {
+					arr.add("?xml version=\"1.0\" encoding=\"UTF-8\"?><errors><error>Device is offline</error></errors>");
+					arr.add(params[0].get(3));
+					arr.add(404);
+					arr.add("Device is offline");
+				}
+				arr.add(params[0].get(4));
+				return arr;
+			}
+
 		}
 
 		@Override

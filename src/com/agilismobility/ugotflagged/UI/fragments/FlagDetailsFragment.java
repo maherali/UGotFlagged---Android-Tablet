@@ -53,7 +53,7 @@ public class FlagDetailsFragment extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (isVisible()) {
+		if (isVisible() && MainApplication.GlobalState.getStream().size() > 0) {
 			updateContent(mPosition);
 		}
 	}

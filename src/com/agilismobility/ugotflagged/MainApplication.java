@@ -6,6 +6,8 @@ import java.util.HashMap;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
@@ -20,7 +22,7 @@ import com.agilismobility.ugotflagged.services.ImageResources;
 
 public class MainApplication extends Application {
 
-	private static Context mInstance;
+	private static MainApplication mInstance;
 	private final String TAG = "MainApplication";
 	private Location mCurrentLocation;
 
@@ -29,6 +31,7 @@ public class MainApplication extends Application {
 	private FollowedUsersFragment followedUsersFragment;
 	private FollowersFragment followersFragment;
 	private UserFlagsFragment followedUserFlags;
+	private CacheDatabase cacheDB;
 
 	public FlagDetailsFragment getFlagDetailsFragment() {
 		return flagDetailsFragment;
@@ -61,7 +64,20 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		mInstance = this;
+		cacheDB = new CacheDatabase(this);
 		super.onCreate();
+	}
+
+	public CacheDatabase getCache() {
+		return cacheDB;
+	}
+
+	public void setXML(String url, String xml) {
+		cacheDB.setXML(url, xml, GlobalState.getCurrentUser() != null ? GlobalState.getCurrentUser().userName : null);
+	}
+
+	public String getXML(String url) {
+		return cacheDB.getXML(url, GlobalState.getCurrentUser() != null ? GlobalState.getCurrentUser().userName : null);
 	}
 
 	@Override
@@ -81,7 +97,7 @@ public class MainApplication extends Application {
 		super.onTerminate();
 	}
 
-	public static Context getInstance() {
+	public static MainApplication getInstance() {
 		return mInstance;
 	}
 
@@ -142,4 +158,12 @@ public class MainApplication extends Application {
 		getImageCache().clear();
 	}
 
+	public static boolean isNetworkConnected() {
+		ConnectivityManager cm = (ConnectivityManager) MainApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo network = cm.getActiveNetworkInfo();
+		if (network != null) {
+			return network.isAvailable();
+		}
+		return false;
+	}
 }
