@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -24,6 +25,24 @@ public class ServerProxy {
 	private static final int CONNECTION_TIMEOUT = 2 * 60 * 1000;
 	private static String sessionId;
 	public static final String URL = "https://ugotflagged.heroku.com";
+	public static final String SERVER_PREF_FILE_NAME = "SERVER_PREF";
+	public static final String SP_SESSION = "SESSION";
+
+	static {
+		sessionId = getStoredSession();
+	}
+
+	public static String getStoredSession() {
+		SharedPreferences settings = MainApplication.getInstance().getSharedPreferences(SERVER_PREF_FILE_NAME, 0);
+		return (settings.getString(SP_SESSION, ""));
+	}
+
+	public static void saveSession() {
+		SharedPreferences settings = MainApplication.getInstance().getSharedPreferences(SERVER_PREF_FILE_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(SP_SESSION, sessionId);
+		editor.commit();
+	}
 
 	public static void syncCookie() {
 		CookieSyncManager mgr = CookieSyncManager.createInstance(MainApplication.getInstance());
@@ -125,6 +144,7 @@ public class ServerProxy {
 					String cookieVal = conn.getHeaderField("Set-Cookie");
 					if (cookieVal != null) {
 						sessionId = cookieVal.substring(0, cookieVal.indexOf(";"));
+						saveSession();
 					}
 					respcode = conn.getResponseCode();
 					if (respcode == -1) {
