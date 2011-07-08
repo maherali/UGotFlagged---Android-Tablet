@@ -5,4 +5,5 @@
     <string name="login_password">Password:</string>
     <string name="login_submit">Login</string>
     <string name="tnc">By signing in you agree to the Agilis Mobility Privacy Policies.</string>
+    <string name="login_instructions">Log in with your UGotFlagged Account</string>
 </resources>
