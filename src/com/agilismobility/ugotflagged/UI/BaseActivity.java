@@ -99,9 +99,12 @@ public abstract class BaseActivity extends Activity {
 	}
 
 	void showDialog(String title, String message) {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		DialogFragment newFragment = MyDialogFragment.newInstance(title, message);
-		newFragment.show(ft, "dialog");
+		try {
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
+			DialogFragment newFragment = MyDialogFragment.newInstance(title, message);
+			newFragment.show(ft, "dialog");
+		} catch (Exception e) {
+		}
 	}
 
 	public static class MyDialogFragment extends DialogFragment {
