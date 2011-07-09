@@ -13,8 +13,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 
+import com.agilismobility.ugotflagged.R;
 import com.agilismobility.utils.Constants;
 
 public abstract class BaseActivity extends Activity {
@@ -135,4 +139,18 @@ public abstract class BaseActivity extends Activity {
 		((Button) findViewById(id)).setEnabled(enabled);
 	}
 
+	protected void showWebDialog(String url) {
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View alertDialogView = inflater.inflate(R.layout.web_dialog, null);
+		WebView myWebView = (WebView) alertDialogView.findViewById(R.id.DialogWebView);
+		myWebView.loadUrl(url);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(alertDialogView);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		}).show();
+	}
 }

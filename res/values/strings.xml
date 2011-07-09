@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">UGotFlagged</string>
-    <string name="login_email">Email:</string>
-    <string name="login_password">Password:</string>
-    <string name="login_submit">Login</string>
-    <string name="tnc">By signing in you agree to the Agilis Mobility Privacy Policies.</string>
-    <string name="login_instructions">Log in with your UGotFlagged Account</string>
-    <string name="register_submit">Sign Up!</string>
-    <string name="register_instructions">Sign up for a UGotFlagged Account</string>
-    <!-- By Signing up you agree to the UGotFlagged Terms and Conditions -->
+	<string name="app_name">UGotFlagged</string>
+	<string name="login_email">Email:</string>
+	<string name="login_password">Password:</string>
+	<string name="login_submit">Login</string>
+	<string name="tnc">By signing in you agree to the Agilis Mobility
+		Privacy Policies.</string>
+	<string name="login_instructions">Log in with your UGotFlagged Account</string>
+	<string name="register_submit">Sign Up!</string>
+	<string name="register_instructions">Sign up for a UGotFlagged Account</string>
+	<!-- By Signing up you agree to the UGotFlagged Terms and Conditions -->
+	
 </resources>

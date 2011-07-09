@@ -164,7 +164,7 @@ public class LoginActivity extends BaseActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.register_menu, menu);
+		inflater.inflate(R.menu.login_menu, menu);
 		return true;
 	}
 
