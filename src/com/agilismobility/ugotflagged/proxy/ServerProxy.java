@@ -192,7 +192,7 @@ public class ServerProxy {
 			}
 			ArrayList<Object> arr = new ArrayList<Object>();
 			if (MainApplication.isNetworkConnected()) {
-				if (respcode == 200) {
+				if (respcode == 200 && !xml.contains("<errors>")) {
 					MainApplication.getInstance().setXML(url.toExternalForm(), xml);
 				}
 				arr.add(xml);

@@ -42,6 +42,8 @@
 		<service android:enabled="true" android:name=".services.RefreshService"></service>
 		<service android:enabled="true" android:name=".services.ImageDownloadingService"></service>
 		<service android:enabled="true" android:name=".services.FollowedUsersService"></service>
+		<service android:enabled="true" android:name=".services.RegisterService"></service>
+
 
 		<!-- Location Support -->
 		<receiver android:name="com.agilismobility.utils.LocationChangedReceiver" />

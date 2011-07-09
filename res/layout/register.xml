@@ -89,7 +89,7 @@
 			android:textColor="#ffffffff" android:text="Password"
 			android:layout_alignBaseline="@id/user_name" />
 
-		<EditText android:id="@+id/password_first" android:inputType="textNoSuggestions|textPassword"
+		<EditText android:id="@+id/password" android:inputType="textNoSuggestions|textPassword"
 			android:hint="Password" android:layout_width="300dip"
 			android:layout_height="wrap_content" android:layout_toRightOf="@id/password_label"
 			android:textColor="#ffffffff" android:singleLine="true" />
