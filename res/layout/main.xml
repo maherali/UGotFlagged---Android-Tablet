@@ -3,10 +3,19 @@
 	android:orientation="horizontal" android:layout_width="match_parent"
 	android:layout_height="match_parent" android:id="@+id/frags">
 
-	<FrameLayout android:id="@+id/left_frag"
-		android:layout_marginTop="?android:attr/actionBarSize"
-		android:layout_width="@dimen/stream_size" android:layout_height="match_parent">
-	</FrameLayout>
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="match_parent" android:orientation="vertical">
+		
+		<TextView android:layout_width="match_parent"
+			android:layout_height="wrap_content" android:id="@+id/stream_title"
+			android:layout_marginTop="20dip" android:layout_marginLeft="20dip"
+			android:textColor="@color/white" android:textSize="20dp" />
+
+		<FrameLayout android:id="@+id/left_frag"
+			android:layout_marginTop="17dip"
+			android:layout_width="@dimen/stream_size" android:layout_height="match_parent">
+		</FrameLayout>
+	</LinearLayout>
 
 	<FrameLayout android:id="@+id/right_frag"
 		android:layout_marginTop="?android:attr/actionBarSize"

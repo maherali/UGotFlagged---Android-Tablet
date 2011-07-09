@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.agilismobility.LocationAwareness;
 import com.agilismobility.LocationAwareness.ILocationResponder;
@@ -146,6 +147,11 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 			FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.replace(R.id.right_frag, newFragment).commit();
+		}
+		TextView streamTitle = (TextView) findViewById(R.id.stream_title);
+		UserDTO currUser = MainApplication.GlobalState.getCurrentUser();
+		if (currUser != null) {
+			streamTitle.setText(currUser.userName + "'s" + " Stream");
 		}
 	}
 
