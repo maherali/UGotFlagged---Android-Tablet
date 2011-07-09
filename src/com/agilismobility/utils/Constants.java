@@ -10,6 +10,7 @@ public class Constants {
 	public static final String NOTIFICATION = "NOTIFICATION";
 	public static final String CURRENTLY_DOING_SOMETHING_NOTIF = "CURRENTLY_DOING_SOMETHING_NOTIF";
 	public static final String FINISHED_DOING_SOMETHING_NOTIF = "FINISHED_DOING_SOMETHING_NOTIF";
+	public static final String LOGIN_AUTO_NOTIFICATION = "LOGIN_AUTO_NOTIFICATION";
 
 	public static final String LOGGING_IN = "LOGGING_IN";
 	public static final String REFRESHING_STREAM = "REFRESHING_STREAM";

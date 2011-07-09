@@ -82,18 +82,14 @@ public class RegisterActivity extends BaseActivity {
 				enableButton(R.id.register_submit, true);
 				if (u.errors.size() == 0) {
 					MainApplication.GlobalState.setCurrentUser(u);
+					Intent newIntent = new Intent(Constants.LOGIN_AUTO_NOTIFICATION);
+					MainApplication.getInstance().sendBroadcast(newIntent);
 					finish();
 				} else {
 					showError(u.errors);
 				}
 			}
 		}.execute();
-	}
-
-	private void startLoginActivity() {
-		Intent newIntent = new Intent();
-		newIntent.setClass(getApplication(), LoginActivity.class);
-		startActivity(newIntent);
 	}
 
 	public class RegisterReceiver extends BroadcastReceiver {

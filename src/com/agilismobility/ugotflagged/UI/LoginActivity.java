@@ -30,11 +30,12 @@ public class LoginActivity extends BaseActivity {
 	public static final String LOGIN_PREF_FILE_NAME = "LOGIN_PREF";
 
 	LoginReceiver mLoginReceiver;
+	LoginAutoReceiver mLoginAutoReceiver;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		registerReceiver();
+		registerReceivers();
 		setContentView(R.layout.login);
 		final TextView userName = (TextView) findViewById(R.id.user_name);
 		final TextView password = (TextView) findViewById(R.id.password);
@@ -85,10 +86,14 @@ public class LoginActivity extends BaseActivity {
 		editor.commit();
 	}
 
-	private void registerReceiver() {
+	private void registerReceivers() {
 		IntentFilter filter = new IntentFilter(LoginService.LOGIN_FINISHED_NOTIF);
 		mLoginReceiver = new LoginReceiver();
 		registerReceiver(mLoginReceiver, filter);
+
+		filter = new IntentFilter(Constants.LOGIN_AUTO_NOTIFICATION);
+		mLoginAutoReceiver = new LoginAutoReceiver();
+		registerReceiver(mLoginAutoReceiver, filter);
 	}
 
 	private void parseLoginAndGo(final String xml) {
@@ -126,9 +131,20 @@ public class LoginActivity extends BaseActivity {
 		}
 	}
 
+	public class LoginAutoReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			TextView userName = (TextView) findViewById(R.id.user_name);
+			userName.setText(MainApplication.GlobalState.getCurrentUser().userName);
+			TextView password = (TextView) findViewById(R.id.password);
+			password.setText("");
+		}
+	}
+
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mLoginReceiver);
+		unregisterReceiver(mLoginAutoReceiver);
 		super.onDestroy();
 	}
 
@@ -157,4 +173,5 @@ public class LoginActivity extends BaseActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 }
