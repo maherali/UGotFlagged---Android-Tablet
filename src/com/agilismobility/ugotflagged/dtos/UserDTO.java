@@ -22,6 +22,7 @@ public class UserDTO extends BaseDTO {
 	public boolean canFollow;
 	public int avatarID;
 	public String avatarMainURL;
+	public String password;
 
 	public ArrayList<PostDTO> posts;
 

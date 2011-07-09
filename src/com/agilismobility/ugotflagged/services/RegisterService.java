@@ -41,26 +41,27 @@ public class RegisterService extends Service {
 		return START_REDELIVER_INTENT;
 	}
 
-	private void register(String firstName, String lastName, String userName, String password, String email, final int startId) {
+	private void register(String firstName, String lastName, String userName, final String password, String email, final int startId) {
 		ServerProxy.post(Constants.REGISTERING, "/users", Utils.toUrlParams(USER_NAME_ARG, userName, PASSWORD_ARG, password, EMAIL_ARG, email,
 				FIRST_NAME_ARG, firstName, LAST_NAME_ARG, lastName), new IServerResponder() {
 			@Override
 			public void success(ServerResponseSummary srs) {
-				anounceRegisterFinished(startId, srs, true);
+				anounceRegisterFinished(password, startId, srs, true);
 			}
 
 			@Override
 			public void failure(ServerResponseSummary srs) {
-				anounceRegisterFinished(startId, srs, false);
+				anounceRegisterFinished(password, startId, srs, false);
 			}
 		});
 	}
 
-	private void anounceRegisterFinished(int startID, ServerResponseSummary srs, boolean success) {
+	private void anounceRegisterFinished(String password, int startID, ServerResponseSummary srs, boolean success) {
 		Intent newIntent = new Intent(REGISTER_FINISHED_NOTIF);
 		newIntent.putExtra(SUCCESS_ARG, success);
 		newIntent.putExtra(XML_ARG, srs.xml);
 		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);
+		newIntent.putExtra(PASSWORD_ARG, password);
 		sendBroadcast(newIntent);
 		stopSelf(startID);
 	}

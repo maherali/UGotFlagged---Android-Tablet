@@ -137,7 +137,9 @@ public class LoginActivity extends BaseActivity {
 			TextView userName = (TextView) findViewById(R.id.user_name);
 			userName.setText(MainApplication.GlobalState.getCurrentUser().userName);
 			TextView password = (TextView) findViewById(R.id.password);
-			password.setText("");
+			password.setText(MainApplication.GlobalState.getCurrentUser().password);
+			CheckBox rememberMe = (CheckBox) findViewById(R.id.rememberme);
+			rememberMe.setChecked(true);
 		}
 	}
 

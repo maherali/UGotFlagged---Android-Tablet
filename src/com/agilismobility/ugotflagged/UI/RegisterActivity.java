@@ -68,12 +68,14 @@ public class RegisterActivity extends BaseActivity {
 		registerReceiver(mRegisterReceiver, filter);
 	}
 
-	private void parseRegisterAndGo(final String xml) {
+	private void parseRegisterAndGo(final String xml, final String password) {
 		Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
 		new AsyncTask<Void, Void, UserDTO>() {
 			@Override
 			protected UserDTO doInBackground(Void... params) {
-				return new UserDTO(new XMLHelper(xml));
+				UserDTO u = new UserDTO(new XMLHelper(xml));
+				u.password = password;
+				return u;
 			}
 
 			@Override
@@ -96,7 +98,7 @@ public class RegisterActivity extends BaseActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getBooleanExtra(RegisterService.SUCCESS_ARG, false)) {
-				parseRegisterAndGo(intent.getStringExtra(RegisterService.XML_ARG));
+				parseRegisterAndGo(intent.getStringExtra(RegisterService.XML_ARG), intent.getStringExtra(RegisterService.PASSWORD_ARG));
 			} else {
 				enableButton(R.id.register_submit, true);
 				showError(intent.getStringExtra(RegisterService.ERROR_ARG));
