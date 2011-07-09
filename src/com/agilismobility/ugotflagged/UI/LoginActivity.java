@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
@@ -57,6 +58,7 @@ public class LoginActivity extends BaseActivity {
 				editor.commit();
 				initiateLogin(userName.getText().toString(), password.getText().toString());
 				enableButton(R.id.login_submit, false);
+				showProgress();
 			}
 		});
 
@@ -69,6 +71,7 @@ public class LoginActivity extends BaseActivity {
 			}
 			initiateLogin(userName.getText().toString(), password.getText().toString());
 			enableButton(R.id.login_submit, false);
+			showProgress();
 		}
 	}
 
@@ -113,6 +116,7 @@ public class LoginActivity extends BaseActivity {
 					startFlagActivity();
 					finish();
 				} else {
+					hideProgress();
 					showError(u.errors);
 				}
 			}
@@ -125,6 +129,7 @@ public class LoginActivity extends BaseActivity {
 			if (intent.getBooleanExtra(LoginService.SUCCESS_ARG, false)) {
 				parseLoginAndGo(intent.getStringExtra(LoginService.XML_ARG));
 			} else {
+				hideProgress();
 				enableButton(R.id.login_submit, true);
 				showError(intent.getStringExtra(LoginService.ERROR_ARG));
 			}
@@ -174,6 +179,16 @@ public class LoginActivity extends BaseActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void showProgress() {
+		((Button) findViewById(R.id.login_submit)).setVisibility(View.GONE);
+		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.VISIBLE);
+	}
+
+	private void hideProgress() {
+		((Button) findViewById(R.id.login_submit)).setVisibility(View.VISIBLE);
+		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.GONE);
 	}
 
 }

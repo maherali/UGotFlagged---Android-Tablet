@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="base">
+	</style>
+
+	<style name="base_fill" parent="base">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+	<style name="base_fill_wrap" parent="base">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="base_wrap" parent="base">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="base_wrap_fill" parent="base">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+	<style name="password_text">
+		<item name="android:password">true</item>
+		<item name="android:inputType">textNoSuggestions|textPassword</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">#ffffffff</item>
+	</style>
+
+
+</resources>

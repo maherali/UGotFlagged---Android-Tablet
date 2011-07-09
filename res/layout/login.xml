@@ -13,7 +13,7 @@
 
 	</LinearLayout>
 
-	
+
 	<LinearLayout android:layout_width="wrap_content"
 		android:layout_marginTop="70dip" android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true" android:id="@+id/first_layout">
@@ -70,12 +70,21 @@
 	<CheckBox android:text="Remember me" android:id="@+id/rememberme"
 		android:layout_marginTop="20dip" android:layout_alignParentLeft="true"
 		android:layout_below="@id/fourth_layout" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_marginLeft="400dip">
+		android:layout_height="wrap_content" android:layout_marginLeft="450dip">
 	</CheckBox>
-	<Button android:layout_width="wrap_content" android:id="@+id/login_submit"
-		android:layout_marginTop="20dip" android:layout_gravity="right"
-		android:layout_marginRight="400dip" android:layout_alignParentRight="true"
-		android:layout_below="@id/fourth_layout" android:layout_height="wrap_content"
-		android:text="@string/login_submit"></Button>
+
+	<FrameLayout android:layout_width="wrap_content"
+		android:layout_centerHorizontal="true" android:layout_height="wrap_content"
+		android:layout_below="@id/fourth_layout"  
+		android:layout_marginTop="20dip">
+
+		<ProgressBar android:id="@+id/progress"
+			android:layout_centerHorizontal="true" android:layout_marginLeft="330dip"
+			android:layout_marginTop="10dip" android:layout_width="30dip"
+			android:layout_height="30dip" android:visibility="gone" />
+		<Button android:layout_width="wrap_content" android:id="@+id/login_submit"
+			android:layout_gravity="right" android:layout_height="wrap_content"
+			android:text="@string/login_submit" android:layout_marginLeft="300dip"></Button>
+	</FrameLayout>
 
 </RelativeLayout>

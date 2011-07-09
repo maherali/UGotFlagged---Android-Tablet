@@ -8,7 +8,6 @@
 		<FrameLayout android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 			<ProgressBar android:id="@+id/progress" android:layout_width="30dip" android:layout_height="30dip"
-				
 				android:visibility="gone" />
 			<Button android:layout_width="30dip" android:layout_height="30dip"
 				android:id="@+id/refresh_button" android:background="@drawable/refresh" />

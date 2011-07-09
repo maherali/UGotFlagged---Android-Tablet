@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
@@ -37,6 +38,7 @@ public class RegisterActivity extends BaseActivity {
 				final TextView lastName = (TextView) findViewById(R.id.last_name);
 				if (password.getText().toString().equals(passwordConf.getText().toString())) {
 					enableButton(R.id.register_submit, false);
+					showProgress();
 					initiateRegister(firstName.getText().toString(), lastName.getText().toString(), userName.getText().toString(), password
 							.getText().toString(), email.getText().toString());
 				} else {
@@ -88,6 +90,7 @@ public class RegisterActivity extends BaseActivity {
 					MainApplication.getInstance().sendBroadcast(newIntent);
 					finish();
 				} else {
+					hideProgress();
 					showError(u.errors);
 				}
 			}
@@ -101,9 +104,20 @@ public class RegisterActivity extends BaseActivity {
 				parseRegisterAndGo(intent.getStringExtra(RegisterService.XML_ARG), intent.getStringExtra(RegisterService.PASSWORD_ARG));
 			} else {
 				enableButton(R.id.register_submit, true);
+				hideProgress();
 				showError(intent.getStringExtra(RegisterService.ERROR_ARG));
 			}
 		}
+	}
+
+	private void showProgress() {
+		((Button) findViewById(R.id.register_submit)).setVisibility(View.GONE);
+		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.VISIBLE);
+	}
+
+	private void hideProgress() {
+		((Button) findViewById(R.id.register_submit)).setVisibility(View.VISIBLE);
+		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.GONE);
 	}
 
 }
