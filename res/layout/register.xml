@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+		android:id="@+id/title_layout" android:layout_marginTop="10dip">
+
+		<TextView android:layout_width="wrap_content" android:id="@+id/inst_register"
+			android:layout_height="wrap_content" android:textSize="36dp"
+			android:textColor="@color/register_instructions" android:text="@string/register_instructions" />
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_marginTop="70dip" android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true" android:id="@+id/first_name_layout">
+
+		<TextView android:layout_width="150dip"
+			android:layout_height="wrap_content" android:textSize="22dp"
+			android:textColor="#ffffffff" android:text="First Name" android:id="@+id/label_first_name"
+			android:layout_toLeftOf="@id/label_first_name" />
+		<EditText android:id="@+id/first_name" android:inputType="textNoSuggestions"
+			android:hint="First Name" android:layout_width="300dip"
+			android:layout_height="wrap_content" android:textColor="#ffffffff"
+			android:layout_alignBaseline="@id/label_first_name" />
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_below="@id/first_name_layout" android:layout_marginTop="00dip"
+		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+		android:id="@+id/last_name_layout">
+
+		<TextView android:layout_width="150dip"
+			android:layout_height="wrap_content" android:textSize="22dp"
+			android:textColor="#ffffffff" android:text="Last Name" android:id="@+id/label_last_name"
+			android:layout_toLeftOf="@id/label_last_name" />
+
+		<EditText android:id="@+id/last_name" android:inputType="textNoSuggestions"
+			android:hint="Last Name" android:layout_width="300dip"
+			android:layout_height="wrap_content" android:textColor="#ffffffff"
+			android:layout_alignBaseline="@id/label_last_name" />
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_below="@id/last_name_layout" android:layout_marginTop="0dip"
+		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+		android:id="@+id/email_layout">
+
+		<TextView android:layout_width="150dip"
+			android:layout_height="wrap_content" android:textSize="22dp"
+			android:textColor="#ffffffff" android:text="Email" android:id="@+id/email_label" />
+
+		<EditText android:id="@+id/email" android:inputType="textEmailAddress"
+			android:hint="Email" android:layout_width="300dip"
+			android:layout_alignBaseline="@id/email_label" android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/email_label" android:textColor="#ffffffff" />
+
+	</LinearLayout>
+
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_below="@id/email_layout" android:layout_marginTop="00dip"
+		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+		android:id="@+id/user_name_layout">
+
+		<TextView android:layout_width="150dip"
+			android:layout_height="wrap_content" android:textSize="22dp"
+			android:textColor="#ffffffff" android:text="User Name" android:id="@+id/user_name_label"
+			android:layout_alignBaseline="@id/user_name" />
+
+		<EditText android:id="@+id/user_name" android:inputType="textNoSuggestions"
+			android:hint="User Name" android:layout_width="300dip"
+			android:layout_height="wrap_content" android:layout_toRightOf="@id/user_name_label"
+			android:textColor="#ffffffff" />
+
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+		android:id="@+id/password_layout" android:layout_below="@id/user_name_layout"
+		android:layout_marginTop="00dip">
+
+		<TextView android:layout_width="150dip" android:id="@+id/password_label"
+			android:layout_height="wrap_content" android:textSize="22dp"
+			android:textColor="#ffffffff" android:text="Password"
+			android:layout_alignBaseline="@id/user_name" />
+
+		<EditText android:id="@+id/password_first" android:inputType="textNoSuggestions|textPassword"
+			android:hint="Password" android:layout_width="300dip"
+			android:layout_height="wrap_content" android:layout_toRightOf="@id/password_label"
+			android:textColor="#ffffffff" android:singleLine="true" />
+	</LinearLayout>
+
+
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+		android:id="@+id/password_conf_layout" android:layout_below="@id/password_layout"
+		android:layout_marginTop="00dip">
+
+		<TextView android:layout_width="150dip" android:id="@+id/password_conf_label"
+			android:layout_height="wrap_content" android:textSize="22dp"
+			android:textColor="#ffffffff" android:text="Password Confirmation" />
+
+		<EditText android:id="@+id/password_conf" android:password="true"
+			android:hint="Password Confirmation" android:layout_width="300dip"
+			android:layout_alignBaseline="@id/password_conf_label"
+			android:inputType="textNoSuggestions|textPassword"
+			android:singleLine="true" android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/password_conf_label" android:textColor="#ffffffff" />
+	</LinearLayout>
+
+	<Button android:layout_width="wrap_content" android:id="@+id/register_submit"
+		android:layout_marginTop="20dip" android:layout_gravity="right"
+		android:layout_marginRight="400dip" android:layout_centerHorizontal="true"
+		android:layout_below="@id/password_conf_layout" android:layout_height="wrap_content"
+		android:text="@string/register_submit"></Button>
+
+</RelativeLayout>

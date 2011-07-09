@@ -6,4 +6,7 @@
     <string name="login_submit">Login</string>
     <string name="tnc">By signing in you agree to the Agilis Mobility Privacy Policies.</string>
     <string name="login_instructions">Log in with your UGotFlagged Account</string>
+    <string name="register_submit">Sign Up!</string>
+    <string name="register_instructions">Sign up for a UGotFlagged Account</string>
+    <!-- By Signing up you agree to the UGotFlagged Terms and Conditions -->
 </resources>

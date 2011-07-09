@@ -13,14 +13,7 @@
 
 	</LinearLayout>
 
-	<!-- <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" 
-		android:layout_centerHorizontal="true" android:id="@+id/sep_layout" android:layout_marginTop="20dip"> 
-		<View android:layout_width="650dip" android:layout_height="1dip" android:layout_below="@id/inst" 
-		android:background="@android:color/darker_gray" android:layout_alignBaseline="@id/inst"> 
-		</View> </LinearLayout> -->
-
-
-
+	
 	<LinearLayout android:layout_width="wrap_content"
 		android:layout_marginTop="70dip" android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true" android:id="@+id/first_layout">
@@ -30,7 +23,7 @@
 			android:textColor="#ffffffff" android:text="User Name" android:id="@+id/label1"
 			android:layout_alignBaseline="@id/user_name" />
 
-		<EditText android:id="@+id/user_name" android:inputType="textEmailAddress"
+		<EditText android:id="@+id/user_name" android:inputType="textNoSuggestions"
 			android:hint="User Name" android:layout_width="300dip"
 			android:layout_height="wrap_content" android:layout_toRightOf="@id/label1"
 			android:textColor="#ffffffff" />
@@ -74,8 +67,6 @@
 		</View>
 	</LinearLayout>
 
-
-
 	<CheckBox android:text="Remember me" android:id="@+id/rememberme"
 		android:layout_marginTop="20dip" android:layout_alignParentLeft="true"
 		android:layout_below="@id/fourth_layout" android:layout_width="wrap_content"
@@ -86,6 +77,5 @@
 		android:layout_marginRight="400dip" android:layout_alignParentRight="true"
 		android:layout_below="@id/fourth_layout" android:layout_height="wrap_content"
 		android:text="@string/login_submit"></Button>
-
 
 </RelativeLayout>
