@@ -1,7 +1,6 @@
 package com.agilismobility;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +20,7 @@ public class InternetButton extends Button {
 				if (MainApplication.isNetworkConnected()) {
 					mOnClickInternetListener.onClick(InternetButton.this);
 				} else {
-					getContext().startActivity(new Intent(getContext(), DialogActivity.class));
+					DialogActivity.showMessage(getContext(), "You can only perform this function in Online mode.");
 				}
 
 			}
