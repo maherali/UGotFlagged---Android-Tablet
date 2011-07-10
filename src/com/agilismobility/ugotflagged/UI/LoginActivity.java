@@ -160,7 +160,7 @@ public class LoginActivity extends BaseActivity {
 
 	private void startFlagActivity() {
 		Intent newIntent = new Intent();
-		newIntent.setClass(getApplication(), FlagsActivity.class);
+		newIntent.setClass(getApplication(), MainActivity.class);
 		startActivity(newIntent);
 	}
 

@@ -36,7 +36,7 @@ import com.agilismobility.ugotflagged.services.SessionService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
-public class FlagsActivity extends BaseActivity implements TabListener, ILocationResponder {
+public class MainActivity extends BaseActivity implements TabListener, ILocationResponder {
 
 	private static final String SELECTED_TAB = "selected_tab";
 

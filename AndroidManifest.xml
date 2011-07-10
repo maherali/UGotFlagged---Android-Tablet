@@ -23,7 +23,7 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".UI.FlagsActivity"
+		<activity android:name=".UI.MainActivity"
 			android:configChanges="orientation|keyboardHidden"
 			android:launchMode="singleTop" android:screenOrientation="landscape">
 		</activity>
