@@ -31,7 +31,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 	private int mCurPosition;
 	private boolean mBusy;
 	private SlowAdapter m_adapter;
-	MyReceiver receiver;
+	ImageAvailableReceiver receiver;
 
 	public int getCurrentPosition() {
 		return mCurPosition;
@@ -73,7 +73,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 
 	private void registerReceiver() {
 		IntentFilter filter = new IntentFilter(ImageDownloadingService.IMAGE_AVAILABLE_NOTIF);
-		receiver = new MyReceiver();
+		receiver = new ImageAvailableReceiver();
 		getActivity().registerReceiver(receiver, filter);
 	}
 
@@ -81,7 +81,7 @@ public class FlagsFragment extends ListFragment implements ListView.OnScrollList
 		m_adapter.notifyDataSetChanged();
 	}
 
-	public class MyReceiver extends BroadcastReceiver {
+	public class ImageAvailableReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			refresh();

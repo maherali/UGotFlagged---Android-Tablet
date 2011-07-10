@@ -111,7 +111,6 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 					MainApplication.GlobalState.setFollowedUsers(u);
 					refresh();
 				} else {
-					findFollowedUsers();
 					((BaseActivity) getActivity()).showError(u.errors);
 				}
 			}

@@ -14,7 +14,7 @@
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:hardwareAccelerated="false" android:name=".MainApplication">
-		<activity android:name=".UI.UGotFlaggedActivity"
+		<activity android:name=".UI.UGotFlaggedActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
 			android:launchMode="singleTop" android:label="@string/app_name">
 			<intent-filter>
@@ -23,23 +23,25 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".UI.FlagsActivity" 
+		<activity android:name=".UI.FlagsActivity"
 			android:configChanges="orientation|keyboardHidden"
 			android:launchMode="singleTop" android:screenOrientation="landscape">
 		</activity>
 
-		<activity android:name=".UI.LoginActivity"  
-			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
-			android:launchMode="singleTop">
-		</activity>
-		
-		<activity android:name=".UI.RegisterActivity"  
+		<activity android:name=".UI.LoginActivity"
 			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
 			android:launchMode="singleTop">
 		</activity>
 
-		<activity  android:name=".UI.DialogActivity" android:theme="@android:style/Theme.Holo.Dialog" launchMode="singleInstance" />
-		
+		<activity android:name=".UI.RegisterActivity"
+			android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden"
+			android:launchMode="singleTop">
+		</activity>
+
+		<activity android:name=".UI.DialogActivity"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar"
+			launchMode="singleInstance" />
+
 		<service android:enabled="true" android:name=".services.LoginService"></service>
 		<service android:enabled="true" android:name=".services.RefreshService"></service>
 		<service android:enabled="true" android:name=".services.ImageDownloadingService"></service>

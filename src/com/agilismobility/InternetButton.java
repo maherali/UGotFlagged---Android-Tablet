@@ -20,7 +20,7 @@ public class InternetButton extends Button {
 				if (MainApplication.isNetworkConnected()) {
 					mOnClickInternetListener.onClick(InternetButton.this);
 				} else {
-					DialogActivity.showMessage(getContext(), "You can only perform this function in Online mode.");
+					DialogActivity.showMessage(getContext(), "Error", "You can only perform this function in Online mode.");
 				}
 
 			}
