@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.agilismobility.InternetButton;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
@@ -31,7 +32,7 @@ public class RegisterActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register);
 		registerReceiver();
-		((Button) findViewById(R.id.register_submit)).setOnClickListener(new View.OnClickListener() {
+		((InternetButton) findViewById(R.id.register_submit)).setOnClickInternetListener(new InternetButton.OnClickInternetListener() {
 			@Override
 			public void onClick(View v) {
 				final TextView userName = (TextView) findViewById(R.id.user_name);

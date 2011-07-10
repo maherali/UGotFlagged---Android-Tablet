@@ -110,18 +110,19 @@
 			android:layout_toRightOf="@id/password_conf_label" style="@style/password_text" />
 	</LinearLayout>
 
-	<FrameLayout android:layout_width="wrap_content" android:layout_centerHorizontal="true"
-		android:layout_height="wrap_content" android:layout_below="@id/password_conf_layout">
-		<ProgressBar android:id="@+id/progress" android:layout_centerHorizontal="true"
-			android:layout_marginLeft="40dip" android:layout_marginTop="30dip"
-			android:layout_width="30dip" android:layout_height="30dip" 
-			android:visibility="gone" />
+	<FrameLayout android:layout_width="wrap_content"
+		android:layout_centerHorizontal="true" android:layout_height="wrap_content"
+		android:layout_below="@id/password_conf_layout">
+		<ProgressBar android:id="@+id/progress"
+			android:layout_centerHorizontal="true" android:layout_marginLeft="40dip"
+			android:layout_marginTop="30dip" android:layout_width="30dip"
+			android:layout_height="30dip" android:visibility="gone" />
 
-		<Button android:layout_width="wrap_content" android:id="@+id/register_submit"
+		<com.agilismobility.InternetButton
+			android:layout_width="wrap_content" android:id="@+id/register_submit"
 			android:layout_marginTop="20dip" android:layout_gravity="right"
-			 android:layout_centerHorizontal="true"
-			  android:layout_height="wrap_content" 
-			android:text="@string/register_submit"></Button>
+			android:layout_centerHorizontal="true" android:layout_height="wrap_content"
+			android:text="@string/register_submit"></com.agilismobility.InternetButton>
 
 	</FrameLayout>
 
