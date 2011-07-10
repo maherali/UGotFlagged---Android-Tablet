@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
-import com.agilismobility.ugotflagged.services.LoginService;
+import com.agilismobility.ugotflagged.services.SessionService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
@@ -30,7 +30,7 @@ public class LoginActivity extends BaseActivity {
 	private static final String SP_LOGIN_REMEMBER_ME = "login_remember_me";
 	public static final String LOGIN_PREF_FILE_NAME = "LOGIN_PREF";
 
-	LoginReceiver mLoginReceiver;
+	SessionReceiver mSessionReceiver;
 	LoginAutoReceiver mLoginAutoReceiver;
 
 	@Override
@@ -76,9 +76,10 @@ public class LoginActivity extends BaseActivity {
 	}
 
 	protected void initiateLogin(String userName, String password) {
-		Intent intent = new Intent(this, LoginService.class);
-		intent.putExtra(LoginService.USER_NAME_ARG, userName);
-		intent.putExtra(LoginService.PASSWORD_ARG, password);
+		Intent intent = new Intent(this, SessionService.class);
+		intent.putExtra(SessionService.ACTION, SessionService.LOGIN_ACTION);
+		intent.putExtra(SessionService.USER_NAME_ARG, userName);
+		intent.putExtra(SessionService.PASSWORD_ARG, password);
 		startService(intent);
 	}
 
@@ -90,9 +91,9 @@ public class LoginActivity extends BaseActivity {
 	}
 
 	private void registerReceivers() {
-		IntentFilter filter = new IntentFilter(LoginService.LOGIN_FINISHED_NOTIF);
-		mLoginReceiver = new LoginReceiver();
-		registerReceiver(mLoginReceiver, filter);
+		IntentFilter filter = new IntentFilter(SessionService.SESSION_NOTIF);
+		mSessionReceiver = new SessionReceiver();
+		registerReceiver(mSessionReceiver, filter);
 
 		filter = new IntentFilter(Constants.LOGIN_AUTO_NOTIFICATION);
 		mLoginAutoReceiver = new LoginAutoReceiver();
@@ -123,15 +124,17 @@ public class LoginActivity extends BaseActivity {
 		}.execute();
 	}
 
-	public class LoginReceiver extends BroadcastReceiver {
+	public class SessionReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getBooleanExtra(LoginService.SUCCESS_ARG, false)) {
-				parseLoginAndGo(intent.getStringExtra(LoginService.XML_ARG));
-			} else {
-				hideProgress();
-				enableButton(R.id.login_submit, true);
-				showError(intent.getStringExtra(LoginService.ERROR_ARG));
+			if (SessionService.LOGIN_ACTION.equals(intent.getStringExtra(SessionService.ACTION))) {
+				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
+					parseLoginAndGo(intent.getStringExtra(SessionService.XML_ARG));
+				} else {
+					hideProgress();
+					enableButton(R.id.login_submit, true);
+					showError(intent.getStringExtra(SessionService.ERROR_ARG));
+				}
 			}
 		}
 	}
@@ -150,7 +153,7 @@ public class LoginActivity extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mLoginReceiver);
+		unregisterReceiver(mSessionReceiver);
 		unregisterReceiver(mLoginAutoReceiver);
 		super.onDestroy();
 	}

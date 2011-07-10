@@ -28,13 +28,22 @@ public class ServerProxy {
 	public static final String SERVER_PREF_FILE_NAME = "SERVER_PREF";
 	public static final String SP_SESSION = "SESSION";
 
+	private static final int MAX_NUMBER_OF_RETRIES = 5;
+
+	private static final int RESPONSE_CODE_N1 = -1;
+	private static final int RESPONSE_CODE_ZERO = 0;
+	private static final int RESPONSE_CODE_200 = 200;
+	private static final int RESPONSE_CODE_300 = 300;
+	private static final int RESPONSE_CODE_307 = 307;
+	private static final int RESPONSE_CODE_404 = 404;
+
 	static {
 		sessionId = getStoredSession();
 	}
 
 	public static String getStoredSession() {
 		SharedPreferences settings = MainApplication.getInstance().getSharedPreferences(SERVER_PREF_FILE_NAME, 0);
-		return (settings.getString(SP_SESSION, ""));
+		return (settings.getString(SP_SESSION, null));
 	}
 
 	public static void saveSession() {
@@ -42,6 +51,11 @@ public class ServerProxy {
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(SP_SESSION, sessionId);
 		editor.commit();
+	}
+
+	public static void resetSession() {
+		sessionId = null;
+		saveSession();
 	}
 
 	public static void syncCookie() {
@@ -97,7 +111,7 @@ public class ServerProxy {
 			String path = (String) params[0].get(1);
 			String data = (String) params[0].get(2);
 			URL url = null;
-			int respcode = 0;
+			int respcode = RESPONSE_CODE_ZERO;
 			String xml = "";
 			String detailedErrorMessage = null;
 			try {
@@ -147,11 +161,11 @@ public class ServerProxy {
 						saveSession();
 					}
 					respcode = conn.getResponseCode();
-					if (respcode == -1) {
-						if (tryCount < 6) {
+					if (respcode == RESPONSE_CODE_N1) {
+						if (tryCount < MAX_NUMBER_OF_RETRIES) {
 							return doInBackground(params);
 						} else {
-							respcode = 0;
+							respcode = RESPONSE_CODE_ZERO;
 						}
 					}
 					InputStream temp;
@@ -161,13 +175,13 @@ public class ServerProxy {
 					} else {
 						temp = conn.getInputStream();
 					}
-					if (respcode >= 300 && respcode <= 307) {
+					if (respcode >= RESPONSE_CODE_300 && respcode <= RESPONSE_CODE_307) {
 						String redirUrl = conn.getHeaderField("Location").trim();
 						String resXML = "<Response><RedirectUrl>" + URLEncoder.encode(redirUrl) + "</RedirectUrl></Response>";
 						temp = new ByteArrayInputStream(resXML.getBytes());
-						respcode = 200;
+						respcode = RESPONSE_CODE_200;
 					}
-					if (respcode == 200) {
+					if (respcode == RESPONSE_CODE_200) {
 						PipeStream pipe = new PipeStream(temp);
 						in = pipe.peek();
 					} else {
@@ -192,7 +206,7 @@ public class ServerProxy {
 			}
 			ArrayList<Object> arr = new ArrayList<Object>();
 			if (MainApplication.isNetworkConnected()) {
-				if (respcode == 200 && !xml.contains("<errors>")) {
+				if (respcode == RESPONSE_CODE_200 && !xml.contains("<errors>")) {
 					MainApplication.getInstance().setXML(url.toExternalForm(), xml);
 				}
 				arr.add(xml);
@@ -206,18 +220,17 @@ public class ServerProxy {
 				if (x != null) {
 					arr.add(x);
 					arr.add(params[0].get(3));
-					arr.add(200);
+					arr.add(RESPONSE_CODE_200);
 					arr.add(null);
 				} else {
 					arr.add("?xml version=\"1.0\" encoding=\"UTF-8\"?><errors><error>Device is offline</error></errors>");
 					arr.add(params[0].get(3));
-					arr.add(404);
+					arr.add(RESPONSE_CODE_404);
 					arr.add("Device is offline");
 				}
 				arr.add(params[0].get(4));
 				return arr;
 			}
-
 		}
 
 		@Override
@@ -235,7 +248,7 @@ public class ServerProxy {
 			Integer responseCode = (Integer) result.get(2);
 			String detailedErrorMessage = (String) result.get(3);
 			ServerResponseSummary srs = new ServerResponseSummary(xml, detailedErrorMessage, responseCode);
-			if (responseCode == 200 && detailedErrorMessage == null) {
+			if (responseCode == RESPONSE_CODE_200 && detailedErrorMessage == null) {
 				callBack.success(srs);
 			} else {
 				callBack.failure(srs);

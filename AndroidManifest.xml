@@ -42,7 +42,7 @@
 			android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			launchMode="singleInstance" />
 
-		<service android:enabled="true" android:name=".services.LoginService"></service>
+		<service android:enabled="true" android:name=".services.SessionService"></service>
 		<service android:enabled="true" android:name=".services.RefreshService"></service>
 		<service android:enabled="true" android:name=".services.ImageDownloadingService"></service>
 		<service android:enabled="true" android:name=".services.ConnectionsService"></service>

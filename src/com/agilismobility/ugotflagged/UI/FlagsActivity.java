@@ -32,6 +32,7 @@ import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
+import com.agilismobility.ugotflagged.services.SessionService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
@@ -241,16 +242,23 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.logout:
-			((MainApplication) getApplication()).clearData();
-			LoginActivity.enableRememberMe(false);
-			finish();
-			Intent intent = new Intent();
-			intent.setClass(getApplication(), LoginActivity.class);
-			startActivity(intent);
+			logout();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void logout() {
+		((MainApplication) getApplication()).clearData();
+		LoginActivity.enableRememberMe(false);
+		finish();
+		Intent intent = new Intent();
+		intent.setClass(getApplication(), LoginActivity.class);
+		startActivity(intent);
+		intent = new Intent(this, SessionService.class);
+		intent.putExtra(SessionService.ACTION, SessionService.LOGOUT_ACTION);
+		startService(intent);
 	}
 
 	@Override

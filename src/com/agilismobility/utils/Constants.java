@@ -13,6 +13,7 @@ public class Constants {
 	public static final String LOGIN_AUTO_NOTIFICATION = "LOGIN_AUTO_NOTIFICATION";
 
 	public static final String LOGGING_IN = "LOGGING_IN";
+	public static final String LOGGING_OUT = "LOGGING_OUT";
 	public static final String REFRESHING_STREAM = "REFRESHING_STREAM";
 	public static final String PARSING_USER_DATA = "PARSING_USER_DATA";
 	public static final String FINDING_FOLLOWED = "FINDING_FOLLOWED";
