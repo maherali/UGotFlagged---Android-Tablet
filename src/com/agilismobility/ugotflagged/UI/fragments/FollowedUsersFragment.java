@@ -15,18 +15,18 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.agilismobility.InternetButton;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.UI.BaseActivity;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.dtos.UsersDTO;
-import com.agilismobility.ugotflagged.services.FollowedUsersService;
+import com.agilismobility.ugotflagged.services.ConnectionsService;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
@@ -82,7 +82,7 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		getActivity().registerReceiver(imageDownloadedReceiver = new ImageDownloadedReceiver(),
 				new IntentFilter(ImageDownloadingService.IMAGE_AVAILABLE_NOTIF));
 		getActivity().registerReceiver(mFollowedUsersReceiver = new FollowedUsersReceiver(),
-				new IntentFilter(FollowedUsersService.FOLLOWED_USERS_FINISHED_NOTIF));
+				new IntentFilter(ConnectionsService.FOLLOWED_USERS_FINISHED_NOTIF));
 	}
 
 	public void refresh() {
@@ -111,6 +111,7 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 					MainApplication.GlobalState.setFollowedUsers(u);
 					refresh();
 				} else {
+					findFollowedUsers();
 					((BaseActivity) getActivity()).showError(u.errors);
 				}
 			}
@@ -140,14 +141,14 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 	public class FollowedUsersReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getBooleanExtra(FollowedUsersService.SUCCESS_ARG, false)) {
-				if (FollowedUsersService.FIND_FOLLOWED_USERS_ACTION.equals(intent.getStringExtra(FollowedUsersService.ACTION))) {
-					parseFollowed(intent.getStringExtra(FollowedUsersService.XML_ARG));
-				} else if (FollowedUsersService.UNFOLLOW_USER_ACTION.equals(intent.getStringExtra(FollowedUsersService.ACTION))) {
-					parseUser(intent.getStringExtra(FollowedUsersService.XML_ARG));
+			if (intent.getBooleanExtra(ConnectionsService.SUCCESS_ARG, false)) {
+				if (ConnectionsService.FIND_FOLLOWED_USERS_ACTION.equals(intent.getStringExtra(ConnectionsService.ACTION))) {
+					parseFollowed(intent.getStringExtra(ConnectionsService.XML_ARG));
+				} else if (ConnectionsService.UNFOLLOW_USER_ACTION.equals(intent.getStringExtra(ConnectionsService.ACTION))) {
+					parseUser(intent.getStringExtra(ConnectionsService.XML_ARG));
 				}
 			} else {
-				((BaseActivity) getActivity()).showError(intent.getStringExtra(FollowedUsersService.ERROR_ARG));
+				((BaseActivity) getActivity()).showError(intent.getStringExtra(ConnectionsService.ERROR_ARG));
 			}
 		}
 	}
@@ -198,13 +199,13 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 
 			ImageView avatarImage = (ImageView) layout.findViewById(R.id.avatar);
 			TextView userNameText = (TextView) layout.findViewById(R.id.user_name);
-			Button followButton = (Button) layout.findViewById(R.id.follow);
+			InternetButton followButton = (InternetButton) layout.findViewById(R.id.follow);
 
 			UserDTO user = MainApplication.GlobalState.getFollowedUsers().getUsers().get(position);
 			userNameText.setText(user.userName);
 			followButton.setText("UnFollow");
 			followButton.setTag(user);
-			followButton.setOnClickListener(new View.OnClickListener() {
+			followButton.setOnClickInternetListener(new InternetButton.OnClickInternetListener() {
 				@Override
 				public void onClick(View v) {
 					UserDTO user = (UserDTO) v.getTag();
@@ -270,15 +271,15 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 	}
 
 	public void findFollowedUsers() {
-		Intent intent = new Intent(getActivity(), FollowedUsersService.class);
-		intent.putExtra(FollowedUsersService.ACTION, FollowedUsersService.FIND_FOLLOWED_USERS_ACTION);
+		Intent intent = new Intent(getActivity(), ConnectionsService.class);
+		intent.putExtra(ConnectionsService.ACTION, ConnectionsService.FIND_FOLLOWED_USERS_ACTION);
 		getActivity().startService(intent);
 	}
 
 	public void unFollowUser(UserDTO user) {
-		Intent intent = new Intent(getActivity(), FollowedUsersService.class);
-		intent.putExtra(FollowedUsersService.ACTION, FollowedUsersService.UNFOLLOW_USER_ACTION);
-		intent.putExtra(FollowedUsersService.USER_NAME_ARG, user.userName);
+		Intent intent = new Intent(getActivity(), ConnectionsService.class);
+		intent.putExtra(ConnectionsService.ACTION, ConnectionsService.UNFOLLOW_USER_ACTION);
+		intent.putExtra(ConnectionsService.USER_NAME_ARG, user.userName);
 		getActivity().startService(intent);
 		MainApplication.GlobalState.removeFollowedUser(user);
 		refresh();

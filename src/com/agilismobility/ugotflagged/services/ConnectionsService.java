@@ -10,7 +10,7 @@ import com.agilismobility.ugotflagged.proxy.ServerProxy.ServerResponseSummary;
 import com.agilismobility.ugotflagged.utils.Utils;
 import com.agilismobility.utils.Constants;
 
-public class FollowedUsersService extends Service {
+public class ConnectionsService extends Service {
 
 	public static final String ACTION = "ACTION";
 

@@ -38,10 +38,12 @@
 			android:launchMode="singleTop">
 		</activity>
 
+		<activity  android:name=".UI.DialogActivity" android:theme="@android:style/Theme.Holo.Dialog" launchMode="singleInstance" />
+		
 		<service android:enabled="true" android:name=".services.LoginService"></service>
 		<service android:enabled="true" android:name=".services.RefreshService"></service>
 		<service android:enabled="true" android:name=".services.ImageDownloadingService"></service>
-		<service android:enabled="true" android:name=".services.FollowedUsersService"></service>
+		<service android:enabled="true" android:name=".services.ConnectionsService"></service>
 		<service android:enabled="true" android:name=".services.RegisterService"></service>
 
 
