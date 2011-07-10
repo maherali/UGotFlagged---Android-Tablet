@@ -11,7 +11,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
+import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
@@ -26,7 +26,7 @@ public class MainApplication extends Application {
 	private final String TAG = "MainApplication";
 	private Location mCurrentLocation;
 
-	private FlagsFragment flagsFragment;
+	private StreamFragment streamFragment;
 	private FlagDetailsFragment flagDetailsFragment;
 	private FollowedUsersFragment followedUsersFragment;
 	private FollowersFragment followersFragment;
@@ -37,8 +37,8 @@ public class MainApplication extends Application {
 		return flagDetailsFragment;
 	}
 
-	public FlagsFragment getFlagsFragment() {
-		return flagsFragment;
+	public StreamFragment getStreamFragment() {
+		return streamFragment;
 	}
 
 	public FollowedUsersFragment getFollowedUsersFragment() {
@@ -54,7 +54,7 @@ public class MainApplication extends Application {
 	}
 
 	public void createFragments() {
-		flagsFragment = new FlagsFragment();
+		streamFragment = new StreamFragment();
 		flagDetailsFragment = new FlagDetailsFragment();
 		followedUsersFragment = new FollowedUsersFragment();
 		followersFragment = new FollowersFragment();

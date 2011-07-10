@@ -27,7 +27,7 @@ import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.Utils;
 
-public class FlagsFragment extends ListFragment implements ListView.OnScrollListener {
+public class StreamFragment extends ListFragment implements ListView.OnScrollListener {
 	private int mCurPosition;
 	private boolean mBusy;
 	private SlowAdapter m_adapter;

@@ -26,9 +26,9 @@ import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FlagsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
+import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
 import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
@@ -132,11 +132,11 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 		Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
 		Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
 		if (leftFrag == null) {
-			FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
+			StreamFragment newFragment = ((MainApplication) getApplication()).getStreamFragment();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.add(R.id.left_frag, newFragment).commit();
 		} else {
-			FlagsFragment newFragment = ((MainApplication) getApplication()).getFlagsFragment();
+			StreamFragment newFragment = ((MainApplication) getApplication()).getStreamFragment();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.replace(R.id.left_frag, newFragment).commit();
 		}
@@ -219,10 +219,10 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 			mSelectedTabPosition = tab.getPosition();
 		} else {
 			mSelectedTabPosition = tab.getPosition();
-			int curPos = ((MainApplication) getApplication()).getFlagsFragment().getCurrentPosition();
+			int curPos = ((MainApplication) getApplication()).getStreamFragment().getCurrentPosition();
 			((MainApplication) getApplication()).createFragments();
 			setupCurrentFragment();
-			((MainApplication) getApplication()).getFlagsFragment().setCurrentPosition(curPos);
+			((MainApplication) getApplication()).getStreamFragment().setCurrentPosition(curPos);
 			((MainApplication) getApplication()).getFlagDetailsFragment().setCurrentPosition(curPos);
 		}
 	}
@@ -269,8 +269,8 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 
 	private void refreshFlags() {
 		Fragment frag = getFragmentManager().findFragmentById(R.id.left_frag);
-		if (frag != null && frag instanceof FlagsFragment) {
-			((FlagsFragment) frag).refresh();
+		if (frag != null && frag instanceof StreamFragment) {
+			((StreamFragment) frag).refresh();
 		}
 	}
 
@@ -301,7 +301,6 @@ public class FlagsActivity extends BaseActivity implements TabListener, ILocatio
 	}
 
 	private void parseRefreshAndGo(final String xml) {
-
 		Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
 		new AsyncTask<Void, Void, UserDTO>() {
 			@Override
