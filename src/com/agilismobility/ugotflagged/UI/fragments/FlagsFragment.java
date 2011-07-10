@@ -58,7 +58,7 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}
-		setListAdapter(m_adapter = new SlowAdapter(getActivity()));
+		setupListAdapter();
 		getListView().setOnScrollListener(this);
 		registerReceiver();
 	}
@@ -95,7 +95,7 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		getActivity().startService(intent);
 	}
 
-	private class SlowAdapter extends BaseAdapter {
+	class SlowAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 
 		public SlowAdapter(Context context) {
@@ -256,6 +256,8 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		super.onSaveInstanceState(outState);
 		outState.putInt("listPosition", mCurPosition);
 	}
+
+	abstract protected void setupListAdapter();
 
 	abstract protected void showAt(int position);
 

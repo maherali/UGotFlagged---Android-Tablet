@@ -29,7 +29,7 @@ import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
-import com.agilismobility.ugotflagged.UI.fragments.UserFlagsFragment;
+import com.agilismobility.ugotflagged.UI.fragments.UserPostsFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
 import com.agilismobility.ugotflagged.services.SessionService;
@@ -108,11 +108,11 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 			ft.replace(R.id.left_frag, newFragment).commit();
 		}
 		if (middleFrag == null) {
-			UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+			UserPostsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserPostsFragment();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.add(R.id.middle_frag, newFragment).commit();
 		} else {
-			UserFlagsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserFlagsFragment();
+			UserPostsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserPostsFragment();
 			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.replace(R.id.middle_frag, newFragment).commit();
 		}
