@@ -29,6 +29,7 @@ import com.agilismobility.ugotflagged.dtos.UsersDTO;
 import com.agilismobility.ugotflagged.services.ConnectionsService;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
+import com.agilismobility.util.Util;
 import com.agilismobility.utils.Constants;
 
 public class FollowedUsersFragment extends ListFragment implements ListView.OnScrollListener {
@@ -199,9 +200,11 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 			ImageView avatarImage = (ImageView) layout.findViewById(R.id.avatar);
 			TextView userNameText = (TextView) layout.findViewById(R.id.user_name);
 			InternetButton followButton = (InternetButton) layout.findViewById(R.id.follow);
+			TextView noOfPostsText = (TextView) layout.findViewById(R.id.no_of_posts);
 
 			UserDTO user = MainApplication.GlobalState.getFollowedUsers().getUsers().get(position);
 			userNameText.setText(user.userName);
+			noOfPostsText.setText(Util.pluralize(user.totalPosts, "flag", "flags"));
 			followButton.setText("UnFollow");
 			followButton.setTag(user);
 			followButton.setOnClickInternetListener(new InternetButton.OnClickInternetListener() {

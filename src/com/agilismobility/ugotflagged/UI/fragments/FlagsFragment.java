@@ -25,12 +25,14 @@ import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.Utils;
+import com.agilismobility.util.Util;
 
 public abstract class FlagsFragment extends ListFragment implements ListView.OnScrollListener {
 	protected int mCurPosition;
 	protected boolean mBusy;
 	protected SlowAdapter m_adapter;
 	protected ImageAvailableReceiver receiver;
+	protected View mListViewHeader;
 
 	public int getCurrentPosition() {
 		return mCurPosition;
@@ -53,11 +55,13 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 			mCurPosition = savedInstanceState.getInt("listPosition");
 		}
 		ListView lv = getListView();
+		setupHeaderView(lv);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		lv.setCacheColorHint(Color.TRANSPARENT);
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}
+
 		setupListAdapter();
 		getListView().setOnScrollListener(this);
 		registerReceiver();
@@ -140,8 +144,8 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 			text.setText(post.text);
 			userNameText.setText(post.author);
 			postTitleText.setText(post.title);
-			postCommentsText.setText(post.replies.size() == 1 ? (post.replies.size() + " comment") : (post.replies.size() + " comments"));
-			postUserFavs.setText(post.totalLikes == 1 ? (post.totalLikes + " user") : (post.totalLikes + " users"));
+			postCommentsText.setText(Util.pluralize(post.replies.size(), "comment", "comments"));
+			postUserFavs.setText(Util.pluralize(post.totalLikes, "user", "users"));
 			Location currLoc = ((MainApplication) getActivity().getApplication()).getCurrentLocation();
 			distanceAway.setText(Utils.distanceAway(currLoc, post.lat, post.lng));
 			timeAgo.setText(post.timeAgo);
@@ -257,6 +261,18 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		outState.putInt("listPosition", mCurPosition);
 	}
 
+	protected void showHeaderView() {
+		if (mListViewHeader != null) {
+			mListViewHeader.setVisibility(View.VISIBLE);
+		}
+	}
+
+	protected void removeHeaderView() {
+		if (mListViewHeader != null) {
+			mListViewHeader.setVisibility(View.GONE);
+		}
+	}
+
 	abstract protected void setupListAdapter();
 
 	abstract protected void showAt(int position);
@@ -264,5 +280,7 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 	abstract protected int getPostCount();
 
 	abstract protected PostDTO getPostAtPosition(int position);
+
+	abstract protected void setupHeaderView(ListView lv);
 
 }

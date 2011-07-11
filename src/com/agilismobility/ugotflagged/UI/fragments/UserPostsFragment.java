@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ListView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.UI.DialogActivity;
@@ -36,6 +37,7 @@ public class UserPostsFragment extends FlagsFragment {
 	}
 
 	private void findUserPosts() {
+		showHeaderView();
 		Intent intent = new Intent(getActivity(), UsersService.class);
 		intent.putExtra(UsersService.ACTION, UsersService.USER_POSTS_ACTION);
 		intent.putExtra(UsersService.USER_NAME_ARG, userName);
@@ -46,6 +48,7 @@ public class UserPostsFragment extends FlagsFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		registerReceiver();
+		setEmptyText("User has no posts.");
 	}
 
 	@Override
@@ -65,10 +68,10 @@ public class UserPostsFragment extends FlagsFragment {
 		public void onReceive(Context context, Intent intent) {
 			if (UsersService.USER_POSTS_ACTION.equals(intent.getStringExtra(UsersService.ACTION))) {
 				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
+					removeHeaderView();
 					parseUserAndGo(intent.getStringExtra(SessionService.XML_ARG));
 				} else {
-					// hideProgress();
-					// enableButton(R.id.login_submit, true);
+					removeHeaderView();
 					DialogActivity.showMessage(getActivity(), "Error", intent.getStringExtra(SessionService.ERROR_ARG));
 				}
 			}
@@ -114,6 +117,10 @@ public class UserPostsFragment extends FlagsFragment {
 	@Override
 	protected void setupListAdapter() {
 		setListAdapter(m_adapter = new SlowAdapter(getActivity()));
+	}
+
+	@Override
+	protected void setupHeaderView(ListView lv) {
 	}
 
 }

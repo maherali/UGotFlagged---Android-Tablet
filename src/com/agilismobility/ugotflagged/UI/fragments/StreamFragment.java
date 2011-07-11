@@ -1,5 +1,7 @@
 package com.agilismobility.ugotflagged.UI.fragments;
 
+import android.widget.ListView;
+
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 
@@ -27,6 +29,10 @@ public class StreamFragment extends FlagsFragment {
 	@Override
 	protected PostDTO getPostAtPosition(int position) {
 		return MainApplication.GlobalState.getStream().get(position);
+	}
+
+	@Override
+	protected void setupHeaderView(ListView lv) {
 	}
 
 }
