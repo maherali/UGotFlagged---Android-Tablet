@@ -19,6 +19,7 @@ public class Constants {
 	public static final String FINDING_FOLLOWED = "FINDING_FOLLOWED";
 	public static final String UNFOLLOWING_FOLLOWED = "UNFOLLOWING_FOLLOWED";
 	public static final String REGISTERING = "REGISTERING";
+	public static final String FINDING_USER_POSTS = "FINDING_USER_POSTS";
 
 	public static void broadcastDoingSomethingNotification(String notifName) {
 		Intent newIntent = new Intent(CURRENTLY_DOING_SOMETHING_NOTIF);

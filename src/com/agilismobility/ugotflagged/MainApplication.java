@@ -107,6 +107,8 @@ public class MainApplication extends Application {
 		static HashMap<Integer, UserDTO> users = new HashMap<Integer, UserDTO>();
 		static UsersDTO followedUsers;
 
+		static HashMap<Integer, ArrayList<PostDTO>> userPosts = new HashMap<Integer, ArrayList<PostDTO>>();
+
 		public static void setCurrentUser(UserDTO user) {
 			currUserID = user.identifier;
 			users.put(currUserID, user);
@@ -118,6 +120,14 @@ public class MainApplication extends Application {
 
 		public static UserDTO getCurrentUser() {
 			return users.get(currUserID);
+		}
+
+		public static ArrayList<PostDTO> getUserPosts(int userID) {
+			return userPosts.get(userID);
+		}
+
+		public static void setUserPosts(int userID, ArrayList<PostDTO> posts) {
+			userPosts.put(userID, posts);
 		}
 
 		public static void clearData() {
