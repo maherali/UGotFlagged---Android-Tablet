@@ -25,11 +25,7 @@ import com.agilismobility.LocationAwareness;
 import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.UI.fragments.FlagDetailsFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
-import com.agilismobility.ugotflagged.UI.fragments.UserPostsFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
 import com.agilismobility.ugotflagged.services.SessionService;
@@ -93,62 +89,22 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		}
 	}
 
-	private void setupTabTwoView() {
-		setContentView(R.layout.followed);
-		Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
-		Fragment middleFrag = getFragmentManager().findFragmentById(R.id.middle_frag);
-		Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
-		if (leftFrag == null) {
-			FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.left_frag, newFragment).commit();
+	private void addOrReplace(final int id, Fragment frag, Fragment newFrag) {
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		if (frag == null) {
+			ft.add(id, newFrag);
 		} else {
-			FollowedUsersFragment newFragment = ((MainApplication) getApplication()).getFollowedUsersFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.left_frag, newFragment).commit();
+			ft.replace(id, newFrag);
 		}
-		if (middleFrag == null) {
-			UserPostsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserPostsFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.middle_frag, newFragment).commit();
-		} else {
-			UserPostsFragment newFragment = ((MainApplication) getApplication()).getFollowedUserPostsFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.middle_frag, newFragment).commit();
-		}
-		if (rightFrag == null) {
-			FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.right_frag, newFragment).commit();
-		} else {
-			FollowersFragment newFragment = ((MainApplication) getApplication()).getFollowersFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.right_frag, newFragment).commit();
-		}
+		ft.commit();
 	}
 
 	private void setupTabOneView() {
 		setContentView(R.layout.main);
-		Fragment leftFrag = getFragmentManager().findFragmentById(R.id.left_frag);
-		Fragment rightFrag = getFragmentManager().findFragmentById(R.id.right_frag);
-		if (leftFrag == null) {
-			StreamFragment newFragment = ((MainApplication) getApplication()).getStreamFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.left_frag, newFragment).commit();
-		} else {
-			StreamFragment newFragment = ((MainApplication) getApplication()).getStreamFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.left_frag, newFragment).commit();
-		}
-		if (rightFrag == null) {
-			FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(R.id.right_frag, newFragment).commit();
-		} else {
-			FlagDetailsFragment newFragment = ((MainApplication) getApplication()).getFlagDetailsFragment();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.replace(R.id.right_frag, newFragment).commit();
-		}
+		addOrReplace(R.id.left_frag, getFragmentManager().findFragmentById(R.id.left_frag),
+				((MainApplication) getApplication()).getStreamFragment());
+		addOrReplace(R.id.right_frag, getFragmentManager().findFragmentById(R.id.right_frag),
+				((MainApplication) getApplication()).getFlagDetailsFragment());
 		TextView streamTitle = (TextView) findViewById(R.id.stream_title);
 		UserDTO currUser = MainApplication.GlobalState.getCurrentUser();
 		if (currUser != null) {
@@ -156,35 +112,39 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		}
 	}
 
-	private void showProgress() {
-		((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setVisibility(View.GONE);
-		((ProgressBar) getActionBar().getCustomView().findViewById(R.id.progress)).setVisibility(View.VISIBLE);
+	private void setupTabTwoView() {
+		setContentView(R.layout.followed);
+		addOrReplace(R.id.left_frag, getFragmentManager().findFragmentById(R.id.left_frag),
+				((MainApplication) getApplication()).getFollowedUsersFragment());
+		addOrReplace(R.id.middle_frag, getFragmentManager().findFragmentById(R.id.middle_frag),
+				((MainApplication) getApplication()).getFollowedUserPostsFragment());
+		addOrReplace(R.id.right_frag, getFragmentManager().findFragmentById(R.id.right_frag),
+				((MainApplication) getApplication()).getFollowersFragment());
 	}
 
-	private void hideProgress() {
-		((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button)).setVisibility(View.VISIBLE);
-		((ProgressBar) getActionBar().getCustomView().findViewById(R.id.progress)).setVisibility(View.GONE);
+	private void showProgress(boolean show) {
+		View refreshView = ((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button));
+		View progressView = ((ProgressBar) getActionBar().getCustomView().findViewById(R.id.progress));
+		if (!show) {
+			refreshView.setVisibility(View.VISIBLE);
+			progressView.setVisibility(View.GONE);
+		} else {
+			refreshView.setVisibility(View.GONE);
+			progressView.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
 	protected void receivedDoingInterestingNotification(String notif) {
-		if (Constants.LOGGING_IN.equals(notif)) {
-			showProgress();
-		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
-			showProgress();
-		} else if (Constants.REFRESHING_STREAM.equals(notif)) {
-			showProgress();
+		if (Constants.LOGGING_IN.equals(notif) || Constants.PARSING_USER_DATA.equals(notif) || Constants.REFRESHING_STREAM.equals(notif)) {
+			showProgress(true);
 		}
 	}
 
 	@Override
 	protected void receivedFinishedDoingInterestingNotification(String notif) {
-		if (Constants.LOGGING_IN.equals(notif)) {
-			hideProgress();
-		} else if (Constants.PARSING_USER_DATA.equals(notif)) {
-			hideProgress();
-		} else if (Constants.REFRESHING_STREAM.equals(notif)) {
-			hideProgress();
+		if (Constants.LOGGING_IN.equals(notif) || Constants.PARSING_USER_DATA.equals(notif) || Constants.REFRESHING_STREAM.equals(notif)) {
+			showProgress(false);
 		}
 	}
 

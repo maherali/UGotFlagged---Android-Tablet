@@ -69,7 +69,9 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 
 	@Override
 	public void onDestroy() {
-		getActivity().unregisterReceiver(receiver);
+		if (receiver != null) {
+			getActivity().unregisterReceiver(receiver);
+		}
 		super.onDestroy();
 	}
 
