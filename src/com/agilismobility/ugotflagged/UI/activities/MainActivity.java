@@ -204,9 +204,18 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		case R.id.logout:
 			logout();
 			return true;
+		case R.id.add_flag:
+			addFlag();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void addFlag() {
+		Intent intent = new Intent();
+		intent.setClass(getApplication(), AddFlagActivity.class);
+		startActivity(intent);
 	}
 
 	private void logout() {

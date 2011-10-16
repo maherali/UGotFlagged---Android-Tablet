@@ -2,9 +2,11 @@ package com.agilismobility.ugotflagged.ui.fragments.shared;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -12,6 +14,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -175,6 +179,14 @@ public abstract class FlagDetailsFragment extends Fragment {
 		postCommentsText.setText(post.replies.size() == 1 ? (post.replies.size() + " comment") : (post.replies.size() + " comments"));
 		postUserFavs.setText(post.totalLikes == 1 ? (post.totalLikes + " user") : (post.totalLikes + " users"));
 		addReplies(post.replies);
+
+		((Button) getActivity().findViewById(R.id.add_comment)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addComment();
+			}
+		});
+
 		postTypePicture.setImageBitmap(postTypeImageForPostType(post.postType));
 		addressText.setText(postAddress(post));
 		distanceAway.setText(Utils.distanceAway(((MainApplication) getActivity().getApplication()).getCurrentLocation(), post.lat, post.lng));
@@ -221,6 +233,20 @@ public abstract class FlagDetailsFragment extends Fragment {
 	public void onDestroy() {
 		getActivity().unregisterReceiver(receiver);
 		super.onDestroy();
+	}
+
+	protected void addComment() {
+		LayoutInflater inflater = LayoutInflater.from(this.getActivity());
+		View alertDialogView = inflater.inflate(R.layout.add_reply, null);
+		EditText myEditText = (EditText) alertDialogView.findViewById(R.id.text_edit_view);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+		builder.setView(alertDialogView);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		}).show();
 	}
 
 	abstract protected PostDTO getPost(int pos);
