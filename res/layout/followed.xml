@@ -11,7 +11,7 @@
 
 	<FrameLayout android:id="@+id/middle_frag"
 		android:layout_marginTop="?android:attr/actionBarSize"
-		android:layout_width="@dimen/stream_size" android:layout_height="match_parent">
+		android:layout_width="@dimen/medium_stream_size" android:layout_height="match_parent">
 	</FrameLayout>
 
 

@@ -10,27 +10,25 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.agilismobility.ugotflagged.UI.fragments.FollowedUserPostsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.StreamFlagDetailsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
-import com.agilismobility.ugotflagged.UI.fragments.UserPostsFragment;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.dtos.UsersDTO;
 import com.agilismobility.ugotflagged.services.ImageResources;
 
 public class MainApplication extends Application {
-
 	private static MainApplication mInstance;
 	private final String TAG = "MainApplication";
 	private Location mCurrentLocation;
-
 	private StreamFragment streamFragment;
 	private StreamFlagDetailsFragment streamFlagDetailsFragment;
 	private FollowedUsersFragment followedUsersFragment;
 	private FollowersFragment followersFragment;
-	private UserPostsFragment followedUserFlags;
+	private FollowedUserPostsFragment followedUserFlags;
 	private CacheDatabase cacheDB;
 
 	public StreamFlagDetailsFragment getStreamFlagDetailsFragment() {
@@ -49,7 +47,7 @@ public class MainApplication extends Application {
 		return followersFragment;
 	}
 
-	public UserPostsFragment getFollowedUserPostsFragment() {
+	public FollowedUserPostsFragment getFollowedUserPostsFragment() {
 		return followedUserFlags;
 	}
 
@@ -58,7 +56,7 @@ public class MainApplication extends Application {
 		streamFlagDetailsFragment = new StreamFlagDetailsFragment();
 		followedUsersFragment = new FollowedUsersFragment();
 		followersFragment = new FollowersFragment();
-		followedUserFlags = new UserPostsFragment();
+		followedUserFlags = new FollowedUserPostsFragment();
 	}
 
 	@Override
@@ -102,11 +100,9 @@ public class MainApplication extends Application {
 	}
 
 	public static class GlobalState {
-
 		static int currUserID;
 		static HashMap<Integer, UserDTO> users = new HashMap<Integer, UserDTO>();
 		static UsersDTO followedUsers;
-
 		static HashMap<Integer, ArrayList<PostDTO>> userPosts = new HashMap<Integer, ArrayList<PostDTO>>();
 
 		public static void setCurrentUser(UserDTO user) {
@@ -115,7 +111,7 @@ public class MainApplication extends Application {
 		}
 
 		public static ArrayList<PostDTO> getStream() {
-			return users.get(currUserID) != null ? users.get(currUserID).posts : new ArrayList<PostDTO>();
+			return getCurrentUser() != null ? getCurrentUser().posts : new ArrayList<PostDTO>();
 		}
 
 		public static UserDTO getCurrentUser() {
@@ -132,6 +128,7 @@ public class MainApplication extends Application {
 
 		public static void clearData() {
 			users.clear();
+			userPosts.clear();
 			followedUsers = null;
 		}
 

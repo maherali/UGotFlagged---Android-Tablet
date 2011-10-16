@@ -19,8 +19,7 @@ import com.agilismobility.ugotflagged.services.UsersService;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
-public class UserPostsFragment extends FlagsFragment {
-
+abstract public class UserPostsFragment extends FlagsFragment {
 	protected Integer userID;
 	protected String userName;
 	protected UsersReceiver mUsersReceiver;
@@ -100,9 +99,7 @@ public class UserPostsFragment extends FlagsFragment {
 	}
 
 	@Override
-	protected void showAt(int position) {
-
-	}
+	abstract protected void showAt(int position);
 
 	@Override
 	protected int getPostCount() {
