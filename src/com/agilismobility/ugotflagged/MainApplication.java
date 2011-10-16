@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.agilismobility.ugotflagged.UI.fragments.FollowedFlagDetailsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUserPostsFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
@@ -26,9 +27,12 @@ public class MainApplication extends Application {
 	private Location mCurrentLocation;
 	private StreamFragment streamFragment;
 	private StreamFlagDetailsFragment streamFlagDetailsFragment;
+
 	private FollowedUsersFragment followedUsersFragment;
-	private FollowersFragment followersFragment;
 	private FollowedUserPostsFragment followedUserFlags;
+	private FollowedFlagDetailsFragment followedFlagDetailsFragment;
+
+	private FollowersFragment followersFragment;
 	private CacheDatabase cacheDB;
 
 	public StreamFlagDetailsFragment getStreamFlagDetailsFragment() {
@@ -43,20 +47,25 @@ public class MainApplication extends Application {
 		return followedUsersFragment;
 	}
 
-	public FollowersFragment getFollowersFragment() {
-		return followersFragment;
-	}
-
 	public FollowedUserPostsFragment getFollowedUserPostsFragment() {
 		return followedUserFlags;
+	}
+
+	public FollowedFlagDetailsFragment getFollowedFlagDetailsFragment() {
+		return followedFlagDetailsFragment;
+	}
+
+	public FollowersFragment getFollowersFragment() {
+		return followersFragment;
 	}
 
 	public void createFragments() {
 		streamFragment = new StreamFragment();
 		streamFlagDetailsFragment = new StreamFlagDetailsFragment();
 		followedUsersFragment = new FollowedUsersFragment();
-		followersFragment = new FollowersFragment();
 		followedUserFlags = new FollowedUserPostsFragment();
+		followedFlagDetailsFragment = new FollowedFlagDetailsFragment();
+		followersFragment = new FollowersFragment();
 	}
 
 	@Override

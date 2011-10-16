@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		addOrReplace(R.id.middle_frag, getFragmentManager().findFragmentById(R.id.middle_frag),
 				((MainApplication) getApplication()).getFollowedUserPostsFragment());
 		addOrReplace(R.id.right_frag, getFragmentManager().findFragmentById(R.id.right_frag),
-				((MainApplication) getApplication()).getFollowersFragment());
+				((MainApplication) getApplication()).getFollowedFlagDetailsFragment());
 	}
 
 	private void showProgress(boolean show) {

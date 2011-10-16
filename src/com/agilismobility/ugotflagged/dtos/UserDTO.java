@@ -52,7 +52,7 @@ public class UserDTO extends BaseDTO {
 	}
 
 	public UserDTO() {
-
+		posts = new ArrayList<PostDTO>();
 	}
 
 	public UserDTO(XMLHelper xml) {

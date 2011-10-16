@@ -34,6 +34,10 @@ public class PostDTO {
 
 	public ArrayList<ReplyDTO> replies;
 
+	public PostDTO() {
+		replies = new ArrayList<ReplyDTO>();
+	}
+
 	public PostDTO(OpenXml post) {
 		this.liked = post.bool("liked/text()");
 		this.canLike = post.integer("can_like/text()") == 1;

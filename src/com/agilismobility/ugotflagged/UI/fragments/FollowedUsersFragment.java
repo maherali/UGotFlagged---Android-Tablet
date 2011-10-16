@@ -294,9 +294,11 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 
 	private void showAt(int position) {
 		UserPostsFragment frag = ((MainApplication) MainApplication.getInstance()).getFollowedUserPostsFragment();
+		FollowedFlagDetailsFragment fragDetails = ((MainApplication) MainApplication.getInstance()).getFollowedFlagDetailsFragment();
 		if (frag != null && frag.isVisible()) {
 			UserDTO user = MainApplication.GlobalState.getFollowedUsers().getUsers().get(position);
 			frag.setUser(user);
+			fragDetails.clearContent();
 		}
 		mCurPosition = position;
 	}

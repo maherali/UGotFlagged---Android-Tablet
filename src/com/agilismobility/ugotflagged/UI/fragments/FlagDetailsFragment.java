@@ -50,9 +50,15 @@ public abstract class FlagDetailsFragment extends Fragment {
 		return mLayout;
 	}
 
+	public void clearContent() {
+		View frame = mLayout.findViewById(R.id.frame);
+		frame.setVisibility(View.INVISIBLE);
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
+		mLayout.setVisibility(View.VISIBLE);
 		if (isVisible() && getPost(mPosition) != null) {
 			updateContent(mPosition);
 		}
@@ -193,7 +199,8 @@ public abstract class FlagDetailsFragment extends Fragment {
 			picture.setVisibility(View.VISIBLE);
 			picture.setImageBitmap(Utils.getRoundedCornerBitmap(bitmapPicture, 9));
 		}
-		licensePlatePicture.setImageBitmap(Utils.getImageAsset(post.plateIssuer.toUpperCase() + ".jpg"));
+		String issuer = post.plateIssuer != null ? post.plateIssuer.toUpperCase() : "";
+		licensePlatePicture.setImageBitmap(Utils.getImageAsset(issuer + ".jpg"));
 		plateNoText.setText(post.plateNumber);
 		licensePlatePicture.invalidate();
 	}
