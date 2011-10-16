@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI;
+package com.agilismobility.ugotflagged.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

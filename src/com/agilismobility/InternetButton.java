@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.agilismobility.ugotflagged.MainApplication;
-import com.agilismobility.ugotflagged.UI.DialogActivity;
+import com.agilismobility.ugotflagged.ui.activities.DialogActivity;
 
 public class InternetButton extends Button {
 

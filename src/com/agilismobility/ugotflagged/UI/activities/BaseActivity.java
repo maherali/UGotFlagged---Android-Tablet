@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI;
+package com.agilismobility.ugotflagged.ui.activities;
 
 import java.util.ArrayList;
 

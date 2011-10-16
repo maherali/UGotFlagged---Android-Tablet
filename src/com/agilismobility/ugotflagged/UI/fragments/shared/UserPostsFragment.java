@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.shared;
 
 import java.util.ArrayList;
 
@@ -11,11 +11,11 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import com.agilismobility.ugotflagged.MainApplication;
-import com.agilismobility.ugotflagged.UI.DialogActivity;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.SessionService;
 import com.agilismobility.ugotflagged.services.UsersService;
+import com.agilismobility.ugotflagged.ui.activities.DialogActivity;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
@@ -47,7 +47,6 @@ abstract public class UserPostsFragment extends FlagsFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		registerReceiver();
-		setEmptyText("User has no posts.");
 	}
 
 	@Override

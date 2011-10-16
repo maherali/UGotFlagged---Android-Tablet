@@ -1,7 +1,8 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.stream;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.ui.fragments.shared.FlagDetailsFragment;
 
 public class StreamFlagDetailsFragment extends FlagDetailsFragment {
 

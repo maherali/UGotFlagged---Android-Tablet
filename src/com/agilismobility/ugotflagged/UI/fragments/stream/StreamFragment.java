@@ -1,9 +1,10 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.stream;
 
 import android.widget.ListView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.ui.fragments.shared.FlagsFragment;
 
 public class StreamFragment extends FlagsFragment {
 

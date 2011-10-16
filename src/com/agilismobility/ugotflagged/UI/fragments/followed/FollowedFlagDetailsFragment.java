@@ -1,6 +1,7 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.followed;
 
 import com.agilismobility.ugotflagged.dtos.PostDTO;
+import com.agilismobility.ugotflagged.ui.fragments.shared.FlagDetailsFragment;
 
 public class FollowedFlagDetailsFragment extends FlagDetailsFragment {
 

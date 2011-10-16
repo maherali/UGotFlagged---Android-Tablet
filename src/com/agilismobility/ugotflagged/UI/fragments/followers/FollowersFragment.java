@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.followers;
 
 import android.app.ListFragment;
 

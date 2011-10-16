@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI;
+package com.agilismobility.ugotflagged.ui.activities;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -25,10 +25,10 @@ import com.agilismobility.LocationAwareness;
 import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.RefreshService;
 import com.agilismobility.ugotflagged.services.SessionService;
+import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFragment;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 

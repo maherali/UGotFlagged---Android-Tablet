@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.followed;
 
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
@@ -23,11 +23,12 @@ import android.widget.TextView;
 import com.agilismobility.InternetButton;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
-import com.agilismobility.ugotflagged.UI.BaseActivity;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.dtos.UsersDTO;
 import com.agilismobility.ugotflagged.services.ConnectionsService;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
+import com.agilismobility.ugotflagged.ui.activities.BaseActivity;
+import com.agilismobility.ugotflagged.ui.fragments.shared.UserPostsFragment;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.util.Util;
 import com.agilismobility.utils.Constants;
@@ -70,6 +71,7 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		}
 		setListAdapter(m_adapter = new SlowAdapter(getActivity()));
 		getListView().setOnScrollListener(this);
+		setEmptyText("No followed users.");
 	}
 
 	@Override

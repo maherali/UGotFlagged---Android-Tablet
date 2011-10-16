@@ -10,16 +10,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import com.agilismobility.ugotflagged.UI.fragments.FollowedFlagDetailsFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FollowedUserPostsFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FollowedUsersFragment;
-import com.agilismobility.ugotflagged.UI.fragments.FollowersFragment;
-import com.agilismobility.ugotflagged.UI.fragments.StreamFlagDetailsFragment;
-import com.agilismobility.ugotflagged.UI.fragments.StreamFragment;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.dtos.UsersDTO;
 import com.agilismobility.ugotflagged.services.ImageResources;
+import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedFlagDetailsFragment;
+import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedUserPostsFragment;
+import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedUsersFragment;
+import com.agilismobility.ugotflagged.ui.fragments.followers.FollowersFragment;
+import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFlagDetailsFragment;
+import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFragment;
 
 public class MainApplication extends Application {
 	private static MainApplication mInstance;

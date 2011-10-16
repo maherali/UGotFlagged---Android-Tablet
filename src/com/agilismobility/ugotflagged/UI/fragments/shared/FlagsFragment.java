@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.shared;
 
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
@@ -82,6 +82,9 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 	}
 
 	public void refresh() {
+		if (getPostCount() == 0) {
+			setEmptyText("User has no posts.");
+		}
 		m_adapter.notifyDataSetChanged();
 	}
 
@@ -101,7 +104,7 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		getActivity().startService(intent);
 	}
 
-	class SlowAdapter extends BaseAdapter {
+	public class SlowAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 
 		public SlowAdapter(Context context) {

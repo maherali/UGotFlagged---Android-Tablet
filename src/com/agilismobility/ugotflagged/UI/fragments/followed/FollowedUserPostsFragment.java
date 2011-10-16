@@ -1,6 +1,7 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.followed;
 
 import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.ui.fragments.shared.UserPostsFragment;
 
 public class FollowedUserPostsFragment extends UserPostsFragment {
 

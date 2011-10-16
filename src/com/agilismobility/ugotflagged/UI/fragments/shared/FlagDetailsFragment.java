@@ -1,4 +1,4 @@
-package com.agilismobility.ugotflagged.UI.fragments;
+package com.agilismobility.ugotflagged.ui.fragments.shared;
 
 import java.util.ArrayList;
 
@@ -142,7 +142,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 		return img;
 	}
 
-	void updateContent(int position) {
+	public void updateContent(int position) {
 		mPosition = position;
 		View frame = mLayout.findViewById(R.id.frame);
 		frame.setVisibility(View.VISIBLE);
