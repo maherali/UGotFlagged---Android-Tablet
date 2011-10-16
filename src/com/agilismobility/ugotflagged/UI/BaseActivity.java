@@ -34,33 +34,32 @@ public abstract class BaseActivity extends Activity {
 	protected void receivedFinishedDoingInterestingNotification(String notif) {
 	}
 
+	private void findAndInvoke(String notifName, boolean doing) {
+		if (notifName != null) {
+			for (String aNotif : mNotificationsObserved) {
+				if (aNotif.equals(notifName)) {
+					if (doing) {
+						receivedDoingInterestingNotification(notifName);
+					} else {
+						receivedFinishedDoingInterestingNotification(notifName);
+					}
+					break;
+				}
+			}
+		}
+	}
+
 	protected class DoingNotificationReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			final String notifName = intent.getStringExtra(Constants.NOTIFICATION);
-			if (notifName != null) {
-				for (String aNotif : mNotificationsObserved) {
-					if (aNotif.equals(notifName)) {
-						receivedDoingInterestingNotification(notifName);
-						break;
-					}
-				}
-			}
+			findAndInvoke(intent.getStringExtra(Constants.NOTIFICATION), true);
 		}
 	}
 
 	protected class FinishedDoingNotificationReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			final String notifName = intent.getStringExtra(Constants.NOTIFICATION);
-			if (notifName != null) {
-				for (String aNotif : mNotificationsObserved) {
-					if (aNotif.equals(notifName)) {
-						receivedFinishedDoingInterestingNotification(notifName);
-						break;
-					}
-				}
-			}
+			findAndInvoke(intent.getStringExtra(Constants.NOTIFICATION), false);
 		}
 	}
 

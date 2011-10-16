@@ -14,7 +14,7 @@ public class StreamFragment extends FlagsFragment {
 
 	@Override
 	protected void showAt(int position) {
-		FlagDetailsFragment frag = ((MainApplication) MainApplication.getInstance()).getFlagDetailsFragment();
+		StreamFlagDetailsFragment frag = ((MainApplication) MainApplication.getInstance()).getStreamFlagDetailsFragment();
 		if (frag != null && frag.isVisible()) {
 			frag.updateContent(position);
 		}

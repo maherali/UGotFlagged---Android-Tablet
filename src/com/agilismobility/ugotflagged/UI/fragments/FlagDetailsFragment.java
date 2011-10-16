@@ -23,7 +23,7 @@ import com.agilismobility.ugotflagged.dtos.ReplyDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.utils.Utils;
 
-public class FlagDetailsFragment extends Fragment {
+public abstract class FlagDetailsFragment extends Fragment {
 	private View mLayout;
 	MyReceiver receiver;
 	private int mPosition;
@@ -53,7 +53,7 @@ public class FlagDetailsFragment extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (isVisible() && MainApplication.GlobalState.getStream().size() > 0) {
+		if (isVisible() && getPost(mPosition) != null) {
 			updateContent(mPosition);
 		}
 	}
@@ -158,7 +158,8 @@ public class FlagDetailsFragment extends Fragment {
 		TextView distanceAway = (TextView) mLayout.findViewById(R.id.distance_away);
 		TextView timeAgo = (TextView) mLayout.findViewById(R.id.timeago);
 
-		PostDTO post = MainApplication.GlobalState.getStream().get(position);
+		PostDTO post = getPost(position);
+
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 		Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoMainURL);
 
@@ -214,4 +215,6 @@ public class FlagDetailsFragment extends Fragment {
 		getActivity().unregisterReceiver(receiver);
 		super.onDestroy();
 	}
+
+	abstract protected PostDTO getPost(int pos);
 }

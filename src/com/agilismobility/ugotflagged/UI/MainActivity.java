@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		addOrReplace(R.id.left_frag, getFragmentManager().findFragmentById(R.id.left_frag),
 				((MainApplication) getApplication()).getStreamFragment());
 		addOrReplace(R.id.right_frag, getFragmentManager().findFragmentById(R.id.right_frag),
-				((MainApplication) getApplication()).getFlagDetailsFragment());
+				((MainApplication) getApplication()).getStreamFlagDetailsFragment());
 		TextView streamTitle = (TextView) findViewById(R.id.stream_title);
 		UserDTO currUser = MainApplication.GlobalState.getCurrentUser();
 		if (currUser != null) {
@@ -125,12 +125,12 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 	private void showProgress(boolean show) {
 		View refreshView = ((Button) getActionBar().getCustomView().findViewById(R.id.refresh_button));
 		View progressView = ((ProgressBar) getActionBar().getCustomView().findViewById(R.id.progress));
-		if (!show) {
-			refreshView.setVisibility(View.VISIBLE);
-			progressView.setVisibility(View.GONE);
-		} else {
+		if (show) {
 			refreshView.setVisibility(View.GONE);
 			progressView.setVisibility(View.VISIBLE);
+		} else {
+			refreshView.setVisibility(View.VISIBLE);
+			progressView.setVisibility(View.GONE);
 		}
 	}
 
@@ -183,7 +183,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 			((MainApplication) getApplication()).createFragments();
 			setupCurrentFragment();
 			((MainApplication) getApplication()).getStreamFragment().setCurrentPosition(curPos);
-			((MainApplication) getApplication()).getFlagDetailsFragment().setCurrentPosition(curPos);
+			((MainApplication) getApplication()).getStreamFlagDetailsFragment().setCurrentPosition(curPos);
 		}
 	}
 
