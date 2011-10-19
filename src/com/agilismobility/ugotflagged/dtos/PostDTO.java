@@ -3,9 +3,10 @@ package com.agilismobility.ugotflagged.dtos;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.util.xpath.OpenXml;
 
-public class PostDTO {
+public class PostDTO extends BaseDTO {
 	public int totalLikes;
 	public boolean canLike;
 	public boolean liked;
@@ -38,7 +39,7 @@ public class PostDTO {
 		replies = new ArrayList<ReplyDTO>();
 	}
 
-	public PostDTO(OpenXml post) {
+	public void parse(OpenXml post) {
 		this.liked = post.bool("liked/text()");
 		this.canLike = post.integer("can_like/text()") == 1;
 		this.identifier = post.integer("identifier/text()");
@@ -76,8 +77,18 @@ public class PostDTO {
 		}
 	}
 
+	public PostDTO(OpenXml post) {
+		parse(post);
+	}
+
 	@Override
 	public String toString() {
 		return text;
+	}
+
+	public PostDTO(XMLHelper xml) {
+		super(xml);
+		OpenXml thePost = xml.getDoc();
+		parse(thePost);
 	}
 }

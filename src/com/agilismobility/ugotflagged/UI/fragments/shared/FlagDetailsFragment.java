@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +26,17 @@ import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.ReplyDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
+import com.agilismobility.ugotflagged.services.PostService;
+import com.agilismobility.ugotflagged.services.SessionService;
+import com.agilismobility.ugotflagged.ui.activities.BaseActivity;
 import com.agilismobility.ugotflagged.utils.Utils;
+import com.agilismobility.ugotflagged.utils.XMLHelper;
+import com.agilismobility.utils.Constants;
 
 public abstract class FlagDetailsFragment extends Fragment {
 	private View mLayout;
 	MyReceiver receiver;
+	CommentReceiver addCommentReceiver;
 	private int mPosition;
 
 	public void setCurrentPosition(int pos) {
@@ -43,7 +50,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		registerReceiver();
+		registerReceivers();
 		mLayout = inflater.inflate(R.layout.post_details, null);
 		View frame = mLayout.findViewById(R.id.frame);
 		frame.setVisibility(View.GONE);
@@ -68,10 +75,48 @@ public abstract class FlagDetailsFragment extends Fragment {
 		}
 	}
 
-	private void registerReceiver() {
+	private void parsePostAndGo(final String xml) {
+		Constants.broadcastDoingSomethingNotification(Constants.PARSING_POST_DATA);
+		new AsyncTask<Void, Void, PostDTO>() {
+			@Override
+			protected PostDTO doInBackground(Void... params) {
+				return new PostDTO(new XMLHelper(xml));
+			}
+
+			@Override
+			protected void onPostExecute(PostDTO post) {
+				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_POST_DATA);
+				if (post.errors.size() == 0) {
+					MainApplication.GlobalState.updatePost(post);
+					updateContent(mPosition);
+				} else {
+					((BaseActivity) getActivity()).showError(post.errors);
+				}
+			}
+		}.execute();
+	}
+
+	private void registerReceivers() {
 		IntentFilter filter = new IntentFilter(ImageDownloadingService.IMAGE_AVAILABLE_NOTIF);
 		receiver = new MyReceiver();
 		getActivity().registerReceiver(receiver, filter);
+
+		filter = new IntentFilter(PostService.ADD_COMMENT_FINISHED_NOTIF);
+		addCommentReceiver = new CommentReceiver();
+		getActivity().registerReceiver(addCommentReceiver, filter);
+	}
+
+	public class CommentReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (PostService.ADD_COMMENT_ACTION.equals(intent.getStringExtra(PostService.ACTION))) {
+				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
+					parsePostAndGo(intent.getStringExtra(SessionService.XML_ARG));
+				} else {
+					((BaseActivity) getActivity()).showError(intent.getStringExtra(SessionService.ERROR_ARG));
+				}
+			}
+		}
 	}
 
 	public class MyReceiver extends BroadcastReceiver {
@@ -229,19 +274,32 @@ public abstract class FlagDetailsFragment extends Fragment {
 		return addr;
 	}
 
+	private void postComment(String commentText) {
+		Intent intent = new Intent(getActivity(), PostService.class);
+		intent.putExtra(PostService.COMMENT_TEXT_PARAM, commentText);
+		intent.putExtra(PostService.POST_ID_PARAM, "" + getPost(mPosition).identifier);
+		getActivity().startService(intent);
+	}
+
 	@Override
 	public void onDestroy() {
 		getActivity().unregisterReceiver(receiver);
+		getActivity().unregisterReceiver(addCommentReceiver);
 		super.onDestroy();
 	}
 
 	protected void addComment() {
 		LayoutInflater inflater = LayoutInflater.from(this.getActivity());
 		View alertDialogView = inflater.inflate(R.layout.add_reply, null);
-		EditText myEditText = (EditText) alertDialogView.findViewById(R.id.text_edit_view);
+		final EditText myEditText = (EditText) alertDialogView.findViewById(R.id.text_edit_view);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 		builder.setView(alertDialogView);
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				postComment(myEditText.getText().toString());
+			}
+		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();

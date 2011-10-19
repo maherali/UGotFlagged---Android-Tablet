@@ -53,6 +53,7 @@
 		<service android:enabled="true" android:name=".services.ConnectionsService"></service>
 		<service android:enabled="true" android:name=".services.RegisterService"></service>
 		<service android:enabled="true" android:name=".services.UsersService"></service>
+		<service android:enabled="true" android:name=".services.PostService"></service>
 
 
 		<!-- Location Support -->

@@ -158,6 +158,53 @@ public class MainApplication extends Application {
 				}
 			}
 		}
+
+		private static void updatePost(ArrayList<PostDTO> array, PostDTO post) {
+			int foundAt = -1;
+			for (int i = 0; i < array.size(); i++) {
+				PostDTO p = array.get(i);
+				if (p.identifier == post.identifier) {
+					foundAt = i;
+					break;
+				}
+			}
+			if (foundAt >= 0) {
+				array.remove(foundAt);
+				array.add(foundAt, post);
+			}
+		}
+
+		public static void updatePost(PostDTO post) {
+			updatePost(getStream(), post);
+			for (ArrayList<PostDTO> array : userPosts.values()) {
+				updatePost(array, post);
+			}
+		}
+
+		private static PostDTO findPost(ArrayList<PostDTO> array, int identifier) {
+			for (int i = 0; i < array.size(); i++) {
+				PostDTO p = array.get(i);
+				if (p.identifier == identifier) {
+					return p;
+				}
+			}
+			return null;
+		}
+
+		public static PostDTO getPost(int identifier) {
+			PostDTO returnedPost = null;
+			returnedPost = findPost(getStream(), identifier);
+			if (returnedPost != null) {
+				return returnedPost;
+			}
+			for (ArrayList<PostDTO> array : userPosts.values()) {
+				returnedPost = findPost(array, identifier);
+				if (returnedPost != null) {
+					return returnedPost;
+				}
+			}
+			return null;
+		}
 	}
 
 	public Location getCurrentLocation() {
