@@ -3,6 +3,13 @@
 	package="com.agilismobility.ugotflagged" android:versionCode="1"
 	android:versionName="1.0">
 	<uses-sdk android:minSdkVersion="12" />
+	
+	 <supports-screens android:smallScreens="false"
+                      android:normalScreens="false"
+                      android:largeScreens="false"
+                      android:xlargeScreens="true"
+                      android:requiresSmallestWidthDp="600" />
+	 
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
