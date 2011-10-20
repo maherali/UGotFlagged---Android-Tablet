@@ -11,6 +11,7 @@
 	<string name="login_instructions">Log in with your UGotFlagged Account</string>
 	<string name="register_submit">Sign Up!</string>
 	<string name="register_instructions">Sign up for a UGotFlagged Account</string>
+	<string name="like_unlike">Like</string>
 	<!-- By Signing up you agree to the UGotFlagged Terms and Conditions -->
 
 </resources>

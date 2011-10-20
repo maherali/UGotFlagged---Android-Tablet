@@ -37,6 +37,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 	private View mLayout;
 	MyReceiver receiver;
 	CommentReceiver addCommentReceiver;
+	LikeUnlikeReceiver likeUnlikeReceiver;
 	private int mPosition;
 
 	public void setCurrentPosition(int pos) {
@@ -104,6 +105,24 @@ public abstract class FlagDetailsFragment extends Fragment {
 		filter = new IntentFilter(PostService.ADD_COMMENT_FINISHED_NOTIF);
 		addCommentReceiver = new CommentReceiver();
 		getActivity().registerReceiver(addCommentReceiver, filter);
+
+		filter = new IntentFilter(PostService.LIKE_UNLIKE_FINISHED_NOTIF);
+		likeUnlikeReceiver = new LikeUnlikeReceiver();
+		getActivity().registerReceiver(likeUnlikeReceiver, filter);
+	}
+
+	public class LikeUnlikeReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (PostService.LIKE_ACTION.equals(intent.getStringExtra(PostService.ACTION))
+					|| PostService.UNLIKE_ACTION.equals(intent.getStringExtra(PostService.ACTION))) {
+				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
+					parsePostAndGo(intent.getStringExtra(SessionService.XML_ARG));
+				} else {
+					((BaseActivity) getActivity()).showError(intent.getStringExtra(SessionService.ERROR_ARG));
+				}
+			}
+		}
 	}
 
 	public class CommentReceiver extends BroadcastReceiver {
@@ -213,7 +232,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 		TextView distanceAway = (TextView) mLayout.findViewById(R.id.distance_away);
 		TextView timeAgo = (TextView) mLayout.findViewById(R.id.timeago);
 
-		PostDTO post = getPost(position);
+		final PostDTO post = getPost(position);
 		if (post == null)
 			return;
 
@@ -231,6 +250,24 @@ public abstract class FlagDetailsFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				addComment();
+			}
+		});
+
+		Button likeUnlikeButton = ((Button) getActivity().findViewById(R.id.like_unlike));
+		if (post.canLike) {
+			likeUnlikeButton.setVisibility(View.VISIBLE);
+		} else {
+			likeUnlikeButton.setVisibility(View.GONE);
+		}
+		if (post.liked) {
+			likeUnlikeButton.setText("Unlike");
+		} else {
+			likeUnlikeButton.setText("Like");
+		}
+		likeUnlikeButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				likeUnlike(post);
 			}
 		});
 
@@ -264,6 +301,13 @@ public abstract class FlagDetailsFragment extends Fragment {
 		licensePlatePicture.invalidate();
 	}
 
+	protected void likeUnlike(PostDTO post) {
+		Intent intent = new Intent(getActivity(), PostService.class);
+		intent.putExtra(PostService.ACTION, post.liked ? PostService.UNLIKE_ACTION : PostService.LIKE_ACTION);
+		intent.putExtra(PostService.POST_ID_PARAM, "" + getPost(mPosition).identifier);
+		getActivity().startService(intent);
+	}
+
 	private String postAddress(PostDTO post) {
 		String addr = post.street != null ? (post.street + ", ") : "";
 		addr = addr + (post.city != null ? (post.city + ", ") : "");
@@ -288,6 +332,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 	public void onDestroy() {
 		getActivity().unregisterReceiver(receiver);
 		getActivity().unregisterReceiver(addCommentReceiver);
+		getActivity().unregisterReceiver(likeUnlikeReceiver);
 		super.onDestroy();
 	}
 
