@@ -89,6 +89,9 @@ public class PostDTO extends BaseDTO {
 	public PostDTO(XMLHelper xml) {
 		super(xml);
 		OpenXml thePost = xml.getDoc();
-		parse(thePost);
+		try {
+			parse(thePost);
+		} catch (Exception e) {
+		}
 	}
 }
