@@ -31,6 +31,7 @@ import com.agilismobility.ugotflagged.services.SessionService;
 import com.agilismobility.ugotflagged.ui.activities.BaseActivity;
 import com.agilismobility.ugotflagged.utils.Utils;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
+import com.agilismobility.util.Util;
 import com.agilismobility.utils.Constants;
 
 public abstract class FlagDetailsFragment extends Fragment {
@@ -242,8 +243,8 @@ public abstract class FlagDetailsFragment extends Fragment {
 		text.setText(post.text);
 		userNameText.setText(post.author);
 		postTitleText.setText(post.title);
-		postCommentsText.setText(post.replies.size() == 1 ? (post.replies.size() + " comment") : (post.replies.size() + " comments"));
-		postUserFavs.setText(post.totalLikes == 1 ? (post.totalLikes + " user") : (post.totalLikes + " users"));
+		postCommentsText.setText(Util.pluralize(post.replies.size(), "comment", "comments"));
+		postUserFavs.setText(Util.pluralize(post.totalLikes, "user", "users"));
 		addReplies(post.replies);
 
 		((Button) getActivity().findViewById(R.id.add_comment)).setOnClickListener(new View.OnClickListener() {
