@@ -214,6 +214,8 @@ public abstract class FlagDetailsFragment extends Fragment {
 		TextView timeAgo = (TextView) mLayout.findViewById(R.id.timeago);
 
 		PostDTO post = getPost(position);
+		if (post == null)
+			return;
 
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 		Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoMainURL);
@@ -276,6 +278,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 
 	private void postComment(String commentText) {
 		Intent intent = new Intent(getActivity(), PostService.class);
+		intent.putExtra(PostService.ACTION, PostService.ADD_COMMENT_ACTION);
 		intent.putExtra(PostService.COMMENT_TEXT_PARAM, commentText);
 		intent.putExtra(PostService.POST_ID_PARAM, "" + getPost(mPosition).identifier);
 		getActivity().startService(intent);

@@ -57,7 +57,7 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		ListView lv = getListView();
 		setupHeaderView(lv);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		lv.setCacheColorHint(Color.TRANSPARENT);
+		lv.setCacheColorHint(Color.CYAN);
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}

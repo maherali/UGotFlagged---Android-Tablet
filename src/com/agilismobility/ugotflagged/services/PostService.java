@@ -30,9 +30,12 @@ public class PostService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, final int startId) {
-		String commentText = intent.getStringExtra(COMMENT_TEXT_PARAM);
-		String postId = intent.getStringExtra(POST_ID_PARAM);
-		addComment(commentText, postId, startId);
+		String action = intent.getStringExtra(ACTION);
+		if (ADD_COMMENT_ACTION.equals(action)) {
+			String commentText = intent.getStringExtra(COMMENT_TEXT_PARAM);
+			String postId = intent.getStringExtra(POST_ID_PARAM);
+			addComment(commentText, postId, startId);
+		}
 		return START_REDELIVER_INTENT;
 	}
 

@@ -19,7 +19,9 @@ public class FollowedFlagDetailsFragment extends FlagDetailsFragment {
 
 	@Override
 	public void updateContent(int position) {
-		post = MainApplication.GlobalState.getPost(post.identifier);
+		if (post != null) {
+			post = MainApplication.GlobalState.getPost(post.identifier);
+		}
 		super.updateContent(position);
 	}
 

@@ -65,7 +65,7 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		ListView lv = getListView();
 		lv.setItemsCanFocus(true);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		lv.setCacheColorHint(Color.TRANSPARENT);
+		lv.setCacheColorHint(Color.CYAN);
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}
