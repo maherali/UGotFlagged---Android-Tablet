@@ -214,6 +214,11 @@ public abstract class FlagDetailsFragment extends Fragment {
 	public void updateContent(int position) {
 		mPosition = position;
 		View frame = mLayout.findViewById(R.id.frame);
+		final PostDTO post = getPost(position);
+		if (post == null) {
+			frame.setVisibility(View.INVISIBLE);
+			return;
+		}
 		frame.setVisibility(View.VISIBLE);
 		View commentsImage = mLayout.findViewById(R.id.post_comments_image);
 		commentsImage.setVisibility(View.VISIBLE);
@@ -232,10 +237,6 @@ public abstract class FlagDetailsFragment extends Fragment {
 		TextView addressText = (TextView) mLayout.findViewById(R.id.address);
 		TextView distanceAway = (TextView) mLayout.findViewById(R.id.distance_away);
 		TextView timeAgo = (TextView) mLayout.findViewById(R.id.timeago);
-
-		final PostDTO post = getPost(position);
-		if (post == null)
-			return;
 
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 		Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoMainURL);
