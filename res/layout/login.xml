@@ -1,90 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
+    <LinearLayout
+        android:id="@+id/title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dip" >
 
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-		android:id="@+id/title_layout" android:layout_marginTop="10dip">
+        <TextView
+            android:id="@+id/inst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_instructions"
+            android:textColor="@color/login_instructions"
+            android:textSize="36dp" />
+    </LinearLayout>
 
-		<TextView android:layout_width="wrap_content" android:id="@+id/inst"
-			android:layout_height="wrap_content" android:textSize="36dp"
-			android:textColor="@color/login_instructions" android:text="@string/login_instructions" />
+    <LinearLayout
+        android:id="@+id/first_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dip" >
 
-	</LinearLayout>
+        <TextView
+            android:id="@+id/label1"
+            android:layout_width="150dip"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/user_name"
+            android:text="User Name"
+            android:textColor="#ffffffff"
+            android:textSize="22dp" />
 
+        <EditText
+            android:id="@+id/user_name"
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/label1"
+            android:hint="User Name"
+            android:inputType="textNoSuggestions"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
 
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_marginTop="70dip" android:layout_height="wrap_content"
-		android:layout_centerHorizontal="true" android:id="@+id/first_layout">
+    <LinearLayout
+        android:id="@+id/second_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/first_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="00dip" >
 
-		<TextView android:layout_width="150dip"
-			android:layout_height="wrap_content" android:textSize="22dp"
-			android:textColor="#ffffffff" android:text="User Name" android:id="@+id/label1"
-			android:layout_alignBaseline="@id/user_name" />
+        <TextView
+            android:id="@+id/label2"
+            android:layout_width="150dip"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/user_name"
+            android:text="Password"
+            android:textColor="#ffffffff"
+            android:textSize="22dp" />
 
-		<EditText android:id="@+id/user_name" android:inputType="textNoSuggestions"
-			android:hint="User Name" android:layout_width="300dip"
-			android:layout_height="wrap_content" android:layout_toRightOf="@id/label1"
-			android:textColor="#ffffffff" />
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/label2"
+            android:hint="Password"
+            android:password="true"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
 
-	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/third_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/second_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dip" >
 
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-		android:id="@+id/second_layout" android:layout_below="@id/first_layout"
-		android:layout_marginTop="00dip">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tnc"
+            android:textColor="#ffffffff"
+            android:textSize="16dp" />
+    </LinearLayout>
 
-		<TextView android:layout_width="150dip" android:id="@+id/label2"
-			android:layout_height="wrap_content" android:textSize="22dp"
-			android:textColor="#ffffffff" android:text="Password"
-			android:layout_alignBaseline="@id/user_name" />
+    <LinearLayout
+        android:id="@+id/fourth_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/third_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="00dip" >
 
-		<EditText android:id="@+id/password" android:password="true"
-			android:hint="Password" android:layout_width="300dip"
-			android:layout_height="wrap_content" android:layout_toRightOf="@id/label2"
-			android:textColor="#ffffffff" />
-	</LinearLayout>
+        <View
+            android:layout_width="650dip"
+            android:layout_height="1dip"
+            android:layout_alignParentLeft="@id/user_name"
+            android:background="@android:color/darker_gray" >
+        </View>
+    </LinearLayout>
 
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-		android:id="@+id/third_layout" android:layout_below="@id/second_layout"
-		android:layout_marginTop="20dip">
+    <CheckBox
+        android:id="@+id/rememberme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/fourth_layout"
+        android:layout_marginLeft="450dip"
+        android:layout_marginTop="20dip"
+        android:text="Remember me" >
+    </CheckBox>
 
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:textSize="16dp"
-			android:textColor="#ffffffff" android:text="@string/tnc" />
-	</LinearLayout>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fourth_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dip" >
 
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-		android:id="@+id/fourth_layout" android:layout_below="@id/third_layout"
-		android:layout_marginTop="00dip">
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="330dip"
+            android:layout_marginTop="10dip"
+            android:visibility="gone" />
 
-		<View android:layout_width="650dip" android:layout_height="1dip"
-			android:background="@android:color/darker_gray"
-			android:layout_alignParentLeft="@id/user_name">
-		</View>
-	</LinearLayout>
-
-	<CheckBox android:text="Remember me" android:id="@+id/rememberme"
-		android:layout_marginTop="20dip" android:layout_alignParentLeft="true"
-		android:layout_below="@id/fourth_layout" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_marginLeft="450dip">
-	</CheckBox>
-
-	<FrameLayout android:layout_width="wrap_content"
-		android:layout_centerHorizontal="true" android:layout_height="wrap_content"
-		android:layout_below="@id/fourth_layout"  
-		android:layout_marginTop="20dip">
-
-		<ProgressBar android:id="@+id/progress"
-			android:layout_centerHorizontal="true" android:layout_marginLeft="330dip"
-			android:layout_marginTop="10dip" android:layout_width="30dip"
-			android:layout_height="30dip" android:visibility="gone" />
-		<Button android:layout_width="wrap_content" android:id="@+id/login_submit"
-			android:layout_gravity="right" android:layout_height="wrap_content"
-			android:text="@string/login_submit" android:layout_marginLeft="300dip"></Button>
-	</FrameLayout>
+        <Button
+            android:id="@+id/login_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="300dip"
+            android:text="@string/login_submit" >
+        </Button>
+    </FrameLayout>
 
 </RelativeLayout>

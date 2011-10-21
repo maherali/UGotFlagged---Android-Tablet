@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
@@ -26,6 +28,9 @@ public class AddFlagActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		registerReceivers();
 		setContentView(R.layout.add_flag);
+		final TextView flagTitleText = (TextView) findViewById(R.id.flag_title);
+		final TextView plateNumberText = (TextView) findViewById(R.id.tag_number);
+		final EditText flagText = (EditText) findViewById(R.id.flag_text);
 
 		((Button) findViewById(R.id.flag_submit)).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -33,15 +38,15 @@ public class AddFlagActivity extends BaseActivity {
 				Intent intent = new Intent(AddFlagActivity.this, PostService.class);
 				intent.putExtra(PostService.ACTION, PostService.ADD_FLAG_ACTION);
 				intent.putExtra(PostService.FLAG_PLATE_ISSUER_PARAM, "NE");
-				intent.putExtra(PostService.FLAG_PLATE_TAG_PARAM, "ABCDEFG");
+				intent.putExtra(PostService.FLAG_PLATE_TAG_PARAM, plateNumberText.getText().toString());
 				intent.putExtra(PostService.FLAG_STREET_PARAM, "1234 Fake Street");
 				intent.putExtra(PostService.FLAG_CITY_PARAM, "Lincoln");
 				intent.putExtra(PostService.FLAG_STATE_PARAM, "CA");
 				intent.putExtra(PostService.FLAG_COUNTRY_PARAM, "US");
 				intent.putExtra(PostService.FLAG_LAT_PARAM, "37");
 				intent.putExtra(PostService.FLAG_LONG_PARAM, "-97");
-				intent.putExtra(PostService.FLAG_TITLE_PARAM, "This is a title");
-				intent.putExtra(PostService.FLAG_TEXT_PARAM, "This is the text");
+				intent.putExtra(PostService.FLAG_TITLE_PARAM, flagTitleText.getText().toString());
+				intent.putExtra(PostService.FLAG_TEXT_PARAM, flagText.getText().toString());
 				intent.putExtra(PostService.FLAG_VEHICLE_PARAM, "A nice color");
 				intent.putExtra(PostService.FLAG_VEHICLE_TYPE_PARAM, "2");
 				intent.putExtra(PostService.FLAG_POST_TYPE_PARAM, "2");

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-	<color name="white">#ffffffff</color>
-	<color name="black">#ff000000</color>
-	<color name="user_name">#ff7cfc00</color>
-	<color name="post_title">#ffffffff</color>
-	<color name="stats_color">#ff00ffff</color>
-	<color name="post_text">#ffffffff</color>
-	<color name="login_instructions">#ff7cfc00</color>
-<color name="register_instructions">#ff7cfc00</color>
+
+    <color name="white">#ffffffff</color>
+    <color name="black">#ff000000</color>
+    <color name="user_name">#ff7cfc00</color>
+    <color name="post_title">#ffffffff</color>
+    <color name="stats_color">#ff00ffff</color>
+    <color name="post_text">#ffffffff</color>
+    <color name="login_instructions">#ff7cfc00</color>
+    <color name="register_instructions">#ff7cfc00</color>
+    <color name="add_flag_instructions">#ff7cfc00</color>
+
 </resources>

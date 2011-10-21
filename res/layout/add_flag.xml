@@ -1,16 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/flag_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginLeft="300dip"
-        android:text="@string/flag_submit" >
-    </Button>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/title_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dip" >
+
+            <TextView
+                android:id="@+id/inst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_flag_instructions"
+                android:textColor="@color/add_flag_instructions"
+                android:textSize="36dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/first_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dip" >
+
+            <TextView
+                android:id="@+id/label1"
+                android:layout_width="150dip"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/flag_title"
+                android:text="Title"
+                android:textColor="#ffffffff"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/flag_title"
+                android:layout_width="300dip"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/label1"
+                android:hint="Flag Title"
+                android:inputType="textNoSuggestions"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tag_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/first_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="00dip" >
+
+            <TextView
+                android:id="@+id/label_tag_number"
+                android:layout_width="150dip"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tag_number"
+                android:text="Tag Number"
+                android:textColor="#ffffffff"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/tag_number"
+                android:layout_width="300dip"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/label_tag_number"
+                android:hint="Tag Number"
+                android:inputType="textNoSuggestions"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/flag_text_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tag_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="00dip" >
+
+            <TextView
+                android:id="@+id/label2"
+                android:layout_width="150dip"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/flag_text"
+                android:text="Description"
+                android:textColor="#ffffffff"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/flag_text"
+                android:layout_width="300dip"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/label2"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/third_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/flag_text_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dip" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fourth_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/third_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="00dip" >
+
+            <View
+                android:layout_width="650dip"
+                android:layout_height="1dip"
+                android:layout_alignParentLeft="@id/flag_title"
+                android:background="@android:color/darker_gray" >
+            </View>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fourth_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dip" >
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="30dip"
+                android:layout_height="30dip"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="330dip"
+                android:layout_marginTop="10dip"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/flag_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/flag_submit" >
+            </Button>
+        </FrameLayout>
+    </RelativeLayout>
+
+</ScrollView>
