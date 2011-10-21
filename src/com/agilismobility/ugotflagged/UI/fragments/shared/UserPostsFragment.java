@@ -51,7 +51,9 @@ abstract public class UserPostsFragment extends FlagsFragment {
 
 	@Override
 	public void onDestroy() {
-		getActivity().unregisterReceiver(mUsersReceiver);
+		if (mUsersReceiver != null) {
+			getActivity().unregisterReceiver(mUsersReceiver);
+		}
 		super.onDestroy();
 	}
 

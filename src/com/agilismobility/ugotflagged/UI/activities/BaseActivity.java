@@ -83,8 +83,12 @@ public abstract class BaseActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(doingSomethingNotificationReceiver);
-		unregisterReceiver(finishedDoingSomethingNotificationReceiver);
+		if (doingSomethingNotificationReceiver != null) {
+			unregisterReceiver(doingSomethingNotificationReceiver);
+		}
+		if (finishedDoingSomethingNotificationReceiver != null) {
+			unregisterReceiver(finishedDoingSomethingNotificationReceiver);
+		}
 		super.onDestroy();
 	}
 

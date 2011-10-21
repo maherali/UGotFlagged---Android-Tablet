@@ -55,7 +55,9 @@ public class RegisterActivity extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mRegisterReceiver);
+		if (mRegisterReceiver != null) {
+			unregisterReceiver(mRegisterReceiver);
+		}
 		super.onDestroy();
 	}
 

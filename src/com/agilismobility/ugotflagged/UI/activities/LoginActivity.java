@@ -153,8 +153,12 @@ public class LoginActivity extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mSessionReceiver);
-		unregisterReceiver(mLoginAutoReceiver);
+		if (mSessionReceiver != null) {
+			unregisterReceiver(mSessionReceiver);
+		}
+		if (mLoginAutoReceiver != null) {
+			unregisterReceiver(mLoginAutoReceiver);
+		}
 		super.onDestroy();
 	}
 

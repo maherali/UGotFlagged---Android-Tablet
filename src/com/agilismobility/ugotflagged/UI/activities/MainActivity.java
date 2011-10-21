@@ -164,8 +164,12 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 
 	@Override
 	protected void onDestroy() {
-		mLocationAwareness.hasDestroyed();
-		unregisterReceiver(mRefreshReceiver);
+		if (mLocationAwareness != null) {
+			mLocationAwareness.hasDestroyed();
+		}
+		if (mRefreshReceiver != null) {
+			unregisterReceiver(mRefreshReceiver);
+		}
 		super.onDestroy();
 	}
 

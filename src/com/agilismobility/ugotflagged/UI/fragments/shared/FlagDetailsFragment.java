@@ -331,9 +331,15 @@ public abstract class FlagDetailsFragment extends Fragment {
 
 	@Override
 	public void onDestroy() {
-		getActivity().unregisterReceiver(receiver);
-		getActivity().unregisterReceiver(addCommentReceiver);
-		getActivity().unregisterReceiver(likeUnlikeReceiver);
+		if (receiver != null) {
+			getActivity().unregisterReceiver(receiver);
+		}
+		if (addCommentReceiver != null) {
+			getActivity().unregisterReceiver(addCommentReceiver);
+		}
+		if (likeUnlikeReceiver != null) {
+			getActivity().unregisterReceiver(likeUnlikeReceiver);
+		}
 		super.onDestroy();
 	}
 

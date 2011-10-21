@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +36,7 @@ public class AddFlagActivity extends BaseActivity {
 		((Button) findViewById(R.id.flag_submit)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Location currLocation = ((MainApplication) getApplication()).getCurrentLocation();
 				Intent intent = new Intent(AddFlagActivity.this, PostService.class);
 				intent.putExtra(PostService.ACTION, PostService.ADD_FLAG_ACTION);
 				intent.putExtra(PostService.FLAG_PLATE_ISSUER_PARAM, "NE");
@@ -43,8 +45,8 @@ public class AddFlagActivity extends BaseActivity {
 				intent.putExtra(PostService.FLAG_CITY_PARAM, "Lincoln");
 				intent.putExtra(PostService.FLAG_STATE_PARAM, "CA");
 				intent.putExtra(PostService.FLAG_COUNTRY_PARAM, "US");
-				intent.putExtra(PostService.FLAG_LAT_PARAM, "37");
-				intent.putExtra(PostService.FLAG_LONG_PARAM, "-97");
+				intent.putExtra(PostService.FLAG_LAT_PARAM, currLocation.getLatitude() + "");
+				intent.putExtra(PostService.FLAG_LONG_PARAM, currLocation.getLongitude() + "");
 				intent.putExtra(PostService.FLAG_TITLE_PARAM, flagTitleText.getText().toString());
 				intent.putExtra(PostService.FLAG_TEXT_PARAM, flagText.getText().toString());
 				intent.putExtra(PostService.FLAG_VEHICLE_PARAM, "A nice color");
@@ -58,7 +60,9 @@ public class AddFlagActivity extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(mAddFlagReceiver);
+		if (mAddFlagReceiver != null) {
+			unregisterReceiver(mAddFlagReceiver);
+		}
 		super.onDestroy();
 	}
 

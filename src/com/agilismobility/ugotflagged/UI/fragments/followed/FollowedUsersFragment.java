@@ -74,8 +74,12 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 
 	@Override
 	public void onDestroy() {
-		getActivity().unregisterReceiver(imageDownloadedReceiver);
-		getActivity().unregisterReceiver(mFollowedUsersReceiver);
+		if (imageDownloadedReceiver != null) {
+			getActivity().unregisterReceiver(imageDownloadedReceiver);
+		}
+		if (mFollowedUsersReceiver != null) {
+			getActivity().unregisterReceiver(mFollowedUsersReceiver);
+		}
 		super.onDestroy();
 	}
 
