@@ -22,6 +22,7 @@ public class Constants {
 	public static final String FINDING_USER_POSTS = "FINDING_USER_POSTS";
 	public static final String ADDING_COMMENT = "ADDING_COMMENT";
 	public static final String PARSING_POST_DATA = "PARSING_POST_DATA";
+	public static final String PARSING_GEO_DATA = "PARSING_GEO_DATA";
 
 	public static void broadcastDoingSomethingNotification(String notifName) {
 		Intent newIntent = new Intent(CURRENTLY_DOING_SOMETHING_NOTIF);

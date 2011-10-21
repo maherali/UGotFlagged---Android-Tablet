@@ -25,7 +25,9 @@ import com.agilismobility.LocationAwareness;
 import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
+import com.agilismobility.ugotflagged.services.GeoCodingService;
 import com.agilismobility.ugotflagged.services.RefreshService;
 import com.agilismobility.ugotflagged.services.SessionService;
 import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFragment;
@@ -40,6 +42,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 
 	LocationAwareness mLocationAwareness;
 	RefreshReceiver mRefreshReceiver;
+	GeoCodingReceiver mGeocodingService;
 
 	private int mSelectedTabPosition = -1;
 
@@ -170,6 +173,9 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		if (mRefreshReceiver != null) {
 			unregisterReceiver(mRefreshReceiver);
 		}
+		if (mGeocodingService != null) {
+			unregisterReceiver(mGeocodingService);
+		}
 		super.onDestroy();
 	}
 
@@ -237,7 +243,23 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 	@Override
 	public void newLocationFound(Location location) {
 		((MainApplication) getApplication()).updateCurrentLocation(location);
+		Intent intent = new Intent(this, GeoCodingService.class);
+		intent.putExtra(GeoCodingService.ACTION, GeoCodingService.GEOCODE_ACTION);
+		intent.putExtra(GeoCodingService.GEO_LAT_PARAM, location.getLatitude() + "");
+		intent.putExtra(GeoCodingService.GEO_LNG_PARAM, location.getLongitude() + "");
+		startService(intent);
 		refreshFlags();
+	}
+
+	public class GeoCodingReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (GeoCodingService.GEOCODE_ACTION.equals(intent.getStringExtra(GeoCodingService.ACTION))) {
+				if (intent.getBooleanExtra(GeoCodingService.SUCCESS_ARG, false)) {
+					parseGeocodingAndGo(intent.getStringExtra(GeoCodingService.XML_ARG));
+				}
+			}
+		}
 	}
 
 	private void refreshFlags() {
@@ -260,6 +282,10 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		IntentFilter filter = new IntentFilter(RefreshService.REFRESHING_FINISHED_NOTIF);
 		mRefreshReceiver = new RefreshReceiver();
 		registerReceiver(mRefreshReceiver, filter);
+
+		filter = new IntentFilter(GeoCodingService.GEO_CODE_FINISHED_NOTIF);
+		mGeocodingService = new GeoCodingReceiver();
+		registerReceiver(mGeocodingService, filter);
 	}
 
 	public class RefreshReceiver extends BroadcastReceiver {
@@ -289,6 +315,24 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 					refreshFlags();
 				} else {
 					showError(u.errors);
+				}
+			}
+		}.execute();
+	}
+
+	private void parseGeocodingAndGo(final String xml) {
+		Constants.broadcastDoingSomethingNotification(Constants.PARSING_GEO_DATA);
+		new AsyncTask<Void, Void, GeocodeDTO>() {
+			@Override
+			protected GeocodeDTO doInBackground(Void... params) {
+				return new GeocodeDTO(new XMLHelper(xml));
+			}
+
+			@Override
+			protected void onPostExecute(GeocodeDTO geo) {
+				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_GEO_DATA);
+				if (geo.errors.size() == 0) {
+					MainApplication.GlobalState.setCurrentGeocodedAddress(geo);
 				}
 			}
 		}.execute();

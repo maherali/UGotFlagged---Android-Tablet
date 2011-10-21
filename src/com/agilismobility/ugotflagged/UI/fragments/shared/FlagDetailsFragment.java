@@ -314,6 +314,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 		String addr = post.street != null ? (post.street + ", ") : "";
 		addr = addr + (post.city != null ? (post.city + ", ") : "");
 		addr = addr + (post.state != null ? post.state : "");
+		addr = addr + (post.country != null ? (", " + post.country) : "");
 		if (post.street == null && post.city == null && post.state == null) {
 			if ((post.lat >= -90.0f && post.lat <= 90) && (post.lng >= -180 && post.lng <= 180)) {
 				addr = "Latitude/Longitude: (" + post.lat + ", " + post.lng + ")";

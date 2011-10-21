@@ -116,15 +116,15 @@ public class ServerProxy {
 			String detailedErrorMessage = null;
 			try {
 				if (method == HTTP_METHOD.Post) {
-					url = new URL(URL + path);
+					url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path);
 				} else {
 					if (data != null && data.length() > 0 && !path.endsWith("?")) {
 						path = path + "?";
 					}
 					if (data != null && data.length() > 0) {
-						url = new URL(URL + path + data);
+						url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path + data);
 					} else {
-						url = new URL(URL + path);
+						url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path);
 					}
 				}
 				conn = (HttpURLConnection) url.openConnection();

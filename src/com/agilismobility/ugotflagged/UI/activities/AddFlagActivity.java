@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.PostService;
 import com.agilismobility.ugotflagged.services.SessionService;
@@ -37,17 +38,62 @@ public class AddFlagActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				Location currLocation = ((MainApplication) getApplication()).getCurrentLocation();
+				GeocodeDTO geo = MainApplication.GlobalState.getCurrentGeocodedAddress();
 				Intent intent = new Intent(AddFlagActivity.this, PostService.class);
 				intent.putExtra(PostService.ACTION, PostService.ADD_FLAG_ACTION);
 				intent.putExtra(PostService.FLAG_PLATE_ISSUER_PARAM, "NE");
+				if (plateNumberText.getText().toString().trim().equals("")) {
+					showError("Please enter a plate number.");
+					return;
+				}
 				intent.putExtra(PostService.FLAG_PLATE_TAG_PARAM, plateNumberText.getText().toString());
-				intent.putExtra(PostService.FLAG_STREET_PARAM, "1234 Fake Street");
-				intent.putExtra(PostService.FLAG_CITY_PARAM, "Lincoln");
-				intent.putExtra(PostService.FLAG_STATE_PARAM, "CA");
-				intent.putExtra(PostService.FLAG_COUNTRY_PARAM, "US");
+
+				String street = "";
+				if (geo != null && geo.street1 != null) {
+					street = geo.street1;
+					if (geo.street2 != null) {
+						street += " and " + geo.street2;
+					}
+				} else {
+					street = "Unknown";
+				}
+				intent.putExtra(PostService.FLAG_STREET_PARAM, street);
+
+				String city = "";
+				if (geo != null && geo.city != null) {
+					city = geo.city;
+				} else {
+					city = "Unknown";
+				}
+				intent.putExtra(PostService.FLAG_CITY_PARAM, city);
+
+				String state = "";
+				if (geo != null && geo.state != null) {
+					state = geo.state;
+				} else {
+					state = "Unknown";
+				}
+				intent.putExtra(PostService.FLAG_STATE_PARAM, state);
+
+				String country = "";
+				if (geo != null && geo.countryCode != null) {
+					country = geo.countryCode;
+				} else {
+					country = "Unknown";
+				}
+				intent.putExtra(PostService.FLAG_COUNTRY_PARAM, country);
+
 				intent.putExtra(PostService.FLAG_LAT_PARAM, currLocation.getLatitude() + "");
 				intent.putExtra(PostService.FLAG_LONG_PARAM, currLocation.getLongitude() + "");
+				if (flagTitleText.getText().toString().trim().equals("")) {
+					showError("Please enter a title for your flag");
+					return;
+				}
 				intent.putExtra(PostService.FLAG_TITLE_PARAM, flagTitleText.getText().toString());
+				if (flagText.getText().toString().trim().equals("")) {
+					showError("Please enter a description for your flag");
+					return;
+				}
 				intent.putExtra(PostService.FLAG_TEXT_PARAM, flagText.getText().toString());
 				intent.putExtra(PostService.FLAG_VEHICLE_PARAM, "A nice color");
 				intent.putExtra(PostService.FLAG_VEHICLE_TYPE_PARAM, "2");

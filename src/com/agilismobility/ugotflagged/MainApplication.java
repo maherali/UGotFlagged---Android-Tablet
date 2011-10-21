@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.dtos.UsersDTO;
@@ -113,6 +114,7 @@ public class MainApplication extends Application {
 		static HashMap<Integer, UserDTO> users = new HashMap<Integer, UserDTO>();
 		static UsersDTO followedUsers;
 		static HashMap<Integer, ArrayList<PostDTO>> userPosts = new HashMap<Integer, ArrayList<PostDTO>>();
+		static GeocodeDTO geocodedAddress;
 
 		public static void setCurrentUser(UserDTO user) {
 			currUserID = user.identifier;
@@ -204,6 +206,14 @@ public class MainApplication extends Application {
 				}
 			}
 			return null;
+		}
+
+		public static void setCurrentGeocodedAddress(GeocodeDTO geo) {
+			geocodedAddress = geo;
+		}
+
+		public static GeocodeDTO getCurrentGeocodedAddress() {
+			return geocodedAddress;
 		}
 	}
 
