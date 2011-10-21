@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -65,7 +64,6 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		ListView lv = getListView();
 		lv.setItemsCanFocus(true);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		lv.setCacheColorHint(Color.CYAN);
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}

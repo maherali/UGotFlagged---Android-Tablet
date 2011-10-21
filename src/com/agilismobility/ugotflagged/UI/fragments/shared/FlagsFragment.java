@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -57,7 +56,6 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		ListView lv = getListView();
 		setupHeaderView(lv);
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		lv.setCacheColorHint(Color.CYAN);
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}
