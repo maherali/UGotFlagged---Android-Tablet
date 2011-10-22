@@ -1,9 +1,12 @@
 package com.agilismobility.ugotflagged.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.agilismobility.ugotflagged.proxy.ServerProxy;
 import com.agilismobility.ugotflagged.proxy.ServerProxy.IServerResponder;
@@ -77,12 +80,41 @@ public class PostService extends Service {
 			String lng = intent.getStringExtra(FLAG_LONG_PARAM);
 			String picPath = intent.getStringExtra(FLAG_PICTURE_PARAM);
 			if (picPath != null) {
-				Log.d("PostService", picPath);
+				Bitmap b = Utils.getScalledImageFromFile(picPath, 300, 300);
+				HashMap<String, String> kv = new HashMap<String, String>();
+				kv.put(FLAG_TITLE_PARAM, title);
+				kv.put(FLAG_TEXT_PARAM, text);
+				kv.put(FLAG_VEHICLE_PARAM, vehicle);
+				kv.put(FLAG_VEHICLE_TYPE_PARAM, vehicleType);
+				kv.put(FLAG_POST_TYPE_PARAM, postType);
+				kv.put(FLAG_STREET_PARAM, street);
+				kv.put(FLAG_CITY_PARAM, city);
+				kv.put(FLAG_STATE_PARAM, state);
+				kv.put(FLAG_COUNTRY_PARAM, country);
+				kv.put(FLAG_PLATE_ISSUER_PARAM, plateIssuer);
+				kv.put(FLAG_PLATE_TAG_PARAM, plateTag);
+				kv.put(FLAG_LAT_PARAM, lat);
+				kv.put(FLAG_LONG_PARAM, lng);
+				addFlagWithImageAndKV(b, kv, startId);
+			} else {
+				addFlag(title, text, vehicle, vehicleType, postType, city, state, country, street, plateIssuer, plateTag, lat, lng, startId);
 			}
-
-			addFlag(title, text, vehicle, vehicleType, postType, city, state, country, street, plateIssuer, plateTag, lat, lng, startId);
 		}
 		return START_REDELIVER_INTENT;
+	}
+
+	private void addFlagWithImageAndKV(Bitmap b, Map<String, String> kv, final int startId) {
+		ServerProxy.postWithBitmapAndKV(b, kv, ADD_FLAG_ACTION, "/posts", null, new IServerResponder() {
+			@Override
+			public void success(ServerResponseSummary srs) {
+				anounceAddFlagFinished(startId, srs, true);
+			}
+
+			@Override
+			public void failure(ServerResponseSummary srs) {
+				anounceAddFlagFinished(startId, srs, false);
+			}
+		});
 	}
 
 	private void addFlag(String title, String text, String vehicle, String vehicleType, String postType, String city, String state,

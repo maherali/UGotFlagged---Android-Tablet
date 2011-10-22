@@ -2,6 +2,7 @@ package com.agilismobility.ugotflagged.proxy;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import android.content.SharedPreferences;
@@ -86,9 +88,9 @@ public class ServerProxy {
 		ServerCallTask.runTask(funcName, HTTP_METHOD.Post, path, data, result);
 	}
 
-	public static void postWithBitmap(Bitmap b, String funcName, String path, String data, IServerResponder result) {
+	public static void postWithBitmapAndKV(Bitmap b, Map<String, String> kv, String funcName, String path, String data, IServerResponder result) {
 		Constants.broadcastDoingSomethingNotification(funcName);
-		ServerCallTask.runTask(b, funcName, HTTP_METHOD.Post, path, data, result);
+		ServerCallTask.runTask(b, kv, funcName, HTTP_METHOD.Post, path, data, result);
 	}
 
 	public static void get(String funcName, String path, String data, IServerResponder result) {
@@ -100,6 +102,8 @@ public class ServerProxy {
 		HttpURLConnection conn;
 		private int tryCount = 0;
 		private ArrayList<Bitmap> mBitmaps;
+		private Map<String, String> mKV;
+		String boundary = "----FOO";
 
 		private static ArrayList<Object> calcParams(String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
 			ArrayList<Object> params = new ArrayList<Object>();
@@ -119,9 +123,11 @@ public class ServerProxy {
 		}
 
 		@SuppressWarnings("unchecked")
-		public static ServerCallTask runTask(Bitmap b, String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
+		public static ServerCallTask runTask(Bitmap b, Map<String, String> kv, String funcName, HTTP_METHOD method, String path, String data,
+				IServerResponder result) {
 			ServerCallTask task = new ServerCallTask();
 			task.addBitmap(b);
+			task.mKV = kv;
 			task.execute(ServerCallTask.calcParams(funcName, method, path, data, result));
 			return task;
 		}
@@ -272,7 +278,13 @@ public class ServerProxy {
 				DataOutputStream dos;
 				try {
 					dos = new DataOutputStream(conn.getOutputStream());
-					dos.writeBytes(data != null ? data : "");
+					if (usingForm()) {
+						addPicture(dos);
+						addVaues(dos);
+						dos.write(("\r\n--" + boundary + "--\r \n").getBytes());
+					} else {
+						dos.writeBytes(data != null ? data : "");
+					}
 					dos.flush();
 					dos.close();
 				} catch (IOException e1) {
@@ -281,10 +293,41 @@ public class ServerProxy {
 			}
 		}
 
+		private void addVaues(DataOutputStream dos) throws IOException {
+			if (mKV == null)
+				return;
+			for (String key : mKV.keySet()) {
+				dos.write(("\r\n--" + boundary + "\r\n").getBytes());
+				dos.write(("Content-Disposition: form-data; name=" + "\"" + key + "\"\r\n\r\n").getBytes());
+				dos.write(mKV.get(key).getBytes());
+			}
+		}
+
+		private void addPicture(DataOutputStream dos) throws IOException {
+			if (mBitmaps != null && mBitmaps.size() > 0) {
+				dos.write(("--" + boundary + "\r\n").getBytes());
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				mBitmaps.get(0).compress(Bitmap.CompressFormat.PNG, 100, stream);
+				if (stream.size() > 0) {
+					dos.write(("Content-Disposition: form-data; name=\"photo[uploaded_data]\"; filename=\"image.jpg\"\r\n").getBytes());
+					dos.write(("Content-Type: image/jpeg" + "\r\n\r\n").getBytes());
+					dos.write(stream.toByteArray());
+				}
+			}
+		}
+
+		private boolean usingForm() {
+			return (mKV != null || (mBitmaps != null && mBitmaps.size() > 0));
+		}
+
 		private void setRequestProperty(HTTP_METHOD method, String data) {
 			if (method == HTTP_METHOD.Post) {
-				conn.setRequestProperty("Content-Length", String.format("%d", data.length()));
-				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				if (usingForm()) {
+					conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+				} else {
+					conn.setRequestProperty("Content-Length", String.format("%d", data.length()));
+					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				}
 			}
 		}
 
