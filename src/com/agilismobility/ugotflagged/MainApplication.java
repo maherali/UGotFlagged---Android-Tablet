@@ -260,6 +260,8 @@ public class MainApplication extends Application {
 		}
 
 		private static void updatePost(ArrayList<PostDTO> array, PostDTO post) {
+			if (array == null)
+				return;
 			int foundAt = -1;
 			for (int i = 0; i < array.size(); i++) {
 				PostDTO p = array.get(i);
@@ -276,6 +278,7 @@ public class MainApplication extends Application {
 
 		public static void updatePost(PostDTO post) {
 			updatePost(getStream(), post);
+			updatePost(getMostLiked(), post);
 			for (ArrayList<PostDTO> array : userPosts.values()) {
 				updatePost(array, post);
 			}
