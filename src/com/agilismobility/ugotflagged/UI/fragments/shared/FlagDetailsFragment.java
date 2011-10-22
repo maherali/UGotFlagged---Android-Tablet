@@ -159,8 +159,8 @@ public abstract class FlagDetailsFragment extends Fragment {
 	private void loadPhoto(String url) {
 		Intent intent = new Intent(getActivity(), ImageDownloadingService.class);
 		intent.putExtra(ImageDownloadingService.URL_ARG, url);
-		intent.putExtra(ImageDownloadingService.WIDTH_ARG, "400");
-		intent.putExtra(ImageDownloadingService.HEIGHT_ARG, "400");
+		intent.putExtra(ImageDownloadingService.WIDTH_ARG, "300");
+		intent.putExtra(ImageDownloadingService.HEIGHT_ARG, "300");
 		getActivity().startService(intent);
 	}
 
