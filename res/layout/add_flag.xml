@@ -205,7 +205,7 @@
                 android:layout_width="30dip"
                 android:layout_height="30dip"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="330dip"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dip"
                 android:visibility="gone" />
 

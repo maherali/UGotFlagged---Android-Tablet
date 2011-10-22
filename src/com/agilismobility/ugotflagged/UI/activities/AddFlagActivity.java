@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -140,6 +141,8 @@ public class AddFlagActivity extends BaseActivity {
 				PostType selectedPostType = (PostType) postTypeSpinner.getSelectedItem();
 				intent.putExtra(PostService.FLAG_POST_TYPE_PARAM, selectedPostType.id);
 
+				enableButton(R.id.flag_submit, false);
+				showProgress();
 				startService(intent);
 			}
 		});
@@ -160,8 +163,8 @@ public class AddFlagActivity extends BaseActivity {
 				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
 					parseUserAndGo(intent.getStringExtra(PostService.XML_ARG));
 				} else {
-					// hideProgress();
-					// enableButton(R.id.login_submit, true);
+					hideProgress();
+					enableButton(R.id.flag_submit, true);
 					showError(intent.getStringExtra(SessionService.ERROR_ARG));
 				}
 			}
@@ -179,6 +182,8 @@ public class AddFlagActivity extends BaseActivity {
 			@Override
 			protected void onPostExecute(UserDTO u) {
 				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
+				hideProgress();
+				enableButton(R.id.flag_submit, true);
 				if (u.errors.size() == 0) {
 					MainApplication.GlobalState.setCurrentUser(u);
 					finish();
@@ -193,6 +198,16 @@ public class AddFlagActivity extends BaseActivity {
 		IntentFilter filter = new IntentFilter(PostService.ADD_FLAG_FINISHED_NOTIF);
 		mAddFlagReceiver = new AddFlagReceiver();
 		registerReceiver(mAddFlagReceiver, filter);
+	}
+
+	private void showProgress() {
+		((Button) findViewById(R.id.flag_submit)).setVisibility(View.GONE);
+		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.VISIBLE);
+	}
+
+	private void hideProgress() {
+		((Button) findViewById(R.id.flag_submit)).setVisibility(View.VISIBLE);
+		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.GONE);
 	}
 
 }
