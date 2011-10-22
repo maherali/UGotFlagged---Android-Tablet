@@ -41,14 +41,13 @@
                 android:textSize="22dp" />
 
             <LinearLayout
-                android:layout_width="400dip"
+                android:layout_width="800dip"
                 android:layout_height="wrap_content" >
 
                 <EditText
                     android:id="@+id/flag_title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="600dip"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
                     android:layout_toRightOf="@id/label1"
                     android:hint="Flag Title"
                     android:inputType="textNoSuggestions"
@@ -56,9 +55,8 @@
 
                 <Spinner
                     android:id="@+id/post_type_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dip"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:prompt="@string/post_type_spinner_prompt" />
             </LinearLayout>
         </LinearLayout>
@@ -81,24 +79,22 @@
                 android:textSize="22dp" />
 
             <LinearLayout
-                android:layout_width="400dip"
+                android:layout_width="800dip"
                 android:layout_height="wrap_content" >
 
                 <EditText
                     android:id="@+id/tag_number"
-                    android:layout_width="wrap_content"
+                    android:layout_width="600dip"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/label_tag_number"
-                    android:layout_weight="4"
                     android:hint="Tag Number"
                     android:inputType="textNoSuggestions"
                     android:textColor="#ffffffff" />
 
                 <Spinner
                     android:id="@+id/issuer_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dip"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:prompt="@string/issuer_spinner_prompt" />
             </LinearLayout>
         </LinearLayout>
@@ -121,24 +117,22 @@
                 android:textSize="22dp" />
 
             <LinearLayout
-                android:layout_width="400dip"
+                android:layout_width="800dip"
                 android:layout_height="wrap_content" >
 
                 <EditText
                     android:id="@+id/vehicle_description"
-                    android:layout_width="wrap_content"
+                    android:layout_width="600dip"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/label_vehicle"
-                    android:layout_weight="4"
                     android:hint="Vehicle Description"
                     android:inputType="textNoSuggestions"
                     android:textColor="#ffffffff" />
 
                 <Spinner
                     android:id="@+id/vehicle_spinner"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dip"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:prompt="@string/vehicle_spinner_prompt" />
             </LinearLayout>
         </LinearLayout>
@@ -162,7 +156,7 @@
 
             <EditText
                 android:id="@+id/flag_text"
-                android:layout_width="400dip"
+                android:layout_width="800dip"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/label2"
                 android:textColor="#ffffffff" />

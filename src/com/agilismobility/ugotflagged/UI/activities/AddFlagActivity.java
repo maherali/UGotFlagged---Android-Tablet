@@ -38,19 +38,17 @@ public class AddFlagActivity extends BaseActivity {
 		setContentView(R.layout.add_flag);
 
 		final Spinner issuerSpinner = (Spinner) findViewById(R.id.issuer_spinner);
-		ArrayAdapter<State> adapter = new ArrayAdapter<State>(this, android.R.layout.simple_spinner_item, MainApplication.getStates());
+		ArrayAdapter<State> adapter = new ArrayAdapter<State>(this, R.layout.simple_spinner_item, MainApplication.getStates());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		issuerSpinner.setAdapter(adapter);
 
 		final Spinner vehicleSpinner = (Spinner) findViewById(R.id.vehicle_spinner);
-		ArrayAdapter<Vehicle> vehicleAdapter = new ArrayAdapter<Vehicle>(this, android.R.layout.simple_spinner_item,
-				MainApplication.getVehicles());
+		ArrayAdapter<Vehicle> vehicleAdapter = new ArrayAdapter<Vehicle>(this, R.layout.simple_spinner_item, MainApplication.getVehicles());
 		vehicleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		vehicleSpinner.setAdapter(vehicleAdapter);
 
 		final Spinner postTypeSpinner = (Spinner) findViewById(R.id.post_type_spinner);
-		ArrayAdapter<PostType> postTypeAdapter = new ArrayAdapter<PostType>(this, android.R.layout.simple_spinner_item,
-				MainApplication.getFlagTypes());
+		ArrayAdapter<PostType> postTypeAdapter = new ArrayAdapter<PostType>(this, R.layout.simple_spinner_item, MainApplication.getFlagTypes());
 		postTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		postTypeSpinner.setAdapter(postTypeAdapter);
 
