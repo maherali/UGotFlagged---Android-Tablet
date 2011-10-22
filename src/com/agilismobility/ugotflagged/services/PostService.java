@@ -76,7 +76,9 @@ public class PostService extends Service {
 			String lat = intent.getStringExtra(FLAG_LAT_PARAM);
 			String lng = intent.getStringExtra(FLAG_LONG_PARAM);
 			String picPath = intent.getStringExtra(FLAG_PICTURE_PARAM);
-			Log.d("PostService", picPath);
+			if (picPath != null) {
+				Log.d("PostService", picPath);
+			}
 
 			addFlag(title, text, vehicle, vehicleType, postType, city, state, country, street, plateIssuer, plateTag, lat, lng, startId);
 		}

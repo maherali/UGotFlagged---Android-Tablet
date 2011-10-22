@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -78,29 +79,57 @@ public class ServerProxy {
 	}
 
 	public static void post(String funcName, String path, String data, IServerResponder result) {
-		makeAServerCall(funcName, HTTP_METHOD.Post, path, data, result);
+		Constants.broadcastDoingSomethingNotification(funcName);
+		ServerCallTask.runTask(funcName, HTTP_METHOD.Post, path, data, result);
+	}
+
+	public static void postWithBitmap(Bitmap b, String funcName, String path, String data, IServerResponder result) {
+		Constants.broadcastDoingSomethingNotification(funcName);
+		ServerCallTask.runTask(b, funcName, HTTP_METHOD.Post, path, data, result);
 	}
 
 	public static void get(String funcName, String path, String data, IServerResponder result) {
-		makeAServerCall(funcName, HTTP_METHOD.Get, path, data, result);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static void makeAServerCall(String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add(method);
-		params.add(path);
-		params.add(data);
-		params.add(result);
-		params.add(funcName);
-		ServerCallTask task = new ServerCallTask();
 		Constants.broadcastDoingSomethingNotification(funcName);
-		task.execute(params);
+		ServerCallTask.runTask(funcName, HTTP_METHOD.Get, path, data, result);
 	}
 
 	private static class ServerCallTask extends AsyncTask<ArrayList<Object>, Integer, ArrayList<Object>> {
 		HttpURLConnection conn;
 		private int tryCount = 0;
+		private ArrayList<Bitmap> mBitmaps;
+
+		private static ArrayList<Object> calcParams(String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
+			ArrayList<Object> params = new ArrayList<Object>();
+			params.add(method);
+			params.add(path);
+			params.add(data);
+			params.add(result);
+			params.add(funcName);
+			return params;
+		}
+
+		@SuppressWarnings("unchecked")
+		public static ServerCallTask runTask(String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
+			ServerCallTask task = new ServerCallTask();
+			task.execute(ServerCallTask.calcParams(funcName, method, path, data, result));
+			return task;
+		}
+
+		@SuppressWarnings("unchecked")
+		public static ServerCallTask runTask(Bitmap b, String funcName, HTTP_METHOD method, String path, String data, IServerResponder result) {
+			ServerCallTask task = new ServerCallTask();
+			task.addBitmap(b);
+			task.execute(ServerCallTask.calcParams(funcName, method, path, data, result));
+			return task;
+		}
+
+		public ServerCallTask addBitmap(Bitmap b) {
+			if (mBitmaps == null) {
+				mBitmaps = new ArrayList<Bitmap>();
+			}
+			mBitmaps.add(b);
+			return this;
+		}
 
 		@Override
 		@SuppressWarnings("static-access")
