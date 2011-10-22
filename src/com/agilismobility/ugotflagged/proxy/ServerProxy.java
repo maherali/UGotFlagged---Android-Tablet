@@ -3,9 +3,12 @@ package com.agilismobility.ugotflagged.proxy;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -132,10 +135,8 @@ public class ServerProxy {
 		}
 
 		@Override
-		@SuppressWarnings("static-access")
 		protected ArrayList<Object> doInBackground(ArrayList<Object>... params) {
 			tryCount++;
-
 			HTTP_METHOD method = (HTTP_METHOD) params[0].get(0);
 			String path = (String) params[0].get(1);
 			String data = (String) params[0].get(2);
@@ -144,51 +145,13 @@ public class ServerProxy {
 			String xml = "";
 			String detailedErrorMessage = null;
 			try {
-				if (method == HTTP_METHOD.Post) {
-					url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path);
-				} else {
-					if (data != null && data.length() > 0 && !path.endsWith("?")) {
-						path = path + "?";
-					}
-					if (data != null && data.length() > 0) {
-						url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path + data);
-					} else {
-						url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path);
-					}
-				}
-				conn = (HttpURLConnection) url.openConnection();
-				conn.setRequestProperty("Accept-Encoding", "gzip");
-				conn.setRequestProperty("App-Agent", "UGotFlagged/1.4 (Device/Android; OSV/Honeycomb; Locale/us-en; ServerVersion/1.0)");
-				conn.setDoInput(true);
-				conn.setFollowRedirects(false);
-				if (method == HTTP_METHOD.Post) {
-					conn.setDoOutput(true);
-				}
-				conn.setUseCaches(false);
-				conn.setRequestMethod(getMethod(method));
-				conn.setConnectTimeout(CONNECTION_TIMEOUT);
-
-				if (method == HTTP_METHOD.Post) {
-					conn.setRequestProperty("Content-Length", String.format("%d", data.length()));
-					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				}
-				if (sessionId != null) {
-					conn.setRequestProperty("Cookie", sessionId);
-				}
+				url = extractURL(method, path, data);
+				configureConnection(method, data, url);
 				InputStream in = null;
 				try {
 					conn.connect();
-					if (method == HTTP_METHOD.Post) {
-						DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-						dos.writeBytes(data != null ? data : "");
-						dos.flush();
-						dos.close();
-					}
-					String cookieVal = conn.getHeaderField("Set-Cookie");
-					if (cookieVal != null) {
-						sessionId = cookieVal.substring(0, cookieVal.indexOf(";"));
-						saveSession();
-					}
+					writeData(method, data);
+					extractCookie();
 					respcode = conn.getResponseCode();
 					if (respcode == RESPONSE_CODE_N1) {
 						if (tryCount < MAX_NUMBER_OF_RETRIES) {
@@ -216,7 +179,6 @@ public class ServerProxy {
 					} else {
 						in = temp;
 					}
-
 					BufferedReader r = new BufferedReader(new InputStreamReader(in));
 					StringBuilder total = new StringBuilder();
 					String line;
@@ -259,6 +221,70 @@ public class ServerProxy {
 				}
 				arr.add(params[0].get(4));
 				return arr;
+			}
+		}
+
+		private void configureConnection(HTTP_METHOD method, String data, URL url) throws IOException, ProtocolException {
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("Accept-Encoding", "gzip");
+			conn.setRequestProperty("App-Agent", "UGotFlagged/1.4 (Device/Android; OSV/Honeycomb; Locale/us-en; ServerVersion/1.0)");
+			conn.setDoInput(true);
+			conn.setFollowRedirects(false);
+			if (method == HTTP_METHOD.Post) {
+				conn.setDoOutput(true);
+			}
+			conn.setUseCaches(false);
+			conn.setRequestMethod(getMethod(method));
+			conn.setConnectTimeout(CONNECTION_TIMEOUT);
+			setRequestProperty(method, data);
+			if (sessionId != null) {
+				conn.setRequestProperty("Cookie", sessionId);
+			}
+		}
+
+		private URL extractURL(HTTP_METHOD method, String path, String data) throws MalformedURLException {
+			URL url = null;
+			if (method == HTTP_METHOD.Post) {
+				url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path);
+			} else {
+				if (data != null && data.length() > 0 && !path.endsWith("?")) {
+					path = path + "?";
+				}
+				if (data != null && data.length() > 0) {
+					url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path + data);
+				} else {
+					url = new URL((path.toLowerCase().startsWith("http") ? "" : URL) + path);
+				}
+			}
+			return url;
+		}
+
+		private void extractCookie() {
+			String cookieVal = conn.getHeaderField("Set-Cookie");
+			if (cookieVal != null) {
+				sessionId = cookieVal.substring(0, cookieVal.indexOf(";"));
+				saveSession();
+			}
+		}
+
+		private void writeData(HTTP_METHOD method, String data) {
+			if (method == HTTP_METHOD.Post) {
+				DataOutputStream dos;
+				try {
+					dos = new DataOutputStream(conn.getOutputStream());
+					dos.writeBytes(data != null ? data : "");
+					dos.flush();
+					dos.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		private void setRequestProperty(HTTP_METHOD method, String data) {
+			if (method == HTTP_METHOD.Post) {
+				conn.setRequestProperty("Content-Length", String.format("%d", data.length()));
+				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			}
 		}
 
