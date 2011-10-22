@@ -59,6 +59,8 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		registerReceivers();
 		if (savedInstanceState != null) {
 			mCurPosition = savedInstanceState.getInt("listPosition");
+		} else {
+			mCurPosition = -1;
 		}
 		findFollowedUsers();
 		ListView lv = getListView();
@@ -297,6 +299,10 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 	}
 
 	private void showAt(int position) {
+		if (position < 0) {
+			mCurPosition = position;
+			return;
+		}
 		UserPostsFragment frag = ((MainApplication) MainApplication.getInstance()).getFollowedUserPostsFragment();
 		FollowedFlagDetailsFragment fragDetails = ((MainApplication) MainApplication.getInstance()).getFollowedFlagDetailsFragment();
 		if (frag != null && frag.isVisible()) {
