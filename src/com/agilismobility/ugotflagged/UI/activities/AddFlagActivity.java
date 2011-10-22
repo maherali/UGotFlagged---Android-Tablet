@@ -8,12 +8,15 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.State;
 import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.PostService;
@@ -30,6 +33,12 @@ public class AddFlagActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		registerReceivers();
 		setContentView(R.layout.add_flag);
+
+		final Spinner spinner = (Spinner) findViewById(R.id.issuer_spinner);
+		ArrayAdapter<State> adapter = new ArrayAdapter<State>(this, android.R.layout.simple_spinner_item, MainApplication.getStates());
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(adapter);
+
 		final TextView flagTitleText = (TextView) findViewById(R.id.flag_title);
 		final TextView plateNumberText = (TextView) findViewById(R.id.tag_number);
 		final EditText flagText = (EditText) findViewById(R.id.flag_text);
@@ -41,9 +50,19 @@ public class AddFlagActivity extends BaseActivity {
 				GeocodeDTO geo = MainApplication.GlobalState.getCurrentGeocodedAddress();
 				Intent intent = new Intent(AddFlagActivity.this, PostService.class);
 				intent.putExtra(PostService.ACTION, PostService.ADD_FLAG_ACTION);
-				intent.putExtra(PostService.FLAG_PLATE_ISSUER_PARAM, "NE");
+
+				State selectedState = (State) spinner.getSelectedItem();
+				if (selectedState == null) {
+					showError("Please enter select a plate issuer.");
+					return;
+				}
+				intent.putExtra(PostService.FLAG_PLATE_ISSUER_PARAM, selectedState.id);
 				if (plateNumberText.getText().toString().trim().equals("")) {
 					showError("Please enter a plate number.");
+					return;
+				}
+				if (plateNumberText.getText().toString().length() > 8) {
+					showError("Please enter a maximum of 8 characters for plate number.");
 					return;
 				}
 				intent.putExtra(PostService.FLAG_PLATE_TAG_PARAM, plateNumberText.getText().toString());

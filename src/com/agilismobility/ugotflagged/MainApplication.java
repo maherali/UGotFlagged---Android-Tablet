@@ -1,10 +1,13 @@
 package com.agilismobility.ugotflagged;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,6 +24,8 @@ import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedUsersFragmen
 import com.agilismobility.ugotflagged.ui.fragments.followers.FollowersFragment;
 import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFlagDetailsFragment;
 import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFragment;
+import com.agilismobility.ugotflagged.utils.PipeStream;
+import com.agilismobility.ugotflagged.utils.XMLHelper;
 
 public class MainApplication extends Application {
 	private static MainApplication mInstance;
@@ -35,6 +40,8 @@ public class MainApplication extends Application {
 
 	private FollowersFragment followersFragment;
 	private CacheDatabase cacheDB;
+
+	private static State[] states;
 
 	public StreamFlagDetailsFragment getStreamFlagDetailsFragment() {
 		return streamFlagDetailsFragment;
@@ -73,7 +80,32 @@ public class MainApplication extends Application {
 	public void onCreate() {
 		mInstance = this;
 		cacheDB = new CacheDatabase(this);
+		fillupStates();
 		super.onCreate();
+	}
+
+	public static State[] getStates() {
+		return states;
+	}
+
+	private void fillupStates() {
+		AssetManager assetManager = getAssets();
+		InputStream inputStream = null;
+		try {
+			inputStream = assetManager.open("states.xml");
+		} catch (IOException e) {
+		}
+		String xml = "";
+		PipeStream pipe = new PipeStream(inputStream);
+		try {
+			pipe.peek();
+			xml = pipe.getData();
+		} catch (Exception e) {
+		}
+		if (!"".equals(xml)) {
+			states = new State[51];
+			State.parse(new XMLHelper(xml)).toArray(states);
+		}
 	}
 
 	public CacheDatabase getCache() {

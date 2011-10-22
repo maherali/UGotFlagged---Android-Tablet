@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="states_array">
+        <item itemid="AL" name="Alabama"/>
+        <item itemid="AK" name="Alaska"/>
+        <item itemid="AZ" name="Arizona"/>
+        <item itemid="AR" name="Arkansas"/>
+        <item itemid="CA" name="California"/>
+        <item itemid="CO" name="Colorado"/>
+        <item itemid="CT" name="Connecticut"/>
+        <item itemid="DC" name="District of Columbia"/>
+        <item itemid="DE" name="Delaware"/>
+        <item itemid="FL" name="Florida"/>
+        <item itemid="GA" name="Georgia"/>
+        <item itemid="HI" name="Hawaii"/>
+        <item itemid="ID" name="Idaho"/>
+        <item itemid="IL" name="Illinois"/>
+        <item itemid="IN" name="Indiana"/>
+        <item itemid="IA" name="Iowa"/>
+        <item itemid="KS" name="Kansas"/>
+        <item itemid="KY" name="Kentucky"/>
+        <item itemid="LA" name="Louisiana"/>
+        <item itemid="ME" name="Maine"/>
+        <item itemid="MD" name="Maryland"/>
+        <item itemid="MA" name="Massachusetts"/>
+        <item itemid="MI" name="Michigan"/>
+        <item itemid="MN" name="Minnesota"/>
+        <item itemid="MS" name="Mississippi"/>
+        <item itemid="MO" name="Missouri"/>
+        <item itemid="MT" name="Montana"/>
+        <item itemid="NE" name="Nebraska"/>
+        <item itemid="NV" name="Nevada"/>
+        <item itemid="NH" name="New Hampshire"/>
+        <item itemid="NJ" name="New Jersey"/>
+        <item itemid="NM" name="New Mexico"/>
+        <item itemid="NY" name="New York"/>
+        <item itemid="NC" name="North Carolina"/>
+        <item itemid="ND" name="North Dakota"/>
+        <item itemid="OH" name="Ohio"/>
+        <item itemid="OK" name="Oklahoma"/>
+        <item itemid="OR" name="Oregon"/>
+        <item itemid="PA" name="Pennsylvania"/>
+        <item itemid="RI" name="Rhode Island"/>
+        <item itemid="SC" name="South Carolina"/>
+        <item itemid="SD" name="South Dakota"/>
+        <item itemid="TN" name="Tennessee"/>
+        <item itemid="TX" name="Texas"/>
+        <item itemid="UT" name="Utah"/>
+        <item itemid="VT" name="Vermont"/>
+        <item itemid="VA" name="Virginia"/>
+        <item itemid="WA" name="Washington"/>
+        <item itemid="WV" name="West Virginia"/>
+        <item itemid="WI" name="Wisconsin"/>
+        <item itemid="WY" name="Wyoming"/>
+    </array>
+
+</resources>
