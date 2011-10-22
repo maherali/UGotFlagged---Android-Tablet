@@ -43,6 +43,7 @@ public class MainApplication extends Application {
 
 	private static State[] states;
 	private static Vehicle[] vehicles;
+	private static PostType[] postTypes;
 
 	public StreamFlagDetailsFragment getStreamFlagDetailsFragment() {
 		return streamFlagDetailsFragment;
@@ -83,6 +84,7 @@ public class MainApplication extends Application {
 		cacheDB = new CacheDatabase(this);
 		fillinStates();
 		fillinvehicles();
+		fillinFlagTypes();
 		super.onCreate();
 	}
 
@@ -92,6 +94,10 @@ public class MainApplication extends Application {
 
 	public static Vehicle[] getVehicles() {
 		return vehicles;
+	}
+
+	public static PostType[] getFlagTypes() {
+		return postTypes;
 	}
 
 	private void fillinStates() {
@@ -129,6 +135,25 @@ public class MainApplication extends Application {
 		}
 		if (!"".equals(xml)) {
 			vehicles = Vehicle.parse(new XMLHelper(xml)).toArray(new Vehicle[0]);
+		}
+	}
+
+	private void fillinFlagTypes() {
+		AssetManager assetManager = getAssets();
+		InputStream inputStream = null;
+		try {
+			inputStream = assetManager.open("flag_types.xml");
+		} catch (IOException e) {
+		}
+		String xml = "";
+		PipeStream pipe = new PipeStream(inputStream);
+		try {
+			pipe.peek();
+			xml = pipe.getData();
+		} catch (Exception e) {
+		}
+		if (!"".equals(xml)) {
+			postTypes = PostType.parse(new XMLHelper(xml)).toArray(new PostType[0]);
 		}
 	}
 

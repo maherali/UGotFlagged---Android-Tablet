@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
+import com.agilismobility.ugotflagged.PostType;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.State;
 import com.agilismobility.ugotflagged.Vehicle;
@@ -45,6 +46,12 @@ public class AddFlagActivity extends BaseActivity {
 				MainApplication.getVehicles());
 		vehicleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		vehicleSpinner.setAdapter(vehicleAdapter);
+
+		final Spinner postTypeSpinner = (Spinner) findViewById(R.id.post_type_spinner);
+		ArrayAdapter<PostType> postTypeAdapter = new ArrayAdapter<PostType>(this, android.R.layout.simple_spinner_item,
+				MainApplication.getFlagTypes());
+		postTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		postTypeSpinner.setAdapter(postTypeAdapter);
 
 		final TextView flagTitleText = (TextView) findViewById(R.id.flag_title);
 		final TextView plateNumberText = (TextView) findViewById(R.id.tag_number);
@@ -130,7 +137,8 @@ public class AddFlagActivity extends BaseActivity {
 				intent.putExtra(PostService.FLAG_VEHICLE_PARAM, vehicleDescriptionText.getText().toString());
 				Vehicle selectedVehicle = (Vehicle) vehicleSpinner.getSelectedItem();
 				intent.putExtra(PostService.FLAG_VEHICLE_TYPE_PARAM, selectedVehicle.id);
-				intent.putExtra(PostService.FLAG_POST_TYPE_PARAM, "2");
+				PostType selectedPostType = (PostType) postTypeSpinner.getSelectedItem();
+				intent.putExtra(PostService.FLAG_POST_TYPE_PARAM, selectedPostType.id);
 
 				startService(intent);
 			}

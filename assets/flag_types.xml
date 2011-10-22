@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<array name="flag_types_array">
+		<item itemid="0" itemimage="shame-48.png" name="Shame" />
+		<item itemid="1" itemimage="asshole-48.png" name="A-Hole" />
+		<item itemid="2" itemimage="kudos-48.png" name="Kudos" />
+		<item itemid="3" itemimage="warning-48.png" name="Warning" />
+	</array>
+
+</resources>

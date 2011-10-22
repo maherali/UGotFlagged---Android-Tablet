@@ -17,6 +17,7 @@
     <string name="like_unlike">Like</string>
     <string name="issuer_spinner_prompt">State</string>
     <string name="vehicle_spinner_prompt">Vehicle</string>
+    <string name="post_type_spinner_prompt">Post Type</string>
 
     <!-- By Signing up you agree to the UGotFlagged Terms and Conditions -->
 
