@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 
 	private static final String SELECTED_TAB = "selected_tab";
 
-	private String[] ACTIONS = { "Stream", "Followed" };
+	private String[] ACTIONS = { "Stream", "Favorites", "Followed" };
 
 	LocationAwareness mLocationAwareness;
 	RefreshReceiver mRefreshReceiver;
@@ -86,9 +86,11 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 
 	private void setupCurrentFragment() {
 		if (getActionBar().getTabCount() == 0 || mSelectedTabPosition == getActionBar().getTabAt(0).getPosition()) {
-			setupTabOneView();
+			setupStreamTab();
 		} else if (mSelectedTabPosition == getActionBar().getTabAt(1).getPosition()) {
-			setupTabTwoView();
+			setupFavoritesTab();
+		} else if (mSelectedTabPosition == getActionBar().getTabAt(2).getPosition()) {
+			setupFollowedTab();
 		}
 	}
 
@@ -102,7 +104,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		ft.commit();
 	}
 
-	private void setupTabOneView() {
+	private void setupStreamTab() {
 		setContentView(R.layout.main);
 		addOrReplace(R.id.left_frag, getFragmentManager().findFragmentById(R.id.left_frag),
 				((MainApplication) getApplication()).getStreamFragment());
@@ -115,7 +117,15 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		}
 	}
 
-	private void setupTabTwoView() {
+	private void setupFavoritesTab() {
+		setContentView(R.layout.liked);
+		addOrReplace(R.id.left_frag, getFragmentManager().findFragmentById(R.id.left_frag),
+				((MainApplication) getApplication()).getLikedFragment());
+		addOrReplace(R.id.right_frag, getFragmentManager().findFragmentById(R.id.right_frag),
+				((MainApplication) getApplication()).getLikedFlagDetailsFragment());
+	}
+
+	private void setupFollowedTab() {
 		setContentView(R.layout.followed);
 		addOrReplace(R.id.left_frag, getFragmentManager().findFragmentById(R.id.left_frag),
 				((MainApplication) getApplication()).getFollowedUsersFragment());

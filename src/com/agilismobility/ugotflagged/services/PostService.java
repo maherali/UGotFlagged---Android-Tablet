@@ -24,6 +24,7 @@ public class PostService extends Service {
 	public static final String UNLIKE_ACTION = "UNLIKE_ACTION";
 	public static final String LIKE_ACTION = "LIKE_ACTION";
 	public static final String ADD_FLAG_ACTION = "ADD_FLAG_ACTION";
+	public static final String MOST_LIKED_FLAGS_ACTION = "MOST_LIKED_FLAGS_ACTION";
 
 	public static final String COMMENT_TEXT_PARAM = "reply[text]";
 	public static final String POST_ID_PARAM = "POST_ID_PARAM";
@@ -43,10 +44,13 @@ public class PostService extends Service {
 	public static final String FLAG_LONG_PARAM = "post[long]";
 	public static final String FLAG_PICTURE_PARAM = "photo[uploaded_data]";
 
+	public static final String PAGE_NUMBER_PARAM = "page";
+
 	private static String TAG = "PostService";
 	public static final String ADD_COMMENT_FINISHED_NOTIF = "ADD_COMMENT_FINISHED_NOTIF";
 	public static final String LIKE_UNLIKE_FINISHED_NOTIF = "LIKE_UNLIKE_FINISHED_NOTIF";
 	public static final String ADD_FLAG_FINISHED_NOTIF = "ADD_FLAG_FINISHED_NOTIF";
+	public static final String MOST_LIKED_FLAGS_FINISHED_NOTIF = "MOST_LIKED_FLAGS_FINISHED_NOTIF";
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -99,8 +103,29 @@ public class PostService extends Service {
 			} else {
 				addFlag(title, text, vehicle, vehicleType, postType, city, state, country, street, plateIssuer, plateTag, lat, lng, startId);
 			}
+		} else if (MOST_LIKED_FLAGS_ACTION.equals(action)) {
+			String pageNo = intent.getStringExtra(PAGE_NUMBER_PARAM);
+			if (pageNo == null) {
+				pageNo = "1";
+			}
+			mostLiked(pageNo, startId);
 		}
 		return START_REDELIVER_INTENT;
+	}
+
+	private void mostLiked(String pageNo, final int startId) {
+		ServerProxy.get(Constants.FINDING_MOST_LIKED_FLAGS, "/posts/most_liked?", Utils.toUrlParams(PAGE_NUMBER_PARAM, pageNo),
+				new IServerResponder() {
+					@Override
+					public void success(ServerResponseSummary srs) {
+						anounceFindingMostLikedFinished(startId, srs, true);
+					}
+
+					@Override
+					public void failure(ServerResponseSummary srs) {
+						anounceFindingMostLikedFinished(startId, srs, false);
+					}
+				});
 	}
 
 	private void addFlagWithImageAndKV(Bitmap b, Map<String, String> kv, final int startId) {
@@ -190,6 +215,16 @@ public class PostService extends Service {
 	private void anounceAddFlagFinished(int startID, ServerResponseSummary srs, boolean success) {
 		Intent newIntent = new Intent(ADD_FLAG_FINISHED_NOTIF);
 		newIntent.putExtra(ACTION, ADD_FLAG_ACTION);
+		newIntent.putExtra(SUCCESS_ARG, success);
+		newIntent.putExtra(XML_ARG, srs.xml);
+		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);
+		sendBroadcast(newIntent);
+		stopSelf(startID);
+	}
+
+	private void anounceFindingMostLikedFinished(int startID, ServerResponseSummary srs, boolean success) {
+		Intent newIntent = new Intent(MOST_LIKED_FLAGS_FINISHED_NOTIF);
+		newIntent.putExtra(ACTION, MOST_LIKED_FLAGS_ACTION);
 		newIntent.putExtra(SUCCESS_ARG, success);
 		newIntent.putExtra(XML_ARG, srs.xml);
 		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);

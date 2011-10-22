@@ -22,6 +22,8 @@ import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedFlagDetailsF
 import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedUserPostsFragment;
 import com.agilismobility.ugotflagged.ui.fragments.followed.FollowedUsersFragment;
 import com.agilismobility.ugotflagged.ui.fragments.followers.FollowersFragment;
+import com.agilismobility.ugotflagged.ui.fragments.liked.LikedFlagDetailsFragment;
+import com.agilismobility.ugotflagged.ui.fragments.liked.LikedFragment;
 import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFlagDetailsFragment;
 import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFragment;
 import com.agilismobility.ugotflagged.utils.PipeStream;
@@ -39,6 +41,10 @@ public class MainApplication extends Application {
 	private FollowedFlagDetailsFragment followedFlagDetailsFragment;
 
 	private FollowersFragment followersFragment;
+
+	private LikedFragment likedFragment;
+	private LikedFlagDetailsFragment likedFlagDetailsFragment;
+
 	private CacheDatabase cacheDB;
 
 	private static State[] states;
@@ -69,6 +75,14 @@ public class MainApplication extends Application {
 		return followersFragment;
 	}
 
+	public LikedFragment getLikedFragment() {
+		return likedFragment;
+	}
+
+	public LikedFlagDetailsFragment getLikedFlagDetailsFragment() {
+		return likedFlagDetailsFragment;
+	}
+
 	public void createFragments() {
 		streamFragment = new StreamFragment();
 		streamFlagDetailsFragment = new StreamFlagDetailsFragment();
@@ -76,6 +90,8 @@ public class MainApplication extends Application {
 		followedUserFlags = new FollowedUserPostsFragment();
 		followedFlagDetailsFragment = new FollowedFlagDetailsFragment();
 		followersFragment = new FollowersFragment();
+		likedFragment = new LikedFragment();
+		likedFlagDetailsFragment = new LikedFlagDetailsFragment();
 	}
 
 	@Override
@@ -196,6 +212,7 @@ public class MainApplication extends Application {
 		static UsersDTO followedUsers;
 		static HashMap<Integer, ArrayList<PostDTO>> userPosts = new HashMap<Integer, ArrayList<PostDTO>>();
 		static GeocodeDTO geocodedAddress;
+		static ArrayList<PostDTO> mostLiked;
 
 		public static void setCurrentUser(UserDTO user) {
 			currUserID = user.identifier;
@@ -295,6 +312,14 @@ public class MainApplication extends Application {
 
 		public static GeocodeDTO getCurrentGeocodedAddress() {
 			return geocodedAddress;
+		}
+
+		public static void setMostLiked(ArrayList<PostDTO> posts) {
+			mostLiked = posts;
+		}
+
+		public static ArrayList<PostDTO> getMostLiked() {
+			return mostLiked;
 		}
 	}
 
