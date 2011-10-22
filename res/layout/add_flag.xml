@@ -163,10 +163,24 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/third_layout"
+            android:id="@+id/picture_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/flag_text_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dip" >
+
+            <ImageButton
+                android:id="@+id/flag_picture_button"
+                android:layout_width="500dip"
+                android:layout_height="500dip" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/third_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/picture_layout"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dip" >
         </LinearLayout>

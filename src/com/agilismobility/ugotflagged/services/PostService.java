@@ -3,6 +3,7 @@ package com.agilismobility.ugotflagged.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.agilismobility.ugotflagged.proxy.ServerProxy;
 import com.agilismobility.ugotflagged.proxy.ServerProxy.IServerResponder;
@@ -37,6 +38,7 @@ public class PostService extends Service {
 	public static final String FLAG_PLATE_TAG_PARAM = "post[plate_tag]";
 	public static final String FLAG_LAT_PARAM = "post[lat]";
 	public static final String FLAG_LONG_PARAM = "post[long]";
+	public static final String FLAG_PICTURE_PARAM = "photo[uploaded_data]";
 
 	private static String TAG = "PostService";
 	public static final String ADD_COMMENT_FINISHED_NOTIF = "ADD_COMMENT_FINISHED_NOTIF";
@@ -73,6 +75,9 @@ public class PostService extends Service {
 			String plateTag = intent.getStringExtra(FLAG_PLATE_TAG_PARAM);
 			String lat = intent.getStringExtra(FLAG_LAT_PARAM);
 			String lng = intent.getStringExtra(FLAG_LONG_PARAM);
+			String picPath = intent.getStringExtra(FLAG_PICTURE_PARAM);
+			Log.d("PostService", picPath);
+
 			addFlag(title, text, vehicle, vehicleType, postType, city, state, country, street, plateIssuer, plateTag, lat, lng, startId);
 		}
 		return START_REDELIVER_INTENT;

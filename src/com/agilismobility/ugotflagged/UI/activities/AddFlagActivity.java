@@ -1,16 +1,25 @@
 package com.agilismobility.ugotflagged.ui.activities;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,12 +33,17 @@ import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.PostService;
 import com.agilismobility.ugotflagged.services.SessionService;
+import com.agilismobility.ugotflagged.utils.Utils;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
 public class AddFlagActivity extends BaseActivity {
 
 	AddFlagReceiver mAddFlagReceiver;
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	public static final int MEDIA_TYPE_IMAGE = 1;
+	private Uri fileUri;
+	private Uri pictureFileUri;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +70,14 @@ public class AddFlagActivity extends BaseActivity {
 		final TextView plateNumberText = (TextView) findViewById(R.id.tag_number);
 		final EditText flagText = (EditText) findViewById(R.id.flag_text);
 		final TextView vehicleDescriptionText = (TextView) findViewById(R.id.vehicle_description);
+
+		final ImageButton pictureButton = (ImageButton) findViewById(R.id.flag_picture_button);
+		pictureButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				obtainPicture();
+			}
+		});
 
 		((Button) findViewById(R.id.flag_submit)).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -139,11 +161,33 @@ public class AddFlagActivity extends BaseActivity {
 				PostType selectedPostType = (PostType) postTypeSpinner.getSelectedItem();
 				intent.putExtra(PostService.FLAG_POST_TYPE_PARAM, selectedPostType.id);
 
+				if (pictureFileUri != null && pictureFileUri.getPath() != null) {
+					intent.putExtra(PostService.FLAG_PICTURE_PARAM, pictureFileUri.getPath());
+				}
+
 				enableButton(R.id.flag_submit, false);
 				showProgress();
 				startService(intent);
 			}
 		});
+	}
+
+	protected void obtainPicture() {
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				pictureFileUri = fileUri;
+				final ImageButton pictureButton = (ImageButton) findViewById(R.id.flag_picture_button);
+				pictureButton.setImageBitmap(Utils.getScalledImageFromFile(pictureFileUri.getPath(), 300, 300));
+			}
+		}
 	}
 
 	@Override
@@ -208,4 +252,37 @@ public class AddFlagActivity extends BaseActivity {
 		((ProgressBar) findViewById(R.id.progress)).setVisibility(View.GONE);
 	}
 
+	/** Create a file Uri for saving an image or video */
+	private static Uri getOutputMediaFileUri(int type) {
+		return Uri.fromFile(getOutputMediaFile(type));
+	}
+
+	/** Create a File for saving an image or video */
+	private static File getOutputMediaFile(int type) {
+		// To be safe, you should check that the SDCard is mounted
+		// using Environment.getExternalStorageState() before doing this.
+
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "UGotFlagged");
+		// This location works best if you want the created images to be shared
+		// between applications and persist after your app has been uninstalled.
+
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.d("UGotFlagged", "failed to create directory");
+				return null;
+			}
+		}
+
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		File mediaFile;
+		if (type == MEDIA_TYPE_IMAGE) {
+			mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+		} else {
+			return null;
+		}
+
+		return mediaFile;
+	}
 }
