@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
+import com.agilismobility.ugotflagged.Vehicle;
 import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.ReplyDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
@@ -211,6 +212,19 @@ public abstract class FlagDetailsFragment extends Fragment {
 		return img;
 	}
 
+	private Bitmap vehcileTypeImage(int vehicleType) {
+		Bitmap img = null;
+		Vehicle[] vehicles = MainApplication.getVehicles();
+		for (int i = 0; i < vehicles.length; i++) {
+			Vehicle v = vehicles[i];
+			if (new Integer(v.id) == vehicleType) {
+				img = Utils.getImageAsset(v.image);
+				break;
+			}
+		}
+		return img;
+	}
+
 	public void updateContent(int position) {
 		mPosition = position;
 		View frame = mLayout.findViewById(R.id.frame);
@@ -236,10 +250,16 @@ public abstract class FlagDetailsFragment extends Fragment {
 		ImageView postTypePicture = (ImageView) mLayout.findViewById(R.id.post_type);
 		TextView addressText = (TextView) mLayout.findViewById(R.id.address);
 		TextView distanceAway = (TextView) mLayout.findViewById(R.id.distance_away);
+		TextView vehicleDescription = (TextView) mLayout.findViewById(R.id.vehicle_description);
+		ImageView vehicleType = (ImageView) mLayout.findViewById(R.id.vehicle_type);
+
 		TextView timeAgo = (TextView) mLayout.findViewById(R.id.timeago);
 
 		Bitmap bitmap = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.authorAvatarURL);
 		Bitmap bitmapPicture = ((MainApplication) getActivity().getApplication()).getImageCache().getImageForURL(post.photoMainURL);
+
+		vehicleDescription.setText(post.vehicle);
+		vehicleType.setImageBitmap(vehcileTypeImage(post.vehicleType));
 
 		text.setText(post.text);
 		userNameText.setText(post.author);

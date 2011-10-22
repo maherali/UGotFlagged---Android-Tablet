@@ -42,6 +42,7 @@ public class MainApplication extends Application {
 	private CacheDatabase cacheDB;
 
 	private static State[] states;
+	private static Vehicle[] vehicles;
 
 	public StreamFlagDetailsFragment getStreamFlagDetailsFragment() {
 		return streamFlagDetailsFragment;
@@ -80,7 +81,8 @@ public class MainApplication extends Application {
 	public void onCreate() {
 		mInstance = this;
 		cacheDB = new CacheDatabase(this);
-		fillupStates();
+		fillinStates();
+		fillinvehicles();
 		super.onCreate();
 	}
 
@@ -88,7 +90,11 @@ public class MainApplication extends Application {
 		return states;
 	}
 
-	private void fillupStates() {
+	public static Vehicle[] getVehicles() {
+		return vehicles;
+	}
+
+	private void fillinStates() {
 		AssetManager assetManager = getAssets();
 		InputStream inputStream = null;
 		try {
@@ -103,8 +109,26 @@ public class MainApplication extends Application {
 		} catch (Exception e) {
 		}
 		if (!"".equals(xml)) {
-			states = new State[51];
-			State.parse(new XMLHelper(xml)).toArray(states);
+			states = State.parse(new XMLHelper(xml)).toArray(new State[0]);
+		}
+	}
+
+	private void fillinvehicles() {
+		AssetManager assetManager = getAssets();
+		InputStream inputStream = null;
+		try {
+			inputStream = assetManager.open("vehicles.xml");
+		} catch (IOException e) {
+		}
+		String xml = "";
+		PipeStream pipe = new PipeStream(inputStream);
+		try {
+			pipe.peek();
+			xml = pipe.getData();
+		} catch (Exception e) {
+		}
+		if (!"".equals(xml)) {
+			vehicles = Vehicle.parse(new XMLHelper(xml)).toArray(new Vehicle[0]);
 		}
 	}
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<array name="vehicles_array">
+		<item itemid="0" itemimage="unspecified_car.png" name="Unspecified" />
+		<item itemid="1" itemimage="van.png" name="Van" />
+		<item itemid="2" itemimage="wagon.png" name="Wagon" />
+		<item itemid="3" itemimage="suv.png" name="Suv" />
+		<item itemid="4" itemimage="sedan.png" name="Sedan" />
+		<item itemid="5" itemimage="truck.png" name="Truck" />
+		<item itemid="6" itemimage="trailer.png" name="Trailer" />
+		<item itemid="7" itemimage="convertible.png" name="Convertible" />
+		<item itemid="8" itemimage="coupe.png" name="Coupe" />
+	</array>
+
+</resources>

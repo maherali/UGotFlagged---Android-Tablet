@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.State;
+import com.agilismobility.ugotflagged.Vehicle;
 import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.PostService;
@@ -34,14 +35,21 @@ public class AddFlagActivity extends BaseActivity {
 		registerReceivers();
 		setContentView(R.layout.add_flag);
 
-		final Spinner spinner = (Spinner) findViewById(R.id.issuer_spinner);
+		final Spinner issuerSpinner = (Spinner) findViewById(R.id.issuer_spinner);
 		ArrayAdapter<State> adapter = new ArrayAdapter<State>(this, android.R.layout.simple_spinner_item, MainApplication.getStates());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner.setAdapter(adapter);
+		issuerSpinner.setAdapter(adapter);
+
+		final Spinner vehicleSpinner = (Spinner) findViewById(R.id.vehicle_spinner);
+		ArrayAdapter<Vehicle> vehicleAdapter = new ArrayAdapter<Vehicle>(this, android.R.layout.simple_spinner_item,
+				MainApplication.getVehicles());
+		vehicleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		vehicleSpinner.setAdapter(vehicleAdapter);
 
 		final TextView flagTitleText = (TextView) findViewById(R.id.flag_title);
 		final TextView plateNumberText = (TextView) findViewById(R.id.tag_number);
 		final EditText flagText = (EditText) findViewById(R.id.flag_text);
+		final TextView vehicleDescriptionText = (TextView) findViewById(R.id.vehicle_description);
 
 		((Button) findViewById(R.id.flag_submit)).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -51,7 +59,7 @@ public class AddFlagActivity extends BaseActivity {
 				Intent intent = new Intent(AddFlagActivity.this, PostService.class);
 				intent.putExtra(PostService.ACTION, PostService.ADD_FLAG_ACTION);
 
-				State selectedState = (State) spinner.getSelectedItem();
+				State selectedState = (State) issuerSpinner.getSelectedItem();
 				if (selectedState == null) {
 					showError("Please enter select a plate issuer.");
 					return;
@@ -114,8 +122,14 @@ public class AddFlagActivity extends BaseActivity {
 					return;
 				}
 				intent.putExtra(PostService.FLAG_TEXT_PARAM, flagText.getText().toString());
-				intent.putExtra(PostService.FLAG_VEHICLE_PARAM, "A nice color");
-				intent.putExtra(PostService.FLAG_VEHICLE_TYPE_PARAM, "2");
+
+				if (vehicleDescriptionText.getText().toString().trim().equals("")) {
+					showError("Please enter a description for the vehicle");
+					return;
+				}
+				intent.putExtra(PostService.FLAG_VEHICLE_PARAM, vehicleDescriptionText.getText().toString());
+				Vehicle selectedVehicle = (Vehicle) vehicleSpinner.getSelectedItem();
+				intent.putExtra(PostService.FLAG_VEHICLE_TYPE_PARAM, selectedVehicle.id);
 				intent.putExtra(PostService.FLAG_POST_TYPE_PARAM, "2");
 
 				startService(intent);

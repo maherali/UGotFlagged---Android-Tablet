@@ -72,21 +72,61 @@
                 android:layout_height="wrap_content" >
 
                 <EditText
-                    android:layout_weight="4"
                     android:id="@+id/tag_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/label_tag_number"
+                    android:layout_weight="4"
                     android:hint="Tag Number"
                     android:inputType="textNoSuggestions"
                     android:textColor="#ffffffff" />
 
                 <Spinner
-                     android:layout_weight="1"
                     android:id="@+id/issuer_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:prompt="@string/issuer_spinner_prompt" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vehicle_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tag_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="00dip" >
+
+            <TextView
+                android:id="@+id/label_vehicle"
+                android:layout_width="150dip"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/vehicle_description"
+                android:text="Vehicle"
+                android:textColor="#ffffffff"
+                android:textSize="22dp" />
+
+            <LinearLayout
+                android:layout_width="400dip"
+                android:layout_height="wrap_content" >
+
+                <EditText
+                    android:id="@+id/vehicle_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/label_vehicle"
+                    android:layout_weight="4"
+                    android:hint="Vehicle Description"
+                    android:inputType="textNoSuggestions"
+                    android:textColor="#ffffffff" />
+
+                <Spinner
+                    android:id="@+id/vehicle_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:prompt="@string/vehicle_spinner_prompt" />
             </LinearLayout>
         </LinearLayout>
 
@@ -94,7 +134,7 @@
             android:id="@+id/flag_text_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tag_layout"
+            android:layout_below="@id/vehicle_layout"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="00dip" >
 
