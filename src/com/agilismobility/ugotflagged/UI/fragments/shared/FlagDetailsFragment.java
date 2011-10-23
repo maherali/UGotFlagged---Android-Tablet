@@ -32,7 +32,7 @@ import com.agilismobility.util.Util;
 
 public abstract class FlagDetailsFragment extends Fragment {
 	private View mLayout;
-	MyReceiver receiver;
+	ImageReceiver imageReceiver;
 	private int mPosition;
 
 	public void setCurrentPosition(int pos) {
@@ -73,12 +73,11 @@ public abstract class FlagDetailsFragment extends Fragment {
 
 	private void registerReceivers() {
 		IntentFilter filter = new IntentFilter(ImageDownloadingService.IMAGE_AVAILABLE_NOTIF);
-		receiver = new MyReceiver();
-		getActivity().registerReceiver(receiver, filter);
-
+		imageReceiver = new ImageReceiver();
+		getActivity().registerReceiver(imageReceiver, filter);
 	}
 
-	public class MyReceiver extends BroadcastReceiver {
+	public class ImageReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			updateContent(mPosition);
@@ -300,10 +299,9 @@ public abstract class FlagDetailsFragment extends Fragment {
 
 	@Override
 	public void onDestroy() {
-		if (receiver != null) {
-			getActivity().unregisterReceiver(receiver);
+		if (imageReceiver != null) {
+			getActivity().unregisterReceiver(imageReceiver);
 		}
-
 		super.onDestroy();
 	}
 
