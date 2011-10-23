@@ -212,11 +212,13 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 			ImageView avatarImage = (ImageView) layout.findViewById(R.id.avatar);
 			TextView userNameText = (TextView) layout.findViewById(R.id.user_name);
 			InternetButton followButton = (InternetButton) layout.findViewById(R.id.follow);
-			TextView noOfPostsText = (TextView) layout.findViewById(R.id.no_of_posts);
+			TextView noOfPostsText = (TextView) layout.findViewById(R.id.user_statistics);
 
 			UserDTO user = MainApplication.GlobalState.getFollowedUsers().getUsers().get(position);
 			userNameText.setText(user.userName);
-			noOfPostsText.setText(Util.pluralize(user.totalPosts, "flag", "flags"));
+			noOfPostsText.setText(Util.pluralize(user.totalPosts, "flag", "flags") + ", "
+					+ Util.pluralize(user.noFollowers, "follower", "followers") + ", follwoing "
+					+ Util.pluralize(user.noFollowedUsers, "user", "users"));
 			followButton.setText("UnFollow");
 			followButton.setTag(user);
 			followButton.setOnClickInternetListener(new InternetButton.OnClickInternetListener() {

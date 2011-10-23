@@ -2,5 +2,5 @@
 <resources>
 	<dimen name="medium_stream_size">400dp</dimen>
 	<dimen name="stream_size">500dp</dimen>
-	<dimen name="simple_user_size">250dp</dimen>
+	<dimen name="simple_user_size">260dp</dimen>
 </resources>

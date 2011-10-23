@@ -1,33 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="horizontal" android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="?android:attr/activatedBackgroundIndicator">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/activatedBackgroundIndicator"
+    android:orientation="vertical" >
 
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_weight="1.5"
-		android:orientation="vertical">
-		<ImageView android:id="@+id/avatar" android:layout_width="48dip"
-			android:layout_height="48dip" android:paddingTop="5dip"
-			android:paddingBottom="5dip" android:paddingLeft="5dip"
-			android:paddingRight="5dip" android:layout_marginTop="5dip" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-		<TextView android:id="@+id/user_name" android:textColor="@color/user_name"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:singleLine="true" android:paddingLeft="6dip" />
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_marginTop="5dip"
+            android:paddingBottom="5dip"
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip"
+            android:paddingTop="5dip" />
 
-		<TextView android:id="@+id/no_of_posts"
-			android:layout_marginLeft="10dip" android:layout_gravity="left"
-			android:layout_width="fill_parent" android:layout_height="wrap_content" />
-			
-	</LinearLayout>
+        <com.agilismobility.InternetButton
+            android:id="@+id/follow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dip"
+            android:layout_marginTop="15dip"
+            android:focusable="false"
+            android:text="" >
+        </com.agilismobility.InternetButton>
+    </LinearLayout>
 
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dip"
+        android:singleLine="true"
+        android:textColor="@color/user_name" />
 
-	<com.agilismobility.InternetButton
-		android:layout_width="wrap_content" android:focusable="false"
-		android:layout_height="wrap_content" android:text=""
-		android:layout_gravity="center_vertical|center_horizontal|right"
-		android:id="@+id/follow">
-	</com.agilismobility.InternetButton>
+    <TextView
+        android:id="@+id/user_statistics"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="10dip" />
 
 </LinearLayout>
