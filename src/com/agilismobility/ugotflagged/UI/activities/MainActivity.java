@@ -66,10 +66,13 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		addInterestingNotificationName(Constants.LOGGING_IN);
 		addInterestingNotificationName(Constants.PARSING_USER_DATA);
 		addInterestingNotificationName(Constants.REFRESHING_STREAM);
+		addInterestingNotificationName(Constants.FINDING_MOST_LIKED_FLAGS);
+		addInterestingNotificationName(Constants.FINDING_USER_POSTS);
+
 		((Button) findViewById(R.id.refresh_button)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				refreshStream();
+				refreshCurrentStream();
 			}
 		});
 		if (savedInstanceState != null) {
@@ -149,14 +152,16 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 
 	@Override
 	protected void receivedDoingInterestingNotification(String notif) {
-		if (Constants.LOGGING_IN.equals(notif) || Constants.PARSING_USER_DATA.equals(notif) || Constants.REFRESHING_STREAM.equals(notif)) {
+		if (Constants.LOGGING_IN.equals(notif) || Constants.PARSING_USER_DATA.equals(notif) || Constants.REFRESHING_STREAM.equals(notif)
+				|| Constants.FINDING_MOST_LIKED_FLAGS.equals(notif) || Constants.FINDING_USER_POSTS.equals(notif)) {
 			showProgress(true);
 		}
 	}
 
 	@Override
 	protected void receivedFinishedDoingInterestingNotification(String notif) {
-		if (Constants.LOGGING_IN.equals(notif) || Constants.PARSING_USER_DATA.equals(notif) || Constants.REFRESHING_STREAM.equals(notif)) {
+		if (Constants.LOGGING_IN.equals(notif) || Constants.PARSING_USER_DATA.equals(notif) || Constants.REFRESHING_STREAM.equals(notif)
+				|| Constants.FINDING_MOST_LIKED_FLAGS.equals(notif) || Constants.FINDING_USER_POSTS.equals(notif)) {
 			showProgress(false);
 		}
 	}
@@ -286,6 +291,31 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 			intent.putExtra(RefreshService.USER_NAME_ARG, currUser.userName);
 			startService(intent);
 		}
+	}
+
+	private void refreshCurrentStream() {
+		switch (mSelectedTabPosition) {
+		case 0:
+			refreshStream();
+			break;
+		case 1:
+			refreshFavs();
+			break;
+		case 2:
+			refreshFollowed();
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	private void refreshFollowed() {
+		((MainApplication) getApplication()).getFollowedUsersFragment().findFollowedUsers();
+	}
+
+	private void refreshFavs() {
+		((MainApplication) getApplication()).getLikedFragment().findLiked();
 	}
 
 	private void registerReceiver() {

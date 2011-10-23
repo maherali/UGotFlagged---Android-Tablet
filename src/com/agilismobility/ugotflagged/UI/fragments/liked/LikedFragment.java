@@ -32,7 +32,7 @@ public class LikedFragment extends FlagsFragment {
 		findLiked();
 	}
 
-	private void findLiked() {
+	public void findLiked() {
 		Intent intent = new Intent(this.getActivity(), PostService.class);
 		intent.putExtra(PostService.ACTION, PostService.MOST_LIKED_FLAGS_ACTION);
 		getActivity().startService(intent);
