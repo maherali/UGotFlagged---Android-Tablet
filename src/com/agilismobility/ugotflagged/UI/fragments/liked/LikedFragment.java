@@ -24,6 +24,11 @@ public class LikedFragment extends FlagsFragment {
 	LikedReceiver mLikedReceiver;
 
 	@Override
+	protected String getListPositionSavedName() {
+		return "listPosition-liked";
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		IntentFilter filter = new IntentFilter(PostService.MOST_LIKED_FLAGS_FINISHED_NOTIF);
@@ -77,7 +82,7 @@ public class LikedFragment extends FlagsFragment {
 				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
 				if (u.errors.size() == 0) {
 					MainApplication.GlobalState.setMostLiked(u.posts);
-					refresh();
+					update();
 				} else {
 					((BaseActivity) getActivity()).showError(u.errors);
 				}

@@ -16,6 +16,7 @@ public class ConnectionsService extends Service {
 
 	public static final String FIND_FOLLOWED_USERS_ACTION = "FIND_FOLLOWED_USERS_ACTION";
 	public static final String UNFOLLOW_USER_ACTION = "UNFOLLOW_USER_ACTION";
+	public static final String FOLLOW_USER_ACTION = "FOLLOW_USER_ACTION";
 
 	public static final String FOLLOWED_USERS_FINISHED_NOTIF = "FOLLOWED_USERS_FINISHED_NOTIF";
 
@@ -35,11 +36,28 @@ public class ConnectionsService extends Service {
 		String action = intent.getStringExtra(ACTION);
 		if (FIND_FOLLOWED_USERS_ACTION.equals(action)) {
 			findFollowedUsers(startId);
+		} else if (FOLLOW_USER_ACTION.equals(action)) {
+			String userName = intent.getStringExtra(USER_NAME_ARG);
+			followUser(startId, userName);
 		} else if (UNFOLLOW_USER_ACTION.equals(action)) {
 			String userName = intent.getStringExtra(USER_NAME_ARG);
 			unfollowUser(startId, userName);
 		}
 		return START_REDELIVER_INTENT;
+	}
+
+	private void followUser(final int startId, final String userName) {
+		ServerProxy.post(Constants.FOLLOWING_FOLLOWED, "/connections", Utils.toUrlParams("user", userName), new IServerResponder() {
+			@Override
+			public void success(ServerResponseSummary srs) {
+				anounceFollowFinished(startId, srs, true);
+			}
+
+			@Override
+			public void failure(ServerResponseSummary srs) {
+				anounceFollowFinished(startId, srs, false);
+			}
+		});
 	}
 
 	private void unfollowUser(final int startId, final String userName) {
@@ -84,6 +102,16 @@ public class ConnectionsService extends Service {
 	private void anounceUnFollowFinished(int startID, ServerResponseSummary srs, boolean success) {
 		Intent newIntent = new Intent(FOLLOWED_USERS_FINISHED_NOTIF);
 		newIntent.putExtra(ACTION, UNFOLLOW_USER_ACTION);
+		newIntent.putExtra(SUCCESS_ARG, success);
+		newIntent.putExtra(XML_ARG, srs.xml);
+		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);
+		sendBroadcast(newIntent);
+		stopSelf(startID);
+	}
+
+	private void anounceFollowFinished(int startID, ServerResponseSummary srs, boolean success) {
+		Intent newIntent = new Intent(FOLLOWED_USERS_FINISHED_NOTIF);
+		newIntent.putExtra(ACTION, FOLLOW_USER_ACTION);
 		newIntent.putExtra(SUCCESS_ARG, success);
 		newIntent.putExtra(XML_ARG, srs.xml);
 		newIntent.putExtra(ERROR_ARG, srs.detailedErrorMessage);

@@ -91,7 +91,7 @@ abstract public class UserPostsFragment extends FlagsFragment {
 				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
 				if (u.errors.size() == 0) {
 					MainApplication.GlobalState.setUserPosts(userID, u.posts);
-					refresh();
+					update();
 				} else {
 					DialogActivity.showMessage(getActivity(), "Error", u.errors.get(0));
 				}
@@ -120,5 +120,4 @@ abstract public class UserPostsFragment extends FlagsFragment {
 	@Override
 	protected void setupHeaderView(ListView lv) {
 	}
-
 }

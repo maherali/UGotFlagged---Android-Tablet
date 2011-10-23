@@ -17,6 +17,7 @@ public class Constants {
 	public static final String REFRESHING_STREAM = "REFRESHING_STREAM";
 	public static final String PARSING_USER_DATA = "PARSING_USER_DATA";
 	public static final String FINDING_FOLLOWED = "FINDING_FOLLOWED";
+	public static final String FOLLOWING_FOLLOWED = "FOLLOWING_FOLLOWED";
 	public static final String UNFOLLOWING_FOLLOWED = "UNFOLLOWING_FOLLOWED";
 	public static final String REGISTERING = "REGISTERING";
 	public static final String FINDING_USER_POSTS = "FINDING_USER_POSTS";

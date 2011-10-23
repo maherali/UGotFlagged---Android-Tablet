@@ -30,8 +30,12 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 	protected int mCurPosition;
 	protected boolean mBusy;
 	protected SlowAdapter m_adapter;
-	protected ImageAvailableReceiver receiver;
+	protected ImageAvailableReceiver imageReceiver;
 	protected View mListViewHeader;
+
+	protected String getListPositionSavedName() {
+		return "listPosition";
+	}
 
 	public int getCurrentPosition() {
 		return mCurPosition;
@@ -51,7 +55,7 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if (savedInstanceState != null) {
-			mCurPosition = savedInstanceState.getInt("listPosition");
+			mCurPosition = savedInstanceState.getInt(getListPositionSavedName());
 		}
 		ListView lv = getListView();
 		setupHeaderView(lv);
@@ -59,37 +63,35 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		if (mCurPosition >= 0) {
 			selectPosition(mCurPosition);
 		}
-
 		setupListAdapter();
 		getListView().setOnScrollListener(this);
 		registerReceiver();
 	}
 
 	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(getListPositionSavedName(), mCurPosition);
+	}
+
+	@Override
 	public void onDestroy() {
-		if (receiver != null) {
-			getActivity().unregisterReceiver(receiver);
+		if (imageReceiver != null) {
+			getActivity().unregisterReceiver(imageReceiver);
 		}
 		super.onDestroy();
 	}
 
 	private void registerReceiver() {
 		IntentFilter filter = new IntentFilter(ImageDownloadingService.IMAGE_AVAILABLE_NOTIF);
-		receiver = new ImageAvailableReceiver();
-		getActivity().registerReceiver(receiver, filter);
-	}
-
-	public void refresh() {
-		if (getPostCount() == 0) {
-			setEmptyText("User has no posts.");
-		}
-		m_adapter.notifyDataSetChanged();
+		imageReceiver = new ImageAvailableReceiver();
+		getActivity().registerReceiver(imageReceiver, filter);
 	}
 
 	public class ImageAvailableReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			refresh();
+			update();
 		}
 	}
 
@@ -258,12 +260,6 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		showAt(position);
 	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt("listPosition", mCurPosition);
-	}
-
 	protected void showHeaderView() {
 		if (mListViewHeader != null) {
 			mListViewHeader.setVisibility(View.VISIBLE);
@@ -274,6 +270,15 @@ public abstract class FlagsFragment extends ListFragment implements ListView.OnS
 		if (mListViewHeader != null) {
 			mListViewHeader.setVisibility(View.GONE);
 		}
+	}
+
+	public void update() {
+		if (!isAdded())
+			return;
+		if (getPostCount() == 0) {
+			setEmptyText("User has no posts.");
+		}
+		m_adapter.notifyDataSetChanged();
 	}
 
 	abstract protected void setupListAdapter();

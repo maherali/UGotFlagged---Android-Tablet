@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,18 +27,12 @@ import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.ReplyDTO;
 import com.agilismobility.ugotflagged.services.ImageDownloadingService;
 import com.agilismobility.ugotflagged.services.PostService;
-import com.agilismobility.ugotflagged.services.SessionService;
-import com.agilismobility.ugotflagged.ui.activities.BaseActivity;
 import com.agilismobility.ugotflagged.utils.Utils;
-import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.util.Util;
-import com.agilismobility.utils.Constants;
 
 public abstract class FlagDetailsFragment extends Fragment {
 	private View mLayout;
 	MyReceiver receiver;
-	CommentReceiver addCommentReceiver;
-	LikeUnlikeReceiver likeUnlikeReceiver;
 	private int mPosition;
 
 	public void setCurrentPosition(int pos) {
@@ -78,66 +71,11 @@ public abstract class FlagDetailsFragment extends Fragment {
 		}
 	}
 
-	private void parsePostAndGo(final String xml) {
-		Constants.broadcastDoingSomethingNotification(Constants.PARSING_POST_DATA);
-		new AsyncTask<Void, Void, PostDTO>() {
-			@Override
-			protected PostDTO doInBackground(Void... params) {
-				return new PostDTO(new XMLHelper(xml));
-			}
-
-			@Override
-			protected void onPostExecute(PostDTO post) {
-				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_POST_DATA);
-				if (post.errors.size() == 0) {
-					MainApplication.GlobalState.updatePost(post);
-					updateContent(mPosition);
-				} else {
-					((BaseActivity) getActivity()).showError(post.errors);
-				}
-			}
-		}.execute();
-	}
-
 	private void registerReceivers() {
 		IntentFilter filter = new IntentFilter(ImageDownloadingService.IMAGE_AVAILABLE_NOTIF);
 		receiver = new MyReceiver();
 		getActivity().registerReceiver(receiver, filter);
 
-		filter = new IntentFilter(PostService.ADD_COMMENT_FINISHED_NOTIF);
-		addCommentReceiver = new CommentReceiver();
-		getActivity().registerReceiver(addCommentReceiver, filter);
-
-		filter = new IntentFilter(PostService.LIKE_UNLIKE_FINISHED_NOTIF);
-		likeUnlikeReceiver = new LikeUnlikeReceiver();
-		getActivity().registerReceiver(likeUnlikeReceiver, filter);
-	}
-
-	public class LikeUnlikeReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (PostService.LIKE_ACTION.equals(intent.getStringExtra(PostService.ACTION))
-					|| PostService.UNLIKE_ACTION.equals(intent.getStringExtra(PostService.ACTION))) {
-				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
-					parsePostAndGo(intent.getStringExtra(SessionService.XML_ARG));
-				} else {
-					((BaseActivity) getActivity()).showError(intent.getStringExtra(SessionService.ERROR_ARG));
-				}
-			}
-		}
-	}
-
-	public class CommentReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (PostService.ADD_COMMENT_ACTION.equals(intent.getStringExtra(PostService.ACTION))) {
-				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
-					parsePostAndGo(intent.getStringExtra(SessionService.XML_ARG));
-				} else {
-					((BaseActivity) getActivity()).showError(intent.getStringExtra(SessionService.ERROR_ARG));
-				}
-			}
-		}
 	}
 
 	public class MyReceiver extends BroadcastReceiver {
@@ -225,6 +163,12 @@ public abstract class FlagDetailsFragment extends Fragment {
 		return img;
 	}
 
+	public void update() {
+		if (!isAdded())
+			return;
+		updateContent(mPosition);
+	}
+
 	public void updateContent(int position) {
 		mPosition = position;
 		View frame = mLayout.findViewById(R.id.frame);
@@ -268,7 +212,10 @@ public abstract class FlagDetailsFragment extends Fragment {
 		postUserFavs.setText(Util.pluralize(post.totalLikes, "user", "users"));
 		addReplies(post.replies);
 
-		((Button) getActivity().findViewById(R.id.add_comment)).setOnClickListener(new View.OnClickListener() {
+		Button addButton = ((Button) getActivity().findViewById(R.id.add_comment));
+		if (addButton == null)
+			return;
+		addButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				addComment();
@@ -356,12 +303,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 		if (receiver != null) {
 			getActivity().unregisterReceiver(receiver);
 		}
-		if (addCommentReceiver != null) {
-			getActivity().unregisterReceiver(addCommentReceiver);
-		}
-		if (likeUnlikeReceiver != null) {
-			getActivity().unregisterReceiver(likeUnlikeReceiver);
-		}
+
 		super.onDestroy();
 	}
 

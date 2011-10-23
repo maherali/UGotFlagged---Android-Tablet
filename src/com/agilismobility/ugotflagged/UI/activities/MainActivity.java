@@ -26,11 +26,12 @@ import com.agilismobility.LocationAwareness.ILocationResponder;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.dtos.GeocodeDTO;
+import com.agilismobility.ugotflagged.dtos.PostDTO;
 import com.agilismobility.ugotflagged.dtos.UserDTO;
 import com.agilismobility.ugotflagged.services.GeoCodingService;
+import com.agilismobility.ugotflagged.services.PostService;
 import com.agilismobility.ugotflagged.services.RefreshService;
 import com.agilismobility.ugotflagged.services.SessionService;
-import com.agilismobility.ugotflagged.ui.fragments.stream.StreamFragment;
 import com.agilismobility.ugotflagged.utils.XMLHelper;
 import com.agilismobility.utils.Constants;
 
@@ -41,7 +42,9 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 	private String[] ACTIONS = { "Stream", "Favorites", "Followed" };
 
 	LocationAwareness mLocationAwareness;
-	RefreshReceiver mRefreshReceiver;
+	RefreshStreamReceiver mRefreshReceiver;
+	CommentReceiver addCommentReceiver;
+	LikeUnlikeReceiver likeUnlikeReceiver;
 	GeoCodingReceiver mGeocodingService;
 
 	private int mSelectedTabPosition = -1;
@@ -79,6 +82,40 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 			mSelectedTabPosition = savedInstanceState.getInt(SELECTED_TAB);
 			getActionBar().setSelectedNavigationItem(mSelectedTabPosition);
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mLocationAwareness.hasResumed();
+		updateFragmentsContent();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mLocationAwareness.hasPaused();
+		((MainApplication) getApplication()).getImageCache().clear();
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (mLocationAwareness != null) {
+			mLocationAwareness.hasDestroyed();
+		}
+		if (mRefreshReceiver != null) {
+			unregisterReceiver(mRefreshReceiver);
+		}
+		if (mGeocodingService != null) {
+			unregisterReceiver(mGeocodingService);
+		}
+		if (addCommentReceiver != null) {
+			unregisterReceiver(addCommentReceiver);
+		}
+		if (likeUnlikeReceiver != null) {
+			unregisterReceiver(likeUnlikeReceiver);
+		}
+		super.onDestroy();
 	}
 
 	@Override
@@ -167,34 +204,6 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		mLocationAwareness.hasResumed();
-		refreshFlags();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		mLocationAwareness.hasPaused();
-		((MainApplication) getApplication()).getImageCache().clear();
-	}
-
-	@Override
-	protected void onDestroy() {
-		if (mLocationAwareness != null) {
-			mLocationAwareness.hasDestroyed();
-		}
-		if (mRefreshReceiver != null) {
-			unregisterReceiver(mRefreshReceiver);
-		}
-		if (mGeocodingService != null) {
-			unregisterReceiver(mGeocodingService);
-		}
-		super.onDestroy();
-	}
-
-	@Override
 	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
 	}
 
@@ -204,7 +213,8 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 			mSelectedTabPosition = tab.getPosition();
 		} else {
 			mSelectedTabPosition = tab.getPosition();
-			int curPos = ((MainApplication) getApplication()).getStreamFragment().getCurrentPosition();
+			int curPos;
+			curPos = ((MainApplication) getApplication()).getStreamFragment().getCurrentPosition();
 			((MainApplication) getApplication()).createFragments();
 			setupCurrentFragment();
 			((MainApplication) getApplication()).getStreamFragment().setCurrentPosition(curPos);
@@ -263,7 +273,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		intent.putExtra(GeoCodingService.GEO_LAT_PARAM, location.getLatitude() + "");
 		intent.putExtra(GeoCodingService.GEO_LNG_PARAM, location.getLongitude() + "");
 		startService(intent);
-		refreshFlags();
+		updateFragmentsContent();
 	}
 
 	public class GeoCodingReceiver extends BroadcastReceiver {
@@ -274,13 +284,6 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 					parseGeocodingAndGo(intent.getStringExtra(GeoCodingService.XML_ARG));
 				}
 			}
-		}
-	}
-
-	private void refreshFlags() {
-		Fragment frag = getFragmentManager().findFragmentById(R.id.left_frag);
-		if (frag != null && frag instanceof StreamFragment) {
-			((StreamFragment) frag).refresh();
 		}
 	}
 
@@ -320,26 +323,61 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 
 	private void registerReceiver() {
 		IntentFilter filter = new IntentFilter(RefreshService.REFRESHING_FINISHED_NOTIF);
-		mRefreshReceiver = new RefreshReceiver();
+		mRefreshReceiver = new RefreshStreamReceiver();
 		registerReceiver(mRefreshReceiver, filter);
 
 		filter = new IntentFilter(GeoCodingService.GEO_CODE_FINISHED_NOTIF);
 		mGeocodingService = new GeoCodingReceiver();
 		registerReceiver(mGeocodingService, filter);
+
+		filter = new IntentFilter(PostService.ADD_COMMENT_FINISHED_NOTIF);
+		addCommentReceiver = new CommentReceiver();
+		registerReceiver(addCommentReceiver, filter);
+
+		filter = new IntentFilter(PostService.LIKE_UNLIKE_FINISHED_NOTIF);
+		likeUnlikeReceiver = new LikeUnlikeReceiver();
+		registerReceiver(likeUnlikeReceiver, filter);
 	}
 
-	public class RefreshReceiver extends BroadcastReceiver {
+	public class RefreshStreamReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (intent.getBooleanExtra(RefreshService.SUCCESS_ARG, false)) {
-				parseRefreshAndGo(intent.getStringExtra(RefreshService.XML_ARG));
+				parseRefreshStreamAndGo(intent.getStringExtra(RefreshService.XML_ARG));
 			} else {
 				showError(intent.getStringExtra(RefreshService.ERROR_ARG));
 			}
 		}
 	}
 
-	private void parseRefreshAndGo(final String xml) {
+	public class LikeUnlikeReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (PostService.LIKE_ACTION.equals(intent.getStringExtra(PostService.ACTION))
+					|| PostService.UNLIKE_ACTION.equals(intent.getStringExtra(PostService.ACTION))) {
+				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
+					parsePostAndGo(intent.getStringExtra(SessionService.XML_ARG));
+				} else {
+					showError(intent.getStringExtra(SessionService.ERROR_ARG));
+				}
+			}
+		}
+	}
+
+	public class CommentReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (PostService.ADD_COMMENT_ACTION.equals(intent.getStringExtra(PostService.ACTION))) {
+				if (intent.getBooleanExtra(SessionService.SUCCESS_ARG, false)) {
+					parsePostAndGo(intent.getStringExtra(SessionService.XML_ARG));
+				} else {
+					showError(intent.getStringExtra(SessionService.ERROR_ARG));
+				}
+			}
+		}
+	}
+
+	private void parseRefreshStreamAndGo(final String xml) {
 		Constants.broadcastDoingSomethingNotification(Constants.PARSING_USER_DATA);
 		new AsyncTask<Void, Void, UserDTO>() {
 			@Override
@@ -352,7 +390,7 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_USER_DATA);
 				if (u.errors.size() == 0) {
 					MainApplication.GlobalState.setCurrentUser(u);
-					refreshFlags();
+					updateFragmentsContent();
 				} else {
 					showError(u.errors);
 				}
@@ -378,4 +416,34 @@ public class MainActivity extends BaseActivity implements TabListener, ILocation
 		}.execute();
 	}
 
+	private void parsePostAndGo(final String xml) {
+		Constants.broadcastDoingSomethingNotification(Constants.PARSING_POST_DATA);
+		new AsyncTask<Void, Void, PostDTO>() {
+			@Override
+			protected PostDTO doInBackground(Void... params) {
+				return new PostDTO(new XMLHelper(xml));
+			}
+
+			@Override
+			protected void onPostExecute(PostDTO post) {
+				Constants.broadcastFinishedDoingSomethingNotification(Constants.PARSING_POST_DATA);
+				if (post.errors.size() == 0) {
+					MainApplication.GlobalState.updatePost(post);
+					updateFragmentsContent();
+				} else {
+					showError(post.errors);
+				}
+			}
+		}.execute();
+	}
+
+	public void updateFragmentsContent() {
+		((MainApplication) getApplication()).getStreamFragment().update();
+		((MainApplication) getApplication()).getStreamFlagDetailsFragment().update();
+		((MainApplication) getApplication()).getLikedFragment().update();
+		((MainApplication) getApplication()).getLikedFlagDetailsFragment().update();
+		((MainApplication) getApplication()).getFollowedUsersFragment().update();
+		((MainApplication) getApplication()).getFollowedUserPostsFragment().update();
+		((MainApplication) getApplication()).getFollowedFlagDetailsFragment().update();
+	}
 }

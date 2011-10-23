@@ -96,6 +96,12 @@ public class FollowedUsersFragment extends ListFragment implements ListView.OnSc
 		m_adapter.notifyDataSetChanged();
 	}
 
+	public void update() {
+		if (!isAdded())
+			return;
+		refresh();
+	}
+
 	public class ImageDownloadedReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
