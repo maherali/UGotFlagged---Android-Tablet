@@ -57,9 +57,9 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginLeft="0dip"
-            android:layout_marginTop="15dip" 
-            android:layout_gravity="center_horizontal">
+            android:layout_marginTop="15dip" >
 
             <ImageView
                 android:id="@+id/vehicle_type"
@@ -202,21 +202,21 @@
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal" >
 
-            <Button
+            <com.agilismobility.InternetButton
                 android:id="@+id/add_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:text="@string/add_comment" >
-            </Button>
+            </com.agilismobility.InternetButton>
 
-            <Button
+            <com.agilismobility.InternetButton
                 android:id="@+id/like_unlike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:text="@string/like_unlike" >
-            </Button>
+            </com.agilismobility.InternetButton>
         </LinearLayout>
 
         <LinearLayout

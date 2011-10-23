@@ -14,12 +14,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.agilismobility.InternetButton;
 import com.agilismobility.ugotflagged.MainApplication;
 import com.agilismobility.ugotflagged.R;
 import com.agilismobility.ugotflagged.Vehicle;
@@ -211,17 +211,17 @@ public abstract class FlagDetailsFragment extends Fragment {
 		postUserFavs.setText(Util.pluralize(post.totalLikes, "user", "users"));
 		addReplies(post.replies);
 
-		Button addButton = ((Button) getActivity().findViewById(R.id.add_comment));
+		InternetButton addButton = ((InternetButton) getActivity().findViewById(R.id.add_comment));
 		if (addButton == null)
 			return;
-		addButton.setOnClickListener(new View.OnClickListener() {
+		addButton.setOnClickInternetListener(new InternetButton.OnClickInternetListener() {
 			@Override
 			public void onClick(View v) {
 				addComment();
 			}
 		});
 
-		Button likeUnlikeButton = ((Button) getActivity().findViewById(R.id.like_unlike));
+		InternetButton likeUnlikeButton = ((InternetButton) getActivity().findViewById(R.id.like_unlike));
 		if (post.canLike) {
 			likeUnlikeButton.setVisibility(View.VISIBLE);
 		} else {
@@ -232,7 +232,7 @@ public abstract class FlagDetailsFragment extends Fragment {
 		} else {
 			likeUnlikeButton.setText("Like");
 		}
-		likeUnlikeButton.setOnClickListener(new View.OnClickListener() {
+		likeUnlikeButton.setOnClickInternetListener(new InternetButton.OnClickInternetListener() {
 			@Override
 			public void onClick(View v) {
 				likeUnlike(post);
