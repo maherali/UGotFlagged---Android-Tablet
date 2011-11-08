@@ -51,6 +51,8 @@ public class MainApplication extends Application {
 	private static Vehicle[] vehicles;
 	private static PostType[] postTypes;
 
+	private boolean terminated;
+
 	public StreamFlagDetailsFragment getStreamFlagDetailsFragment() {
 		return streamFlagDetailsFragment;
 	}
@@ -96,6 +98,7 @@ public class MainApplication extends Application {
 
 	@Override
 	public void onCreate() {
+		this.terminated = false;
 		mInstance = this;
 		cacheDB = new CacheDatabase(this);
 		fillinStates();
@@ -198,7 +201,7 @@ public class MainApplication extends Application {
 
 	@Override
 	public void onTerminate() {
-		// TODO Auto-generated method stub
+		this.terminated = true;
 		super.onTerminate();
 	}
 
